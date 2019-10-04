@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -8,137 +10,146 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<!--<?import javafx.scene.control.TreeTableColumn?>-->
+<!--<?import javafx.scene.control.TreeTableView?>-->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="745.0" prefWidth="1041.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <TabPane layoutX="272.0" layoutY="-1.0" prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
-            <tabs>
-                <Tab text="File">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <children>
-                                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Save" />
-                                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Load" />
-                                <Button layoutX="177.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="New" />
-                        <Button layoutX="261.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Redo" />
-                        <Button layoutX="344.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Undo" />
-                            </children>
-                        </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="Edit">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create Surface" />
-                        <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create material" />
-                        <Button layoutX="159.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
-                        <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Inspection" />
-                        <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
-                        <CheckBox layoutX="885.0" layoutY="28.0" mnemonicParsing="false" text="Snap grid" />
-                        <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
-                        <Button layoutX="446.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
-                        <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="horizontally center" />
-                        <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
-                        <CheckBox layoutX="776.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
-                     </children></AnchorPane>
-                    </content>
-                </Tab>
-            </tabs>
-        </TabPane>
-        <SplitPane dividerPositions="0.7632338787295476" layoutX="309.0" layoutY="259.0" prefHeight="615.0" prefWidth="876.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
-            <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="513.0" prefWidth="203.0" />
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="643.0" prefWidth="293.0">
-               <children>
-                  <TabPane prefHeight="643.0" prefWidth="280.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <tabs>
-                      <Tab text="Propreties">
-                           <content>
-                              <GridPane>
-                                <columnConstraints>
-                                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label text="Tile propreties" />
-                                    <Label contentDisplay="CENTER" text="Tile height" GridPane.rowIndex="1" />
-                                    <Label text="Tile width" GridPane.rowIndex="2" />
-                                    <Label text="Tile material" GridPane.rowIndex="5" />
-                                    <Label text="Surface position" GridPane.rowIndex="7" />
-                                    <Label text="Tile pattern" GridPane.rowIndex="6" />
-                                    <Label text="Seal width" GridPane.rowIndex="10" />
-                                    <Label text="Seal color" GridPane.rowIndex="11" />
-                                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                                    <Label text="Surface propreties" GridPane.rowIndex="4" />
-                                    <Label text="Seal propreties" GridPane.rowIndex="9" />
-                                    <Label text="Tile color" GridPane.rowIndex="3" />
-                                    <Label text="Surface color" GridPane.rowIndex="8" />
-                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                       <children>
-                                          <TextField layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
-                                          <TextField layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
-                                          <Label layoutX="46.0" layoutY="6.0" text="x" />
-                                          <Label layoutX="111.0" layoutY="6.0" text="y" />
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </GridPane>
-                           </content>
-                        </Tab>
-                      <Tab text="Inspection" />
-                        <Tab text="Accounting">
-                           <content>
-                              <SplitPane dividerPositions="0.6384364820846905" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
-                                <items>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                                       <children>
-                                          <TreeTableView prefHeight="614.0" prefWidth="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <columns>
-                                                <TreeTableColumn prefWidth="75.0" text="Name" />
-                                                <TreeTableColumn prefWidth="75.0" text="Quantity" />
-                                                <TreeTableColumn prefWidth="114.0" text="Number of boxe" />
-                                             </columns>
-                                          </TreeTableView>
-                                       </children></AnchorPane>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="297.0" />
-                                </items>
-                              </SplitPane>
-                           </content>
-                        </Tab>
-                    </tabs>
-                  </TabPane>
-               </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="745.0" prefWidth="1041.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+            onKeyPressed="#handleKeyPressed"
+            fx:controller="sample.Controller">
+  <children>
+    <TabPane prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
+      <tabs>
+        <Tab text="File">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Save" />
+                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Load" />
+                <Button layoutX="177.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="New" />
+                <Button layoutX="261.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Redo" />
+                <Button layoutX="344.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Undo" />
+              </children>
             </AnchorPane>
-            </items>
-        </SplitPane>
-    </children>
+          </content>
+        </Tab>
+        <Tab text="Edit">
+          <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Button onAction="#onCreateSurfaceSelected" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create Surface" />
+                <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create material" />
+                <Button layoutX="159.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
+                <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Inspection" />
+                <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
+                <CheckBox layoutX="885.0" layoutY="28.0" mnemonicParsing="false" text="Snap grid" />
+                <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
+                <Button layoutX="446.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
+                <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="horizontally center" />
+                <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
+                <CheckBox layoutX="776.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+    <SplitPane dividerPositions="0.7632338787295476" prefHeight="615.0" prefWidth="876.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+      <items>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="513.0" prefWidth="203.0">
+          <children>
+            <Pane fx:id="drawingSection" onMouseClicked="#onDrawingSectionClicked" layoutX="0.0" layoutY="0.0" prefHeight="643.0" prefWidth="790.0" />
+          </children>
+        </AnchorPane>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="643.0" prefWidth="293.0">
+          <children>
+            <TabPane prefHeight="643.0" prefWidth="280.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <tabs>
+                <Tab text="Propreties">
+                  <content>
+                    <GridPane>
+                      <children>
+                        <Label text="Tile propreties" />
+                        <Label contentDisplay="CENTER" text="Tile height" GridPane.rowIndex="1" />
+                        <Label text="Tile width" GridPane.rowIndex="2" />
+                        <Label text="Tile material" GridPane.rowIndex="5" />
+                        <Label text="Surface position" GridPane.rowIndex="7" />
+                        <Label text="Tile pattern" GridPane.rowIndex="6" />
+                        <Label text="Seal width" GridPane.rowIndex="10" />
+                        <Label text="Seal color" GridPane.rowIndex="11" />
+                        <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <TextField GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label text="Surface propreties" GridPane.rowIndex="4" />
+                        <Label text="Seal propreties" GridPane.rowIndex="9" />
+                        <Label text="Tile color" GridPane.rowIndex="3" />
+                        <Label text="Surface color" GridPane.rowIndex="8" />
+                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                          <children>
+                            <TextField layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <Label layoutX="46.0" layoutY="6.0" text="x" />
+                            <Label layoutX="111.0" layoutY="6.0" text="y" />
+                          </children>
+                        </AnchorPane>
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
+                  </content>
+                </Tab>
+                <Tab text="Inspection" />
+                <Tab text="Accounting">
+                  <content>
+                    <SplitPane dividerPositions="0.4991735537190083" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                      <items>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                          <!--                                       <children>-->
+                          <!--                                          <TreeTableView prefHeight="614.0" prefWidth="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">-->
+                          <!--                                             <columns>-->
+                          <!--&lt;!&ndash;                                                <TreeTableColumn prefWidth="75.0" text="Name" />&ndash;&gt;-->
+                          <!--&lt;!&ndash;                                                <TreeTableColumn prefWidth="75.0" text="Quantity" />&ndash;&gt;-->
+                          <!--&lt;!&ndash;                                                <TreeTableColumn prefWidth="114.0" text="Number of boxe" />&ndash;&gt;-->
+                          <!--                                             </columns>-->
+                          <!--                                          </TreeTableView>-->
+                          <!--                                       </children>-->
+                        </AnchorPane>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="297.0" />
+                      </items>
+                    </SplitPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+  </children>
 </AnchorPane>

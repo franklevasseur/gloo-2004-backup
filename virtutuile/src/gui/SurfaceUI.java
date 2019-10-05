@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -19,11 +20,23 @@ public class SurfaceUI {
         {
             @Override
             public void handle(MouseEvent t) {
-                isSelected = true;
-                rectangle.setFill(Color.RED);
                 selectionManager.unselectAll();
+
+                select();
                 selectionManager.selectSurface(that);
                 t.consume();
+            }
+        });
+
+        rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent t) {
+                if (isSelected) {
+                    rectangle.setX(t.getX() - (width / 2));
+                    rectangle.setY(t.getY() - (height / 2));
+                    t.consume();
+                }
             }
         });
     }
@@ -32,12 +45,15 @@ public class SurfaceUI {
         return rectangle;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    void select() {
+        isSelected = true;
+        rectangle.setFill(Color.RED);
+        rectangle.setCursor(Cursor.HAND);
     }
 
-    public void unselect() {
+    void unselect() {
         isSelected = false;
         rectangle.setFill(Color.BLACK);
+        rectangle.setCursor(Cursor.DEFAULT);
     }
 }

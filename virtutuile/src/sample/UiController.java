@@ -1,7 +1,5 @@
 package sample;
 
-import gui.SelectionManager;
-import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -17,8 +15,9 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import gui.SurfaceUI;
+import gui.SelectionManager;
 
-public class Controller implements Initializable {
+public class UiController implements Initializable {
 
     public Pane drawingSection;
 

@@ -5,18 +5,18 @@ import java.util.List;
 
 public class SelectionManager {
 
-    private List<SurfaceUI> selectedSurfaces = new LinkedList<SurfaceUI>();
+    private List<RectangleSurfaceUI> selectedSurfaces = new LinkedList<RectangleSurfaceUI>();
 
     public void unselectAll() {
-        selectedSurfaces.forEach(SurfaceUI::unselect);
+        selectedSurfaces.forEach(RectangleSurfaceUI::unselect);
         selectedSurfaces.clear();
     }
 
-    public void selectSurface(SurfaceUI surface) {
+    public void selectSurface(RectangleSurfaceUI surface) {
         selectedSurfaces.add(surface);
     }
 
-    public List<SurfaceUI> getSelectedSurfaces() {
+    public List<RectangleSurfaceUI> getSelectedSurfaces() {
         return selectedSurfaces;
     }
 }

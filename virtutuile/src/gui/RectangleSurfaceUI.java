@@ -12,21 +12,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SurfaceUI {
+public class RectangleSurfaceUI {
 
-    private Rectangle surfaceNode;
+    private Rectangle rectangle;
 
     private boolean isSelected = false;
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
 
     private Pane parentNode;
 
-    public SurfaceUI(double x, double y, double width, double height, SelectionManager selectionManager, Pane parentNode) {
-        surfaceNode = new Rectangle(x, y, width, height);
+    public RectangleSurfaceUI(PixelPoint topLeftSummit, double width, double height, SelectionManager selectionManager, Pane parentNode) {
+        rectangle = new Rectangle(topLeftSummit.x, topLeftSummit.y, width, height);
+        rectangle.setFill(Color.WHITE);
+        rectangle.setStroke(Color.BLACK);
+
         this.parentNode = parentNode;
 
-        SurfaceUI that = this;
-        surfaceNode.setOnMouseClicked(new EventHandler<MouseEvent>()
+        RectangleSurfaceUI that = this;
+        rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
@@ -38,59 +41,65 @@ public class SurfaceUI {
             }
         });
 
-        surfaceNode.setOnMouseDragged(new EventHandler<MouseEvent>()
+        rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
-                if (isSelected) {
-                    hideAttachmentPoints();
-                    surfaceNode.setX(t.getX() - (width / 2));
-                    surfaceNode.setY(t.getY() - (height / 2));
-                    t.consume();
-                }
+                hideAttachmentPoints();
+                rectangle.setX(t.getX() - (rectangle.getWidth() / 2));
+                rectangle.setY(t.getY() - (rectangle.getHeight() / 2));
+                t.consume();
             }
         });
 
-        surfaceNode.setOnMouseEntered(new EventHandler<MouseEvent>()
+        rectangle.setOnMouseEntered(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
-                surfaceNode.setCursor(Cursor.HAND);
+                rectangle.setCursor(Cursor.HAND);
             }
         });
 
-        surfaceNode.setOnMouseExited(new EventHandler<MouseEvent>()
+        rectangle.setOnMouseExited(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
-                surfaceNode.setCursor(Cursor.DEFAULT);
+                rectangle.setCursor(Cursor.DEFAULT);
             }
         });
     }
 
     public Node getNode() {
-        return surfaceNode;
+        return rectangle;
     }
 
     void select() {
         isSelected = true;
-        surfaceNode.setFill(Color.RED);
-
         displayAttachmentPoints();
     }
 
     void unselect() {
         isSelected = false;
-        surfaceNode.setFill(Color.BLACK);
-
         hideAttachmentPoints();
     }
 
+    public void increaseSizeBy(double deltaWidth, double deltaHeight) {
+        double newWidth = rectangle.getWidth() + deltaWidth;
+        double newHeight = rectangle.getHeight() + deltaHeight;
+
+        if (newWidth >=0 ) {
+            rectangle.setWidth(newWidth);
+        }
+        if (newHeight >= 0) {
+            rectangle.setHeight(newHeight);
+        }
+    }
+
     private void displayAttachmentPoints() {
-        PixelPoint topLeft = new PixelPoint(surfaceNode.getX(), surfaceNode.getY());
-        PixelPoint topRight = new PixelPoint(surfaceNode.getX() + surfaceNode.getWidth(), surfaceNode.getY());
-        PixelPoint bottomLeft = new PixelPoint(surfaceNode.getX(), surfaceNode.getY() + surfaceNode.getHeight());
-        PixelPoint bottomRight = new PixelPoint(surfaceNode.getX() + surfaceNode.getWidth(), surfaceNode.getY() + surfaceNode.getHeight());
+        PixelPoint topLeft = new PixelPoint(rectangle.getX(), rectangle.getY());
+        PixelPoint topRight = new PixelPoint(rectangle.getX() + rectangle.getWidth(), rectangle.getY());
+        PixelPoint bottomLeft = new PixelPoint(rectangle.getX(), rectangle.getY() + rectangle.getHeight());
+        PixelPoint bottomRight = new PixelPoint(rectangle.getX() + rectangle.getWidth(), rectangle.getY() + rectangle.getHeight());
         attachmentPoints.add(new AttachmentPointUI(topLeft, CardinalPoint.NW, this));
         attachmentPoints.add(new AttachmentPointUI(topRight, CardinalPoint.NE, this));
         attachmentPoints.add(new AttachmentPointUI(bottomLeft, CardinalPoint.SW, this));

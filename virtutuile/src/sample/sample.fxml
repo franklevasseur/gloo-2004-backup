@@ -20,6 +20,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="745.0" prefWidth="1041.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
             onKeyPressed="#handleKeyPressed"
+            onKeyReleased="#handleKeyReleased"
             fx:controller="sample.UiController">
   <children>
     <TabPane prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">

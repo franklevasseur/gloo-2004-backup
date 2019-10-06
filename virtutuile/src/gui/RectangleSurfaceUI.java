@@ -1,5 +1,7 @@
 package gui;
 
+import application.Controller;
+import domain.SurfaceId;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -14,28 +16,31 @@ import java.util.stream.Collectors;
 
 public class RectangleSurfaceUI {
 
+    private SurfaceId id;
     private Rectangle rectangle;
-
     private boolean isSelected = false;
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
-
     private Pane parentNode;
+    private Controller controller = Controller.getInstance();
 
-    public RectangleSurfaceUI(PixelPoint topLeftSummit, double width, double height, SelectionManager selectionManager, Pane parentNode) {
+    public RectangleSurfaceUI(PixelPoint topLeftSummit,
+                              double width,
+                              double height,
+                              SelectionManager selectionManager,
+                              Pane parentNode) {
         rectangle = new Rectangle(topLeftSummit.x, topLeftSummit.y, width, height);
         rectangle.setFill(Color.WHITE);
         rectangle.setStroke(Color.BLACK);
 
         this.parentNode = parentNode;
 
+        id = controller.createSurface(this);
+
         RectangleSurfaceUI that = this;
         rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
-                selectionManager.unselectAll();
-
-                select();
                 selectionManager.selectSurface(that);
                 t.consume();
             }
@@ -49,6 +54,8 @@ public class RectangleSurfaceUI {
                 rectangle.setX(t.getX() - (rectangle.getWidth() / 2));
                 rectangle.setY(t.getY() - (rectangle.getHeight() / 2));
                 t.consume();
+
+                controller.updateSurface(that);
             }
         });
 
@@ -73,12 +80,14 @@ public class RectangleSurfaceUI {
         return rectangle;
     }
 
-    void select() {
+    public void select() {
         isSelected = true;
-        displayAttachmentPoints();
+        if (attachmentPoints.isEmpty()) {
+            displayAttachmentPoints();
+        }
     }
 
-    void unselect() {
+    public void unselect() {
         isSelected = false;
         hideAttachmentPoints();
     }
@@ -93,6 +102,8 @@ public class RectangleSurfaceUI {
         if (newHeight >= 0) {
             rectangle.setHeight(newHeight);
         }
+
+        controller.updateSurface(this);
     }
 
     private void displayAttachmentPoints() {

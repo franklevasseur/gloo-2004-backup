@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle;
 
 public class AttachmentPointUI {
 
-    private static final int pointWidth = 10;
+    private static final double pointWidth = 10;
     private Rectangle rectangle;
 
     public AttachmentPointUI(PixelPoint coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {

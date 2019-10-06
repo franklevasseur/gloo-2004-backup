@@ -1,6 +1,11 @@
 package sample;
 
+import gui.RectangleSurfaceUI;
+import gui.SelectionManager;
 import gui.PixelPoint;
+
+import application.Controller;
+
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -15,18 +20,17 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import gui.RectangleSurfaceUI;
-import gui.SelectionManager;
-
 public class UiController implements Initializable {
 
     public Pane drawingSection;
 
-    private List<RectangleSurfaceUI> allSurfaces = new LinkedList<RectangleSurfaceUI>();
+    private List<RectangleSurfaceUI> allSurfaces = new LinkedList<>();
     private SelectionManager selectionManager = new SelectionManager();
 
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
+
+    private Controller domainController = Controller.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -35,11 +39,16 @@ public class UiController implements Initializable {
 
     public void handleKeyPressed(KeyEvent e) {
         if(e.getCode() == KeyCode.DELETE) {
-            List<RectangleSurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
-            List<Node> selectedNodes = selectedSurfaces.stream().map(RectangleSurfaceUI::getNode).collect(Collectors.toList());
+            removeSelectedSurfaces();
+        }
+        if(e.getCode() == KeyCode.CONTROL) {
+            selectionManager.allowMultipleSelection();
+        }
+    }
 
-            drawingSection.getChildren().removeIf(selectedNodes::contains);
-            allSurfaces.removeIf(selectedSurfaces::contains);
+    public void handleKeyReleased(KeyEvent e) {
+        if(e.getCode() == KeyCode.CONTROL) {
+            selectionManager.disableMultipleSelection();
         }
     }
 
@@ -61,6 +70,16 @@ public class UiController implements Initializable {
             stateCurrentlyCreatingSurface = true;
             drawingSection.setCursor(Cursor.CROSSHAIR);
         }
+    }
+
+    private void removeSelectedSurfaces() {
+        List<RectangleSurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+        List<Node> selectedNodes = selectedSurfaces.stream()
+                .peek(RectangleSurfaceUI::unselect)
+                .map(RectangleSurfaceUI::getNode).collect(Collectors.toList());
+
+        drawingSection.getChildren().removeIf(selectedNodes::contains);
+        allSurfaces.removeIf(selectedSurfaces::contains);
     }
 
     private RectangleSurfaceUI createSurfaceHere(MouseEvent e, double width, double height) {

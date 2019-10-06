@@ -6,6 +6,7 @@ import java.util.List;
 public class SelectionManager {
 
     private List<RectangleSurfaceUI> selectedSurfaces = new LinkedList<RectangleSurfaceUI>();
+    private boolean multipleSelectionAllowed = false;
 
     public void unselectAll() {
         selectedSurfaces.forEach(RectangleSurfaceUI::unselect);
@@ -13,10 +14,22 @@ public class SelectionManager {
     }
 
     public void selectSurface(RectangleSurfaceUI surface) {
+        if (!multipleSelectionAllowed) {
+            unselectAll();
+        }
+        surface.select();
         selectedSurfaces.add(surface);
     }
 
     public List<RectangleSurfaceUI> getSelectedSurfaces() {
         return selectedSurfaces;
+    }
+
+    public void allowMultipleSelection() {
+        multipleSelectionAllowed = true;
+    }
+
+    public void disableMultipleSelection() {
+        multipleSelectionAllowed = false;
     }
 }

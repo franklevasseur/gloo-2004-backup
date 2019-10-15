@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Génie logiciel orienté objet" company="" webLink="http://" view-date="2019-09-08" view-index="0" gantt-divider-location="583" resource-divider-location="300" version="2.8.5" locale="en_CA">
+    <description/>
+    <view zooming-state="default:6" id="gantt-chart">
+        <field id="tpd3" name="Name" width="276" order="0"/>
+        <field id="tpd4" name="Begin date" width="152" order="1"/>
+        <field id="tpd5" name="End date" width="151" order="2"/>
+        <timeline><![CDATA[28,29,32,33,31]]></timeline>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Name" width="210" order="0"/>
+        <field id="1" name="Default role" width="86" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="0" mon="0" tue="0" wed="0" thu="0" fri="0" sat="0"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="28" name="Itération 1" color="#000000" meeting="false" start="2019-09-16" duration="14" complete="0" expand="true">
+            <task id="34" name="tracer" meeting="false" start="2019-09-16" duration="14" complete="0" expand="true"/>
+            <task id="58" name="éditer des surfaces" meeting="false" start="2019-09-16" duration="14" complete="0" expand="true"/>
+            <task id="37" name="déplacer" meeting="false" start="2019-09-16" duration="14" complete="0" expand="true"/>
+            <task id="90" name="Modification de surfaces" meeting="false" start="2019-09-16" duration="14" complete="0" expand="true"/>
+        </task>
+        <task id="29" name="Itération 2" color="#000000" meeting="false" start="2019-09-30" duration="14" complete="0" expand="true">
+            <task id="62" name="alignement des surfaces" meeting="false" start="2019-09-30" duration="14" complete="0" expand="true"/>
+            <task id="61" name="soustraire surface" color="#8cb6ce" meeting="false" start="2019-09-30" duration="14" complete="0" expand="true"/>
+            <task id="63" name="alignement des tuiles" color="#8cb6ce" meeting="false" start="2019-09-30" duration="14" complete="0" expand="true"/>
+            <task id="64" name="fusion de surface" meeting="false" start="2019-09-30" duration="14" complete="0" expand="true"/>
+        </task>
+        <task id="32" name="Itération 3" color="#000000" meeting="false" start="2019-10-14" duration="14" complete="0" expand="true">
+            <task id="72" name="dézoomer" color="#8cb6ce" meeting="false" start="2019-10-14" duration="14" complete="0" expand="true"/>
+            <task id="73" name="zoomer" meeting="false" start="2019-10-14" duration="14" complete="0" expand="true"/>
+            <task id="74" name="Multisélection/sélection de surface" meeting="false" start="2019-10-14" duration="14" complete="0" expand="true"/>
+        </task>
+        <task id="31" name="Itération 4" color="#000000" meeting="false" start="2019-10-28" duration="14" complete="0" expand="true">
+            <task id="79" name="choisir matériel" color="#8cb6ce" meeting="false" start="2019-10-28" duration="14" complete="0" expand="true"/>
+            <task id="80" name="configuration snapgrid" meeting="false" start="2019-10-28" duration="14" complete="0" expand="true"/>
+            <task id="81" name="créer matériel" meeting="false" start="2019-10-28" duration="14" complete="0" expand="true"/>
+        </task>
+        <task id="82" name="Itération 5" meeting="false" start="2019-11-11" duration="14" complete="0" expand="true">
+            <task id="84" name="redo" meeting="false" start="2019-11-11" duration="14" complete="0" expand="true"/>
+            <task id="85" name="save" meeting="false" start="2019-11-11" duration="14" complete="0" expand="true"/>
+            <task id="86" name="load" color="#8cb6ce" meeting="false" start="2019-11-11" duration="14" complete="0" expand="true"/>
+            <task id="87" name="undo" meeting="false" start="2019-11-11" duration="14" complete="0" expand="true"/>
+        </task>
+        <task id="33" name="Itération 6" color="#000000" meeting="false" start="2019-11-25" duration="14" complete="0" expand="true">
+            <task id="75" name="quantité de coulis" meeting="false" start="2019-11-25" duration="14" complete="0" expand="true"/>
+            <task id="76" name="nombre de tuiles" color="#8cb6ce" meeting="false" start="2019-11-25" duration="14" complete="0" expand="true"/>
+            <task id="77" name="nombre de boîtes" meeting="false" start="2019-11-25" duration="14" complete="0" expand="true"/>
+            <task id="78" name="conversion métrique/impérial" meeting="false" start="2019-11-25" duration="14" complete="0" expand="true"/>
+        </task>
+    </tasks>
+    <resources/>
+    <allocations/>
+    <vacations/>
+    <previous/>
+    <roles roleset-name="Default"/>
+    <roles roleset-name="SoftwareDevelopment"/>
+</project>

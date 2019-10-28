@@ -1,15 +1,16 @@
 package gui;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class SelectionManager {
 
-    private List<RectangleSurfaceUI> selectedSurfaces = new LinkedList<RectangleSurfaceUI>();
+    private List<SurfaceUI> selectedSurfaces = new ArrayList<>();
     private boolean multipleSelectionAllowed = false;
 
     public void unselectAll() {
-        selectedSurfaces.forEach(RectangleSurfaceUI::unselect);
+        selectedSurfaces.forEach(SurfaceUI::unselect);
         selectedSurfaces.clear();
     }
 
@@ -21,7 +22,7 @@ public class SelectionManager {
         selectedSurfaces.add(surface);
     }
 
-    public List<RectangleSurfaceUI> getSelectedSurfaces() {
+    public List<SurfaceUI> getSelectedSurfaces() {
         return selectedSurfaces;
     }
 

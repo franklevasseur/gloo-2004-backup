@@ -6,13 +6,15 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import utils.CardinalPoint;
+import utils.Point;
 
 public class AttachmentPointUI {
 
     private static final double pointWidth = 10;
     private Rectangle rectangle;
 
-    public AttachmentPointUI(PixelPoint coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {
+    public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {
         rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
 
         rectangle.setOnMouseEntered(new EventHandler<MouseEvent>()

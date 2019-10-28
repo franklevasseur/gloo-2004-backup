@@ -1,0 +1,7 @@
+package application;
+
+import java.util.List;
+
+public class ProjectDto {
+    public List<SurfaceDto> surfaces;
+}

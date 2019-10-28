@@ -1,11 +1,14 @@
 package sample;
 
+import application.ProjectDto;
+import application.SurfaceDto;
 import gui.RectangleSurfaceUI;
 import gui.SelectionManager;
-import gui.PixelPoint;
 
 import application.Controller;
 
+import gui.SurfaceUI;
+import gui.ZoomManager;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -13,19 +16,21 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import utils.Id;
+import utils.Point;
+import utils.RectangleHelper;
 
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UiController implements Initializable {
 
     public Pane drawingSection;
 
-    private List<RectangleSurfaceUI> allSurfaces = new LinkedList<>();
+    private List<SurfaceUI> allSurfaces = new ArrayList<SurfaceUI>();
     private SelectionManager selectionManager = new SelectionManager();
+    private ZoomManager zoomManager = new ZoomManager();
 
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
@@ -57,10 +62,9 @@ public class UiController implements Initializable {
             drawingSection.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
 
-            RectangleSurfaceUI newSurface = createSurfaceHere(e, 40, 40);
+            createSurfaceHere(e, 40, 40);
 
-            allSurfaces.add(newSurface);
-            drawingSection.getChildren().addAll(newSurface.getNode());
+            this.renderFromProject();
         }
         selectionManager.unselectAll();
     }
@@ -73,21 +77,53 @@ public class UiController implements Initializable {
     }
 
     private void removeSelectedSurfaces() {
-        List<RectangleSurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
         List<Node> selectedNodes = selectedSurfaces.stream()
-                .peek(RectangleSurfaceUI::unselect)
-                .map(RectangleSurfaceUI::getNode).collect(Collectors.toList());
+                .peek(SurfaceUI::unselect)
+                .peek(s -> domainController.removeSurface(s.toDto()))
+                .map(SurfaceUI::getNode).collect(Collectors.toList());
 
         drawingSection.getChildren().removeIf(selectedNodes::contains);
         allSurfaces.removeIf(selectedSurfaces::contains);
     }
 
-    private RectangleSurfaceUI createSurfaceHere(MouseEvent e, double width, double height) {
+    private void createSurfaceHere(MouseEvent e, double widthPixels, double heightPixels) {
 
-        double x = e.getX() - (width / 2);
-        double y = e.getY() - (height / 2);
-        PixelPoint topLeftCorner = new PixelPoint(x, y);
+        double xPixels = e.getX() - (widthPixels / 2);
+        double yPixels = e.getY() - (heightPixels / 2);
 
-        return new RectangleSurfaceUI(topLeftCorner, width, height, selectionManager, drawingSection);
+        double x = zoomManager.pixelsToMeters(xPixels);
+        double y = zoomManager.pixelsToMeters(yPixels);
+        double width = zoomManager.pixelsToMeters(widthPixels);
+        double height = zoomManager.pixelsToMeters(heightPixels);
+
+        SurfaceDto surface = new SurfaceDto();
+        surface.id = new Id();
+        surface.isRectangular = true;
+        surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
+
+        domainController.createSurface(surface);
+    }
+
+    private void renderFromProject() {
+
+        this.clearDrawings();
+
+        ProjectDto project = this.domainController.getProject();
+        for (SurfaceDto surface: project.surfaces) {
+            this.displaySurface(surface);
+        }
+    }
+
+    private void clearDrawings() {
+        this.allSurfaces.clear();
+        this.selectionManager.unselectAll();
+        this.drawingSection.getChildren().clear();
+    }
+
+    private void displaySurface(SurfaceDto surfaceDto) {
+        RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto, zoomManager, selectionManager, drawingSection);
+        this.allSurfaces.add(surfaceUi);
+        this.drawingSection.getChildren().add(surfaceUi.getNode());
     }
 }

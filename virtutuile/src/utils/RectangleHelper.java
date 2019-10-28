@@ -4,6 +4,11 @@ import java.util.*;
 
 public class RectangleHelper {
 
+    public static List<Point> rectangleInfoToSummits(double topLeftCornerX, double topLeftCornerY, double width, double height) {
+        Point topLeftCorner = new Point(topLeftCornerX, topLeftCornerY);
+        return rectangleInfoToSummits(topLeftCorner, width, height);
+    }
+
     public static List<Point> rectangleInfoToSummits(Point topLeftCorner, double width, double height) {
 
         double x = topLeftCorner.x;

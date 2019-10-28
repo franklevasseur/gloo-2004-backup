@@ -5,6 +5,10 @@ public class Point {
     public double y;
     public CardinalPoint cardinality;
 
+    public static Point translate(Point oldPoint, double delatX, double deltaY) {
+        return new Point(oldPoint.x + delatX, oldPoint.y + deltaY);
+    }
+
     public Point(double x, double y) {
         this.x = x;
         this.y = y;

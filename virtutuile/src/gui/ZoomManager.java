@@ -4,7 +4,7 @@ import utils.Point;
 
 public class ZoomManager {
 
-    private double pixelsPerMeters = 30;
+    private double pixelsPerMeters = 100;
 
     public double pixelsToMeters(double pixels) {
         return pixels / pixelsPerMeters;

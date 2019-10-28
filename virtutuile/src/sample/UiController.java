@@ -1,17 +1,13 @@
 package sample;
 
-import application.ProjectDto;
-import application.SurfaceDto;
+import application.*;
 import gui.RectangleSurfaceUI;
 import gui.SelectionManager;
-
-import application.Controller;
 
 import gui.SurfaceUI;
 import gui.ZoomManager;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -22,13 +18,12 @@ import utils.RectangleHelper;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class UiController implements Initializable {
 
     public Pane drawingSection;
 
-    private List<SurfaceUI> allSurfaces = new ArrayList<SurfaceUI>();
+    private List<SurfaceUI> allSurfaces = new ArrayList<>();
     private SelectionManager selectionManager = new SelectionManager();
     private ZoomManager zoomManager = new ZoomManager();
 
@@ -62,7 +57,7 @@ public class UiController implements Initializable {
             drawingSection.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
 
-            createSurfaceHere(e, 40, 40);
+            createSurfaceHere(e, 200, 200);
 
             this.renderFromProject();
         }
@@ -76,14 +71,19 @@ public class UiController implements Initializable {
         }
     }
 
+    public void fillSelectedSurfaceWithTiles() {
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+
+        for (SurfaceUI surface: selectedSurfaces) {
+            this.domainController.fillSurfaceWithDefaults(surface.toDto());
+        }
+
+        renderFromProject();
+    }
+
     private void removeSelectedSurfaces() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
-        List<Node> selectedNodes = selectedSurfaces.stream()
-                .peek(SurfaceUI::unselect)
-                .peek(s -> domainController.removeSurface(s.toDto()))
-                .map(SurfaceUI::getNode).collect(Collectors.toList());
-
-        drawingSection.getChildren().removeIf(selectedNodes::contains);
+        selectedSurfaces.forEach(SurfaceUI::remove);
         allSurfaces.removeIf(selectedSurfaces::contains);
     }
 
@@ -99,6 +99,7 @@ public class UiController implements Initializable {
 
         SurfaceDto surface = new SurfaceDto();
         surface.id = new Id();
+        surface.isHole = true;
         surface.isRectangular = true;
         surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
 
@@ -110,8 +111,10 @@ public class UiController implements Initializable {
         this.clearDrawings();
 
         ProjectDto project = this.domainController.getProject();
-        for (SurfaceDto surface: project.surfaces) {
-            this.displaySurface(surface);
+        if (project.surfaces != null) {
+            for (SurfaceDto surface: project.surfaces) {
+                this.displaySurface(surface);
+            }
         }
     }
 
@@ -124,6 +127,5 @@ public class UiController implements Initializable {
     private void displaySurface(SurfaceDto surfaceDto) {
         RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto, zoomManager, selectionManager, drawingSection);
         this.allSurfaces.add(surfaceUi);
-        this.drawingSection.getChildren().add(surfaceUi.getNode());
     }
 }

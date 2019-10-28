@@ -22,6 +22,11 @@ public class SelectionManager {
         selectedSurfaces.add(surface);
     }
 
+    public void unselectSurface(SurfaceUI surface) {
+        surface.unselect();
+        selectedSurfaces.removeIf(s -> s.getId() == surface.getId());
+    }
+
     public List<SurfaceUI> getSelectedSurfaces() {
         return selectedSurfaces;
     }

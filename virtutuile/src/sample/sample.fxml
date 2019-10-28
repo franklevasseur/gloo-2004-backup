@@ -44,7 +44,7 @@
               <children>
                 <Button onAction="#onCreateSurfaceSelected" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create Surface" />
                 <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create material" />
-                <Button layoutX="159.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
+                <Button onAction="#fillSelectedSurfaceWithTiles" layoutX="159.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
                 <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Inspection" />
                 <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
                 <CheckBox layoutX="885.0" layoutY="28.0" mnemonicParsing="false" text="Snap grid" />

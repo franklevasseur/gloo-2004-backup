@@ -1,6 +1,13 @@
 package application;
 
+import utils.Point;
+import utils.RectangleHelper;
+import utils.RectangleInfo;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Controller {
 
@@ -45,8 +52,58 @@ public class Controller {
         // ...
     }
 
-    public void fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsinfoDto sealing) {
+    public void fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
         // ...
+    }
+
+    public void fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
+        // Let the backend choose a default pattern and sealing and master tile
+        // ...
+        SurfaceDto surface = this.temporaryProject.surfaces.stream().filter(s -> s.id.isSame(surfaceToFill.id)).findFirst().get();
+        surface.isHole = false;
+
+        if (!surface.isRectangular) {
+            // TODO: find another logic
+            throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");
+        }
+
+        RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surface.summits);
+
+        double tileWidth = 0.3;
+        double tileHeight = 0.2;
+
+        SealsInfoDto defaultSealInfo = new SealsInfoDto();
+        defaultSealInfo.sealWidth = 0.02;
+
+        List<TileDto> tiles = new ArrayList<>();
+
+        double unitOfWidth = tileWidth + defaultSealInfo.sealWidth;
+        double unitOfHeight = tileHeight + defaultSealInfo.sealWidth;
+
+        int amountOfLines = (int) Math.ceil(surfaceRectangle.height / unitOfHeight);
+        int amountOfColumns = (int) Math.ceil(surfaceRectangle.width / unitOfWidth);
+
+        for (int line = 0; line < amountOfLines; line++) {
+            for (int column = 0; column < amountOfColumns; column++) {
+                TileDto nextTile = new TileDto();
+
+                Point topLeftCorner = Point.translate(surfaceRectangle.topLeftCorner, column * unitOfWidth, line * unitOfHeight);
+
+                double rightSurfaceBound = surfaceRectangle.topLeftCorner.x + surfaceRectangle.width;
+                double bottomSurfaceBound = surfaceRectangle.topLeftCorner.y + surfaceRectangle.height;
+
+                boolean isTileOverflowX = topLeftCorner.x + tileWidth > rightSurfaceBound;
+                boolean isTileOverflowY = topLeftCorner.y + tileHeight > bottomSurfaceBound;
+                double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.x : tileWidth;
+                double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
+
+                nextTile.summits = RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight);
+
+                tiles.add(nextTile);
+            }
+        }
+
+        surface.tiles = tiles;
     }
 
     public void loadProject(String projectPath) {

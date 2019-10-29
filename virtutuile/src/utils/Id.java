@@ -2,7 +2,7 @@ package utils;
 
 public class Id {
 
-    private static int instanceCount;
+    private static int instanceCount = 0;
     private int id;
 
     public Id() {

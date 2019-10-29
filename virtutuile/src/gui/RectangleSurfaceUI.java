@@ -4,7 +4,6 @@ import application.Controller;
 import application.SurfaceDto;
 import application.TileDto;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utils.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;

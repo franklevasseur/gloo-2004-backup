@@ -7,11 +7,13 @@ import gui.SelectionManager;
 import gui.SurfaceUI;
 import gui.ZoomManager;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.transform.Scale;
 import utils.Id;
 import utils.Point;
 import utils.RectangleHelper;
@@ -21,7 +23,9 @@ import java.util.*;
 
 public class UiController implements Initializable {
 
+    public Pane pane;
     public Pane drawingSection;
+    private Circle originIndicator;
 
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
     private SelectionManager selectionManager = new SelectionManager();
@@ -29,12 +33,53 @@ public class UiController implements Initializable {
 
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
+    private boolean stateEnableZooming = false;
 
     private Controller domainController = Controller.getInstance();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("Initialization...");
+
+        originIndicator = new Circle();
+        originIndicator.setFill(Color.RED);
+        originIndicator.setRadius(10);
+
+        // Invisible Pane object that contains all other shapes
+        // Needed to be invisible so zooming out of it would not expose its edge
+        // Make it look like its infinite in size
+        drawingSection.setPrefHeight(1);
+        drawingSection.setPrefWidth(1);
+
+        drawingSection.getChildren().add(originIndicator);
+    }
+
+    public void handleZoom(ScrollEvent event) {
+        if (stateEnableZooming) {
+            double zoom_fac = 1.05;
+            double delta_y = event.getDeltaY();
+
+            if (delta_y < 0) {
+                zoom_fac = 1.9 - zoom_fac;
+            }
+
+            Point cursorCoord = this.getPointInReferenceToOrigin(new Point(event.getX(), event.getY()));
+
+            Scale newScale = new Scale();
+            newScale.setPivotX(cursorCoord.x);
+            newScale.setPivotY(cursorCoord.y);
+            newScale.setX(zoom_fac);
+            newScale.setY(zoom_fac);
+
+            drawingSection.getTransforms().add(newScale);
+            zoomManager.zoomBy(zoom_fac);
+        }
+        event.consume();
+    }
+
+    public void resetZoom() {
+        drawingSection.getTransforms().clear();
+        zoomManager.resetZoom();
     }
 
     public void handleKeyPressed(KeyEvent e) {
@@ -43,31 +88,52 @@ public class UiController implements Initializable {
         }
         if(e.getCode() == KeyCode.CONTROL) {
             selectionManager.allowMultipleSelection();
+            stateEnableZooming = true;
+        }
+        if(e.getCode() == KeyCode.ALT) {
+            resetZoom();
         }
     }
 
     public void handleKeyReleased(KeyEvent e) {
         if(e.getCode() == KeyCode.CONTROL) {
             selectionManager.disableMultipleSelection();
+            stateEnableZooming = false;
         }
     }
 
-    public void onDrawingSectionClicked(MouseEvent e) {
+    public void onPaneClicked(MouseEvent e) {
+
+        Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
+
+//        System.out.println(String.format("click : (%f, %f)", clickCoord.x, clickCoord.y));
         if (stateCurrentlyCreatingSurface) {
-            drawingSection.setCursor(Cursor.DEFAULT);
+            pane.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
 
-            createSurfaceHere(e, 200, 200);
+            createSurfaceHere(new Point(clickCoord.x, clickCoord.y), 200, 200);
 
             this.renderFromProject();
         }
         selectionManager.unselectAll();
     }
 
+    private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {
+        Bounds bound = originIndicator.getBoundsInParent();
+        Bounds actual = drawingSection.localToParent(bound);
+        double xOrigin = actual.getCenterX();
+        double yOrigin = actual.getCenterY();
+
+        double xFromOrigin = (pointInReferenceToPane.x - xOrigin) / zoomManager.getCurrentScale();
+        double yFromOrigin = (pointInReferenceToPane.y - yOrigin) / zoomManager.getCurrentScale();
+
+        return new Point(xFromOrigin, yFromOrigin);
+    }
+
     public void onCreateSurfaceSelected() {
         if(!stateCurrentlyCreatingSurface) {
             stateCurrentlyCreatingSurface = true;
-            drawingSection.setCursor(Cursor.CROSSHAIR);
+            pane.setCursor(Cursor.CROSSHAIR);
         }
     }
 
@@ -87,10 +153,10 @@ public class UiController implements Initializable {
         allSurfaces.removeIf(selectedSurfaces::contains);
     }
 
-    private void createSurfaceHere(MouseEvent e, double widthPixels, double heightPixels) {
+    private void createSurfaceHere(Point location, double widthPixels, double heightPixels) {
 
-        double xPixels = e.getX() - (widthPixels / 2);
-        double yPixels = e.getY() - (heightPixels / 2);
+        double xPixels = location.x - (widthPixels / 2);
+        double yPixels = location.y - (heightPixels / 2);
 
         double x = zoomManager.pixelsToMeters(xPixels);
         double y = zoomManager.pixelsToMeters(yPixels);
@@ -122,6 +188,7 @@ public class UiController implements Initializable {
         this.allSurfaces.clear();
         this.selectionManager.unselectAll();
         this.drawingSection.getChildren().clear();
+        this.drawingSection.getChildren().add(originIndicator);
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {

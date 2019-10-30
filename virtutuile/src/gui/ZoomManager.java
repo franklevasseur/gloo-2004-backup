@@ -5,7 +5,9 @@ import utils.Point;
 public class ZoomManager {
 
     private double pixelsPerMeters = 100;
+    private double currentScale = 1;
 
+    // TODO: take account of current scale in meters conversion
     public double pixelsToMeters(double pixels) {
         return pixels / pixelsPerMeters;
     }
@@ -24,5 +26,17 @@ public class ZoomManager {
         double x = this.metersToPixels(metersPoint.x);
         double y = this.metersToPixels(metersPoint.y);
         return new Point(x, y);
+    }
+
+    public void zoomBy(double zoomFactor) {
+        this.currentScale *= zoomFactor;
+    }
+
+    public void resetZoom() {
+        this.currentScale = 1;
+    }
+
+    public double getCurrentScale() {
+        return this.currentScale;
     }
 }

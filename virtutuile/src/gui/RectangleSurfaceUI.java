@@ -4,7 +4,6 @@ import application.Controller;
 import application.SurfaceDto;
 import application.TileDto;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utils.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -204,13 +202,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void remove() {
-        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-        List<Node> selectedNodes = selectedSurfaces.stream()
-                .peek(SurfaceUI::unselect)
-                .peek(s -> controller.removeSurface(s.toDto()))
-                .map(SurfaceUI::getNode).collect(Collectors.toList());
-
-        parentNode.getChildren().removeIf(selectedNodes::contains);
-        selectedSurfaces.forEach(s -> selectionManager.unselectSurface(s));
+        this.hideTiles();
+        this.unselect();
+        controller.removeSurface(this.toDto());
+        parentNode.getChildren().remove(this.getNode());
     }
 }

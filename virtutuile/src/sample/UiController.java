@@ -45,9 +45,11 @@ public class UiController implements Initializable {
         originIndicator.setFill(Color.RED);
         originIndicator.setRadius(10);
 
-//        drawingSection.setStyle("-fx-background-color: #0ff");
-        drawingSection.setPrefHeight(100);
-        drawingSection.setPrefWidth(100);
+        // Invisible Pane object that contains all other shapes
+        // Needed to be invisible so zooming out of it would not expose its edge
+        // Make it look like its infinite in size
+        drawingSection.setPrefHeight(1);
+        drawingSection.setPrefWidth(1);
 
         drawingSection.getChildren().add(originIndicator);
     }
@@ -102,14 +104,14 @@ public class UiController implements Initializable {
 
     public void onPaneClicked(MouseEvent e) {
 
-        Point clikCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
+        Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
 
-        System.out.println(String.format("click : (%f, %f)", clikCoord.x, clikCoord.y));
+//        System.out.println(String.format("click : (%f, %f)", clickCoord.x, clickCoord.y));
         if (stateCurrentlyCreatingSurface) {
             pane.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
 
-            createSurfaceHere(new Point(clikCoord.x, clikCoord.y), 200, 200);
+            createSurfaceHere(new Point(clickCoord.x, clickCoord.y), 200, 200);
 
             this.renderFromProject();
         }

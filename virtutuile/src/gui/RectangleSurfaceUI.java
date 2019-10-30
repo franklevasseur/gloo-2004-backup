@@ -202,13 +202,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void remove() {
-        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-        List<Node> selectedNodes = selectedSurfaces.stream()
-                .peek(SurfaceUI::unselect)
-                .peek(s -> controller.removeSurface(s.toDto()))
-                .map(SurfaceUI::getNode).collect(Collectors.toList());
-
-        parentNode.getChildren().removeIf(selectedNodes::contains);
-        selectedSurfaces.forEach(s -> selectionManager.unselectSurface(s));
+        this.hideTiles();
+        this.unselect();
+        controller.removeSurface(this.toDto());
+        parentNode.getChildren().remove(this.getNode());
     }
 }

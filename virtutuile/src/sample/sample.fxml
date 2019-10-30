@@ -66,8 +66,6 @@
             <Pane onScroll="#handleZoom"
                   fx:id="pane"
                   onMouseClicked="#onPaneClicked"
-                  maxHeight="1.7976931348623157E308"
-                  maxWidth="1.7976931348623157E308"
                   prefHeight="700" prefWidth="750"
                   style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
               <children>

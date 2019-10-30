@@ -66,5 +66,18 @@ public class Surface {
         this.sealsInfo = pSealsInfo;
     }
 
+    public Surface surfaceFusion(ArrayList<Surface> surfaces){
+        ArrayList<Point> points;
+        boolean hole = true;
+        //définir le traitement en fonction de ce qu'on a en cliquant sur plusieurs surfaces
+        for(int i = 0; i < surfaces.size(); i++){
+            if (surfaces.get(i)).isHole();{
+                //traitement si une surface est un trou
+            }
+            points.add(i.getSummits());
+        }
+        new Surface(hole, points);
+    }
+
 
 }

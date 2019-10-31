@@ -1,13 +1,14 @@
 package application;
 
+import Domain.Project;
+import Domain.Surface;
 import utils.Point;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -16,32 +17,27 @@ public class Controller {
         return instance;
     }
 
-    // TODO: remove this and replace with a backend;
-    private ProjectDto temporaryProject = new ProjectDto();
+    private Project vraiProject = new Project();
 
-    public void createSurface(SurfaceDto newSurface) {
-        if (temporaryProject.surfaces == null) {
-            temporaryProject.surfaces = new ArrayList<SurfaceDto>();
-        }
-        temporaryProject.surfaces.add(newSurface);
-
+    public void createSurface(SurfaceDto newSurfaceDto) {
+        Surface newSurface = SurfaceAssembler.fromDto(newSurfaceDto);
+        vraiProject.getSurfaces().add(newSurface);
         // ...
     }
 
-    public void updateSurface(SurfaceDto surface) {
-        this.removeSurface(surface);
-        temporaryProject.surfaces.add(surface);
-        // ...
+    public void updateSurface(SurfaceDto surfaceDto) {
+
+        Surface surface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceDto.id)).findFirst().get();
+        SurfaceAssembler.fromDto(surfaceDto, surface);
     }
 
     public ProjectDto getProject() {
-        return temporaryProject;
+        return ProjectAssembler.toDto(vraiProject);
         // ...
     }
 
     public void removeSurface(SurfaceDto surface) {
-        this.temporaryProject.surfaces.removeIf(s -> s.id.isSame(surface.id));
-        // ...
+        this.vraiProject.getSurfaces().removeIf(s -> s.getId().isSame(surface.id));
     }
 
     public void undo() {
@@ -59,15 +55,17 @@ public class Controller {
     public void fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
         // Let the backend choose a default pattern and sealing and master tile
         // ...
-        SurfaceDto surface = this.temporaryProject.surfaces.stream().filter(s -> s.id.isSame(surfaceToFill.id)).findFirst().get();
-        surface.isHole = false;
+        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceToFill.id)).findFirst().get();
+        SurfaceDto surfaceToFillDto = SurfaceAssembler.toDto(desiredSurface);
 
-        if (!surface.isRectangular) {
+        surfaceToFillDto.isHole = false;
+
+        if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
             throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");
         }
 
-        RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surface.summits);
+        RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits);
 
         double tileWidth = 0.3;
         double tileHeight = 0.2;
@@ -103,7 +101,10 @@ public class Controller {
             }
         }
 
-        surface.tiles = tiles;
+        surfaceToFillDto.tiles = tiles;
+
+        //TODO: je sais c'est pas bin beau
+        this.updateSurface(surfaceToFillDto);
     }
 
     public void loadProject(String projectPath) {
@@ -112,6 +113,11 @@ public class Controller {
 
     public void saveProject(String projectPath) {
         // ...
+    }
+
+    public void fusionSurfaces(List<SurfaceDto> surfacesDto) {
+        List<Surface> surfaces = surfacesDto.stream().map(dto -> SurfaceAssembler.fromDto(dto)).collect(Collectors.toList());
+        this.vraiProject.fusionSurfaces(surfaces);
     }
 
     // ...

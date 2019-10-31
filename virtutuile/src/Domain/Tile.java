@@ -1,13 +1,14 @@
 package Domain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Tile {
-    private ArrayList<Point> summit;
+    private List<Point> summits;
     private Material material;
 
-    public Tile(ArrayList<Point> pSummit, Material pMaterial){
-        summit = pSummit;
+    public Tile(List<Point> pSummit, Material pMaterial){
+        summits = pSummit;
         material = pMaterial;
     }
 
@@ -16,9 +17,9 @@ public class Tile {
         double minY;
         double maxY;
 
-        minY = summit.get(0).getY().getValue();
-        maxY = summit.get(0).getY().getValue();
-        for (Point i:summit){
+        minY = summits.get(0).getY().getValue();
+        maxY = summits.get(0).getY().getValue();
+        for (Point i:summits){
             if (minY > i.getY().getValue()){
                 minY = i.getY().getValue();
             }
@@ -36,9 +37,9 @@ public class Tile {
         double minX;
         double maxX;
 
-        minX = summit.get(0).getY().getValue();
-        maxX = summit.get(0).getY().getValue();
-        for (Point i:summit){
+        minX = summits.get(0).getY().getValue();
+        maxX = summits.get(0).getY().getValue();
+        for (Point i:summits){
             if (minX > i.getY().getValue()){
                 minX = i.getY().getValue();
             }
@@ -54,5 +55,13 @@ public class Tile {
     public Measure getOrientation(){
         Measure value = new Measure();
         return value;
+    }
+
+    public List<Point> getSummits() {
+        return this.summits;
+    }
+
+    public void setSummits(ArrayList<Point> summits) {
+        this.summits = summits;
     }
 }

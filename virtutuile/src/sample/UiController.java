@@ -20,6 +20,7 @@ import utils.RectangleHelper;
 
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UiController implements Initializable {
 
@@ -194,5 +195,12 @@ public class UiController implements Initializable {
     private void displaySurface(SurfaceDto surfaceDto) {
         RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto, zoomManager, selectionManager, drawingSection);
         this.allSurfaces.add(surfaceUi);
+    }
+
+    public void surfaceFusion() {
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+        List<SurfaceDto> dtos = selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList());
+        domainController.fusionSurfaces(dtos);
+        this.renderFromProject();
     }
 }

@@ -47,7 +47,7 @@
                 <Button onAction="#fillSelectedSurfaceWithTiles" layoutX="159.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
                 <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Inspection" />
                 <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
-                <CheckBox layoutX="885.0" layoutY="28.0" mnemonicParsing="false" text="Snap grid" />
+                <CheckBox fx:id="snapGridCheckBox" onAction="#snapGridToggle" layoutX="885.0" layoutY="28.0" mnemonicParsing="false" text="Snap grid" />
                 <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
                 <Button layoutX="446.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
                 <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="horizontally center" />

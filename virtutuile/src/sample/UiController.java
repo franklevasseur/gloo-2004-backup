@@ -1,14 +1,12 @@
 package sample;
 
 import application.*;
-import gui.RectangleSurfaceUI;
-import gui.SelectionManager;
+import gui.*;
 
-import gui.SurfaceUI;
-import gui.ZoomManager;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
+import javafx.scene.control.CheckBox;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,10 +24,12 @@ public class UiController implements Initializable {
     public Pane pane;
     public Pane drawingSection;
     private Circle originIndicator;
+    public CheckBox snapGridCheckBox;
 
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
     private SelectionManager selectionManager = new SelectionManager();
     private ZoomManager zoomManager = new ZoomManager();
+    private SnapGridUI snapGridUI;
 
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
@@ -73,6 +73,10 @@ public class UiController implements Initializable {
 
             drawingSection.getTransforms().add(newScale);
             zoomManager.zoomBy(zoom_fac);
+
+            if (this.snapGridCheckBox.isSelected()) {
+                this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
+            }
         }
         event.consume();
     }
@@ -80,6 +84,9 @@ public class UiController implements Initializable {
     public void resetZoom() {
         drawingSection.getTransforms().clear();
         zoomManager.resetZoom();
+        if (this.snapGridCheckBox.isSelected()) {
+            this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
+        }
     }
 
     public void handleKeyPressed(KeyEvent e) {
@@ -106,7 +113,7 @@ public class UiController implements Initializable {
 
         Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
 
-//        System.out.println(String.format("click : (%f, %f)", clickCoord.x, clickCoord.y));
+        System.out.println(String.format("click : (%f, %f)", clickCoord.x, clickCoord.y));
         if (stateCurrentlyCreatingSurface) {
             pane.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
@@ -135,6 +142,31 @@ public class UiController implements Initializable {
             stateCurrentlyCreatingSurface = true;
             pane.setCursor(Cursor.CROSSHAIR);
         }
+    }
+
+    public void snapGridToggle() {
+        if (snapGridCheckBox.isSelected()) {
+            this.snapGridUI = new SnapGridUI(this.drawingSection);
+            this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
+        } else {
+            this.snapGridUI.removeGrid();
+        }
+    }
+
+    private List<Point> getViewBoxSummits() {
+        List<Point> viewBorders = new ArrayList<>();
+
+        Point zeroZero = new Point(0,0);
+        Point topLeftViewPoint = this.getPointInReferenceToOrigin(zeroZero);
+        Point topRightViewPoint = this.getPointInReferenceToOrigin(Point.translate(zeroZero, pane.getWidth(), 0));
+        Point bottomLeftViewPoint = this.getPointInReferenceToOrigin(Point.translate(zeroZero, 0, pane.getHeight()));
+        Point bottomRightViewPoint = this.getPointInReferenceToOrigin(Point.translate(zeroZero, pane.getWidth(), pane.getHeight()));
+
+        viewBorders.add(topLeftViewPoint);
+        viewBorders.add(topRightViewPoint);
+        viewBorders.add(bottomLeftViewPoint);
+        viewBorders.add(bottomRightViewPoint);
+        return viewBorders;
     }
 
     public void fillSelectedSurfaceWithTiles() {
@@ -189,6 +221,9 @@ public class UiController implements Initializable {
         this.selectionManager.unselectAll();
         this.drawingSection.getChildren().clear();
         this.drawingSection.getChildren().add(originIndicator);
+        if (this.snapGridCheckBox.isSelected()) {
+            this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
+        }
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {

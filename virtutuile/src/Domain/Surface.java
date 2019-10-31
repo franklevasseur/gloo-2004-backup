@@ -3,18 +3,21 @@ package Domain;
 import utils.Id;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Surface {
     private Id id;
     private boolean isHole;
-    private ArrayList<Tile> tiles;
-    private ArrayList<Point> summits;
+    private List<Tile> tiles = new ArrayList<>();
+    private List<Point> summits;
     private SealsInfo sealsInfo;
+    private boolean isRectangular = true;
 
-    public Surface(boolean pIsHole, ArrayList<Point> pSummits){
+    public Surface(boolean pIsHole, List<Point> pSummits, boolean isRectangular){
         this.isHole = pIsHole;
         this.summits = pSummits;
         this.id = new Id();
+        this.isRectangular = isRectangular;
     }
 
     //region Get
@@ -25,11 +28,11 @@ public class Surface {
         return id;
     }
 
-    public ArrayList<Point> getSummits() {
+    public List<Point> getSummits() {
         return summits;
     }
 
-    public ArrayList<Tile> getTiles() {
+    public List<Tile> getTiles() {
         return tiles;
     }
 
@@ -55,7 +58,7 @@ public class Surface {
         isHole = hole;
     }
 
-    public void setTiles(ArrayList<Tile> tiles) {
+    public void setTiles(List<Tile> tiles) {
         this.tiles = tiles;
     }
 
@@ -66,5 +69,15 @@ public class Surface {
         this.sealsInfo = pSealsInfo;
     }
 
+    public void setSummits(List<Point> summits) {
+        this.summits = summits;
+    }
 
+    public boolean getIsRectangular() {
+        return this.isRectangular;
+    }
+
+    public void setIsRectangular(boolean isRectangular) {
+        this.isRectangular = isRectangular;
+    }
 }

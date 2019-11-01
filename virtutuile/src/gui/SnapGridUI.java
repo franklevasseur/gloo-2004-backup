@@ -33,7 +33,7 @@ public class SnapGridUI {
         int upperBoundLine = (int) Math.ceil((viewBoxRectangle.topLeftCorner.y + viewBoxRectangle.height) / gridGap);
 
         int nLines = upperBoundLine - lowerBoundLine;
-        if (nLines < 1) {
+        if (nLines < 1 || nLines >= 1000) {
             return;
         }
 
@@ -54,7 +54,7 @@ public class SnapGridUI {
         int upperBoundColumn = (int) Math.ceil((viewBoxRectangle.topLeftCorner.x + viewBoxRectangle.width) / gridGap);
 
         int nColumns = upperBoundColumn - lowerBoundColumn;
-        if (nColumns < 1) {
+        if (nColumns < 1 || nColumns >= 1000) {
             return;
         }
 

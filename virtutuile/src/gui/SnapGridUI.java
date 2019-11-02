@@ -12,9 +12,10 @@ import java.util.List;
 
 public class SnapGridUI {
 
-    private double gridGap = 100;
+    private double gridGap = 50;
     private Pane parentNode;
     private List<Line> displayedLines = new ArrayList<>();
+    private boolean isVisible = false;
 
     public SnapGridUI(Pane parentNode) {
         this.parentNode = parentNode;
@@ -26,6 +27,20 @@ public class SnapGridUI {
         this.renderLines(viewBoxRectangle);
         this.renderColumn(viewBoxRectangle);
         this.parentNode.getChildren().addAll(displayedLines);
+    }
+
+    public Point getNearestGridPoint(Point point) {
+        int i = (int) Math.round(point.x / gridGap);
+        int j = (int) Math.round(point.y / gridGap);
+        return new Point(i * gridGap, j * gridGap);
+    }
+
+    public void setVisibility(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
+
+    public boolean isVisible() {
+        return this.isVisible;
     }
 
     private void renderLines(RectangleInfo viewBoxRectangle) {

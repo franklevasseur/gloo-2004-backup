@@ -29,13 +29,18 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private Controller controller = Controller.getInstance();
     private ZoomManager zoomManager;
     private SelectionManager selectionManager;
+    private SnapGridUI snapGrid;
+
+    private boolean currentlyBeingDragged = false;
 
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
-                              Pane parentNode) {
+                              Pane parentNode,
+                              SnapGridUI snapGrid) {
 
         this.id = surfaceDto.id;
+        this.snapGrid = snapGrid;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
 
@@ -70,12 +75,21 @@ public class RectangleSurfaceUI implements SurfaceUI {
             }
         });
 
+        rectangle.setOnMouseReleased(mouseEvent -> {
+            if (this.currentlyBeingDragged) {
+                this.currentlyBeingDragged = false;
+                this.snapToGrid();
+            }
+        });
+
         rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent t) {
                 hideAttachmentPoints();
                 hideTiles();
+
+                that.currentlyBeingDragged = true;
 
                 rectangle.setX(t.getX() - (rectangle.getWidth() / 2));
                 rectangle.setY(t.getY() - (rectangle.getHeight() / 2));
@@ -104,6 +118,16 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         this.parentNode.getChildren().add(rectangle);
         rectangle.toFront();
+    }
+
+    private void snapToGrid() {
+        if (this.snapGrid.isVisible()) {
+            Point currentRectanglePosition = new Point(this.rectangle.getX(), this.rectangle.getY());
+            Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
+            this.rectangle.setX(nearestGridPoint.x);
+            this.rectangle.setY(nearestGridPoint.y);
+            this.controller.updateSurface(this.toDto());
+        }
     }
 
     private void renderTiles(List<RectangleInfo> tiles) {

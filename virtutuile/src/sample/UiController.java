@@ -53,6 +53,7 @@ public class UiController implements Initializable {
         drawingSection.setPrefWidth(1);
 
         drawingSection.getChildren().add(originIndicator);
+        this.snapGridUI = new SnapGridUI(this.drawingSection);
     }
 
     public void handleZoom(ScrollEvent event) {
@@ -75,7 +76,7 @@ public class UiController implements Initializable {
             drawingSection.getTransforms().add(newScale);
             zoomManager.zoomBy(zoom_fac);
 
-            if (this.snapGridCheckBox.isSelected()) {
+            if (this.snapGridUI.isVisible()) {
                 this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
             }
         }
@@ -85,7 +86,7 @@ public class UiController implements Initializable {
     public void resetZoom() {
         drawingSection.getTransforms().clear();
         zoomManager.resetZoom();
-        if (this.snapGridCheckBox.isSelected()) {
+        if (this.snapGridUI.isVisible()) {
             this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
         }
     }
@@ -147,9 +148,10 @@ public class UiController implements Initializable {
 
     public void snapGridToggle() {
         if (snapGridCheckBox.isSelected()) {
-            this.snapGridUI = new SnapGridUI(this.drawingSection);
+            this.snapGridUI.setVisibility(true);
             this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
         } else {
+            this.snapGridUI.setVisibility(false);
             this.snapGridUI.removeGrid();
         }
     }
@@ -191,8 +193,11 @@ public class UiController implements Initializable {
         double xPixels = location.x - (widthPixels / 2);
         double yPixels = location.y - (heightPixels / 2);
 
-        double x = zoomManager.pixelsToMeters(xPixels);
-        double y = zoomManager.pixelsToMeters(yPixels);
+        Point desiredPoint = new Point(xPixels, yPixels);
+        Point actualPoint = this.snapGridUI.isVisible() ? this.snapGridUI.getNearestGridPoint(desiredPoint) : desiredPoint;
+
+        double x = zoomManager.pixelsToMeters(actualPoint.x);
+        double y = zoomManager.pixelsToMeters(actualPoint.y);
         double width = zoomManager.pixelsToMeters(widthPixels);
         double height = zoomManager.pixelsToMeters(heightPixels);
 
@@ -228,7 +233,11 @@ public class UiController implements Initializable {
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {
-        RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto, zoomManager, selectionManager, drawingSection);
+        RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto,
+                zoomManager,
+                selectionManager,
+                drawingSection,
+                snapGridUI);
         this.allSurfaces.add(surfaceUi);
     }
 

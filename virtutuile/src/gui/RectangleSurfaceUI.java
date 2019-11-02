@@ -225,10 +225,14 @@ public class RectangleSurfaceUI implements SurfaceUI {
         return id;
     }
 
-    public void remove() {
+    public void delete() {
+        hide();
+        controller.removeSurface(this.toDto());
+    }
+
+    public void hide() {
         this.hideTiles();
         this.unselect();
-        controller.removeSurface(this.toDto());
         parentNode.getChildren().remove(this.getNode());
     }
 }

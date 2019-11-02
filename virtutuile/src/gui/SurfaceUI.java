@@ -6,10 +6,11 @@ import utils.Id;
 
 public interface SurfaceUI {
 
-    public Node getNode();
-    public SurfaceDto toDto();
-    public void select();
-    public void unselect();
-    public Id getId();
-    public void remove();
+    Node getNode();
+    SurfaceDto toDto();
+    void select();
+    void unselect();
+    Id getId();
+    void delete();
+    void hide();
 }

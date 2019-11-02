@@ -173,7 +173,7 @@ public class UiController implements Initializable {
 
     private void removeSelectedSurfaces() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
-        selectedSurfaces.forEach(SurfaceUI::remove);
+        selectedSurfaces.forEach(SurfaceUI::delete);
         allSurfaces.removeIf(selectedSurfaces::contains);
     }
 
@@ -212,9 +212,9 @@ public class UiController implements Initializable {
     }
 
     private void clearDrawings() {
-        this.allSurfaces.forEach(s -> s.remove());
-        this.allSurfaces.clear();
+        this.allSurfaces.forEach(SurfaceUI::hide);
         this.selectionManager.unselectAll();
+        this.allSurfaces.clear();
         this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
     }
 

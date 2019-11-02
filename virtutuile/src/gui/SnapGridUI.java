@@ -1,7 +1,9 @@
 package gui;
 
+import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import utils.Point;
 import utils.RectangleHelper;
@@ -16,17 +18,51 @@ public class SnapGridUI {
     private Pane parentNode;
     private List<Line> displayedLines = new ArrayList<>();
     private boolean isVisible = false;
+    private Circle originIndicator;
+    private Line xAxis;
+    private Line yAxis;
 
     public SnapGridUI(Pane parentNode) {
         this.parentNode = parentNode;
+
+        originIndicator = new Circle();
+        originIndicator.setFill(Color.RED);
+        originIndicator.setRadius(7.5);
+        this.parentNode.getChildren().addAll(originIndicator);
+
+        xAxis = new Line(0, 0, 750, 0);
+        yAxis = new Line(0, 0, 0, 750);
+        this.parentNode.getChildren().add(xAxis);
+        this.parentNode.getChildren().add(yAxis);
     }
 
     public void renderForViewBox(List<Point> viewBoxSummits) {
         removeGrid();
         RectangleInfo viewBoxRectangle = RectangleHelper.summitsToRectangleInfo(viewBoxSummits);
-        this.renderLines(viewBoxRectangle);
-        this.renderColumn(viewBoxRectangle);
-        this.parentNode.getChildren().addAll(displayedLines);
+
+        originIndicator.setRadius(viewBoxRectangle.width / 100);
+
+        xAxis.setStartX(viewBoxRectangle.topLeftCorner.x);
+        xAxis.setStartY(0);
+        xAxis.setEndX(viewBoxRectangle.topLeftCorner.x + viewBoxRectangle.width);
+        xAxis.setEndY(0);
+        xAxis.setStrokeWidth(viewBoxRectangle.width / 750);
+
+        yAxis.setStartX(0);
+        yAxis.setStartY(viewBoxRectangle.topLeftCorner.y);
+        yAxis.setEndX(0);
+        yAxis.setEndY(viewBoxRectangle.topLeftCorner.y + viewBoxRectangle.height);
+        yAxis.setStrokeWidth(viewBoxRectangle.width / 750);
+
+        if (this.isVisible) {
+            this.renderLines(viewBoxRectangle);
+            this.renderColumn(viewBoxRectangle);
+            this.parentNode.getChildren().addAll(displayedLines);
+        }
+    }
+
+    public Bounds getOriginBounds() {
+        return originIndicator.getBoundsInParent();
     }
 
     public Point getNearestGridPoint(Point point) {

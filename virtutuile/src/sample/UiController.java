@@ -9,8 +9,6 @@ import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.transform.Scale;
 import utils.Id;
 import utils.Point;
@@ -24,7 +22,7 @@ public class UiController implements Initializable {
 
     public Pane pane;
     public Pane drawingSection;
-    private Circle originIndicator;
+
     public CheckBox snapGridCheckBox;
 
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
@@ -42,17 +40,12 @@ public class UiController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("Initialization...");
 
-        originIndicator = new Circle();
-        originIndicator.setFill(Color.RED);
-        originIndicator.setRadius(10);
-
         // Invisible Pane object that contains all other shapes
         // Needed to be invisible so zooming out of it would not expose its edge
         // Make it look like its infinite in size
         drawingSection.setPrefHeight(1);
         drawingSection.setPrefWidth(1);
 
-        drawingSection.getChildren().add(originIndicator);
         this.snapGridUI = new SnapGridUI(this.drawingSection);
     }
 
@@ -76,9 +69,7 @@ public class UiController implements Initializable {
             drawingSection.getTransforms().add(newScale);
             zoomManager.zoomBy(zoom_fac);
 
-            if (this.snapGridUI.isVisible()) {
-                this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
-            }
+            this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
         }
         event.consume();
     }
@@ -86,9 +77,7 @@ public class UiController implements Initializable {
     public void resetZoom() {
         drawingSection.getTransforms().clear();
         zoomManager.resetZoom();
-        if (this.snapGridUI.isVisible()) {
-            this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
-        }
+        this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
     }
 
     public void handleKeyPressed(KeyEvent e) {
@@ -128,7 +117,7 @@ public class UiController implements Initializable {
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {
-        Bounds bound = originIndicator.getBoundsInParent();
+        Bounds bound = snapGridUI.getOriginBounds();
         Bounds actual = drawingSection.localToParent(bound);
         double xOrigin = actual.getCenterX();
         double yOrigin = actual.getCenterY();
@@ -223,13 +212,10 @@ public class UiController implements Initializable {
     }
 
     private void clearDrawings() {
+        this.allSurfaces.forEach(s -> s.remove());
         this.allSurfaces.clear();
         this.selectionManager.unselectAll();
-        this.drawingSection.getChildren().clear();
-        this.drawingSection.getChildren().add(originIndicator);
-        if (this.snapGridCheckBox.isSelected()) {
-            this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
-        }
+        this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {

@@ -175,6 +175,7 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
         selectedSurfaces.forEach(SurfaceUI::delete);
         allSurfaces.removeIf(selectedSurfaces::contains);
+        selectionManager.unselectAll();
     }
 
     private void createSurfaceHere(Point location, double widthPixels, double heightPixels) {

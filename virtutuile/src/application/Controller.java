@@ -48,11 +48,12 @@ public class Controller {
         // ...
     }
 
-    public void fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
+    public List<TileDto> fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
         // ...
+        return new ArrayList<TileDto>();
     }
 
-    public void fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
+    public List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
         // Let the backend choose a default pattern and sealing and master tile
         // ...
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceToFill.id)).findFirst().get();
@@ -105,6 +106,8 @@ public class Controller {
 
         //TODO: je sais c'est pas bin beau
         this.updateSurface(surfaceToFillDto);
+
+        return tiles;
     }
 
     public void loadProject(String projectPath) {

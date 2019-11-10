@@ -1,10 +1,10 @@
 package gui;
 
 import application.Controller;
+import application.SealsInfoDto;
 import application.SurfaceDto;
 import application.TileDto;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utils.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +30,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private Controller controller = Controller.getInstance();
     private ZoomManager zoomManager;
     private SelectionManager selectionManager;
+
+    private TileDto masterTile;
+    private SealsInfoDto sealsInfo;
 
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
@@ -54,7 +56,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.selectionManager = selectionManager;
 
         this.isHole = surfaceDto.isHole;
-
         if (!surfaceDto.isHole && surfaceDto.tiles != null && surfaceDto.tiles.size() != 0) {
             this.renderTiles(surfaceDto.tiles.stream().map(t -> {
                 List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
@@ -121,7 +122,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         }).collect(Collectors.toList());
     }
 
-    private void hideTiles() {
+    public void hideTiles() {
         if (this.tiles != null) {
             this.parentNode.getChildren().removeIf(this.tiles::contains);
             this.tiles.clear();
@@ -213,4 +214,14 @@ public class RectangleSurfaceUI implements SurfaceUI {
         parentNode.getChildren().removeIf(selectedNodes::contains);
         selectedSurfaces.forEach(s -> selectionManager.unselectSurface(s));
     }
+
+    public void setSealsInfo(SealsInfoDto newSealInfos) {this.sealsInfo = newSealInfos; }
+    public void setMasterTile(TileDto newMasterTile) {
+        this.masterTile = newMasterTile;
+    }
+
+    public TileDto getMasterTile() {
+        return this.masterTile;
+    }
+    public SealsInfoDto getSealsInfo(){return this.sealsInfo; }
 }

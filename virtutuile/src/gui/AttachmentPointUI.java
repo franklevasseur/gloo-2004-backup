@@ -14,6 +14,8 @@ public class AttachmentPointUI {
     private static final double pointWidth = 10;
     private Rectangle rectangle;
 
+    private boolean currentlyBeingDragged = false;
+
     public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {
         rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
 
@@ -60,6 +62,8 @@ public class AttachmentPointUI {
                     return;
                 }
 
+                currentlyBeingDragged = true;
+
                 double deltaX = t.getX() - (rectangle.getX() + pointWidth / 2);
                 double deltaY = t.getY() - (rectangle.getY() + pointWidth / 2);
 
@@ -68,6 +72,13 @@ public class AttachmentPointUI {
 
                 parentSurface.increaseSizeBy(deltaX, deltaY);
                 t.consume();
+            }
+        });
+
+        rectangle.setOnMouseReleased(mouseEvent -> {
+            if (currentlyBeingDragged) {
+                currentlyBeingDragged = false;
+                parentSurface.renderTiles();
             }
         });
 

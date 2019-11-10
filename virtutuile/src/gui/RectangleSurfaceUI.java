@@ -30,6 +30,10 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private Controller controller = Controller.getInstance();
     private ZoomManager zoomManager;
     private SelectionManager selectionManager;
+    private SnapGridUI snapGrid;
+
+    private Point lastPointOfContact = new Point(0, 0);
+    private boolean currentlyBeingDragged = false;
 
     private TileDto masterTile;
     private SealsInfoDto sealsInfo;
@@ -37,9 +41,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
-                              Pane parentNode) {
+                              Pane parentNode,
+                              SnapGridUI snapGrid) {
 
         this.id = surfaceDto.id;
+        this.snapGrid = snapGrid;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
 
@@ -56,12 +62,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.selectionManager = selectionManager;
 
         this.isHole = surfaceDto.isHole;
-        if (!surfaceDto.isHole && surfaceDto.tiles != null && surfaceDto.tiles.size() != 0) {
-            this.renderTiles(surfaceDto.tiles.stream().map(t -> {
-                List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
-                return RectangleHelper.summitsToRectangleInfo(pixelPoints);
-            }).collect(Collectors.toList()));
-        }
+
+        this.renderTiles(surfaceDto.tiles);
 
         RectangleSurfaceUI that = this;
         rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
@@ -73,6 +75,22 @@ public class RectangleSurfaceUI implements SurfaceUI {
             }
         });
 
+        rectangle.setOnMousePressed(mouseEvent -> {
+            this.lastPointOfContact = new Point(mouseEvent.getX() - rectangle.getX(), mouseEvent.getY() - rectangle.getY());
+//            System.out.println(String.format("(%f, %f)", mouseEvent.getX(), mouseEvent.getY()));
+        });
+
+        rectangle.setOnMouseReleased(mouseEvent -> {
+            if (this.currentlyBeingDragged) {
+                this.currentlyBeingDragged = false;
+                this.snapToGrid();
+
+                if (!this.isHole) {
+                    renderTiles(controller.fillSurfaceWithDefaults(this.toDto()));
+                }
+            }
+        });
+
         rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
         {
             @Override
@@ -80,8 +98,10 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 hideAttachmentPoints();
                 hideTiles();
 
-                rectangle.setX(t.getX() - (rectangle.getWidth() / 2));
-                rectangle.setY(t.getY() - (rectangle.getHeight() / 2));
+                that.currentlyBeingDragged = true;
+
+                rectangle.setX(t.getX() - that.lastPointOfContact.x);
+                rectangle.setY(t.getY() - that.lastPointOfContact.y);
 
                 t.consume();
 
@@ -109,17 +129,40 @@ public class RectangleSurfaceUI implements SurfaceUI {
         rectangle.toFront();
     }
 
-    private void renderTiles(List<RectangleInfo> tiles) {
-        // TODO: refactor this in its own class
-        this.tiles = tiles.stream().map(t -> {
+    private void snapToGrid() {
+        if (this.snapGrid.isVisible()) {
+            Point currentRectanglePosition = new Point(this.rectangle.getX(), this.rectangle.getY());
+            Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
+            this.rectangle.setX(nearestGridPoint.x);
+            this.rectangle.setY(nearestGridPoint.y);
+            this.controller.updateSurface(this.toDto());
+        }
+    }
+
+    public void renderTiles() {
+        this.renderTiles(controller.fillSurfaceWithDefaults(this.toDto()));
+    }
+
+    private void renderTiles(List<TileDto> tiles) {
+        if (this.isHole || tiles == null || tiles.size() == 0) {
+            return;
+        }
+
+        List<RectangleInfo> tilesRect = tiles.stream().map(t -> {
+            List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
+            return RectangleHelper.summitsToRectangleInfo(pixelPoints);
+        }).collect(Collectors.toList());
+
+        hideTiles();
+
+        this.tiles = tilesRect.stream().map(t -> {
             Rectangle tileUI = new Rectangle(t.topLeftCorner.x, t.topLeftCorner.y, t.width, t.height);
             tileUI.setFill(Color.PALETURQUOISE);
             tileUI.setStroke(Color.DARKTURQUOISE);
             return tileUI;
-        }).peek(t -> {
-            this.parentNode.getChildren().add(t);
-            t.toFront();
         }).collect(Collectors.toList());
+        this.parentNode.getChildren().addAll(this.tiles);
+        this.rectangle.toFront();
     }
 
     public void hideTiles() {
@@ -204,15 +247,15 @@ public class RectangleSurfaceUI implements SurfaceUI {
         return id;
     }
 
-    public void remove() {
-        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-        List<Node> selectedNodes = selectedSurfaces.stream()
-                .peek(SurfaceUI::unselect)
-                .peek(s -> controller.removeSurface(s.toDto()))
-                .map(SurfaceUI::getNode).collect(Collectors.toList());
+    public void delete() {
+        hide();
+        controller.removeSurface(this.toDto());
+    }
 
-        parentNode.getChildren().removeIf(selectedNodes::contains);
-        selectedSurfaces.forEach(s -> selectionManager.unselectSurface(s));
+    public void hide() {
+        this.hideTiles();
+        this.unselect();
+        parentNode.getChildren().remove(this.getNode());
     }
 
     public void setSealsInfo(SealsInfoDto newSealInfos) {this.sealsInfo = newSealInfos; }

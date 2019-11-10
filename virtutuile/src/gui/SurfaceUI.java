@@ -8,15 +8,16 @@ import utils.Id;
 
 public interface SurfaceUI {
 
-    public Node getNode();
-    public SurfaceDto toDto();
-    public void select();
-    public void unselect();
-    public Id getId();
-    public void remove();
-    public void setMasterTile(TileDto tileHeight);
-    public TileDto getMasterTile();
-    public void setSealsInfo(SealsInfoDto newSealInfos);
-    public SealsInfoDto getSealsInfo();
-    public void hideTiles();
+    Node getNode();
+    SurfaceDto toDto();
+    void select();
+    void unselect();
+    Id getId();
+    void delete();
+    void setMasterTile(TileDto tileHeight);
+    TileDto getMasterTile();
+    void setSealsInfo(SealsInfoDto newSealInfos);
+    SealsInfoDto getSealsInfo();
+    void hideTiles();
+    void hide();
 }

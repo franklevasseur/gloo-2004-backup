@@ -1,6 +1,5 @@
 package sample;
 
-import Domain.Surface;
 import application.*;
 import gui.*;
 
@@ -218,10 +217,10 @@ public class UiController implements Initializable {
 
             chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
             this.domainController.updateSurface(chosenSurface.toDto());
+            chosenSurface.fill();
             this.renderFromProject();
         }
-        catch (ParseException e){
-
+        catch (ParseException e) {
             System.out.println("STFU ça pete");
         }
     }
@@ -276,6 +275,8 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
+            surface.setHole(false);
+            domainController.updateSurface(surface.toDto());
             surface.fill();
         }
 

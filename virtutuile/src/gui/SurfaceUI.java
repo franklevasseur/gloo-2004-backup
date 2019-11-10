@@ -24,4 +24,5 @@ public interface SurfaceUI {
     void fill();
     void setSize(double width, double height);
     void setPosition(Point position);
+    void setHole(boolean isHole);
 }

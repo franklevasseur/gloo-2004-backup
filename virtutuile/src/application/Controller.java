@@ -59,8 +59,6 @@ public class Controller {
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceToFill.id)).findFirst().get();
         SurfaceDto surfaceToFillDto = SurfaceAssembler.toDto(desiredSurface);
 
-        surfaceToFillDto.isHole = false;
-
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
             throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");

@@ -24,7 +24,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private boolean isHole;
 
     private Rectangle rectangle;
-    private RectangleInfo rectangleInfo;
 
     private boolean isSelected = false;
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
@@ -55,7 +54,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
         double width = zoomManager.metersToPixels(rectangleInfo.width);
         double height = zoomManager.metersToPixels(rectangleInfo.height);
 
-        this.rectangleInfo = new RectangleInfo(topLeftCorner, width, height);
         rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
@@ -109,7 +107,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 rectangle.setY(newY);
 
                 Point newTopLeftCorner = new Point(newX, newY);
-                that.rectangleInfo.topLeftCorner = newTopLeftCorner;
 
                 t.consume();
 
@@ -143,9 +140,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
             this.rectangle.setX(nearestGridPoint.x);
             this.rectangle.setY(nearestGridPoint.y);
-
-            Point newTopLeftCorner = new Point(nearestGridPoint.x, nearestGridPoint.y);
-            rectangleInfo.topLeftCorner = nearestGridPoint;
 
             this.controller.updateSurface(this.toDto());
         }
@@ -208,11 +202,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         if (newWidth >=0) {
             rectangle.setWidth(newWidth);
-            rectangleInfo.width = newWidth;
         }
         if (newHeight >= 0) {
             rectangle.setHeight(newHeight);
-            rectangleInfo.height = newHeight;
         }
 
         controller.updateSurface(this.toDto());
@@ -224,6 +216,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         dto.summits = this.getSummits().stream().map(p -> zoomManager.pixelsToMeters(p)).collect(Collectors.toList());
         dto.isRectangular = true;
         dto.id = this.id;
+        dto.isHole = this.isHole;
 
         if (!this.isHole && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> {
@@ -247,8 +240,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     private List<Point> getSummits() {
-        Point topLeft = rectangleInfo.topLeftCorner;
-        return RectangleHelper.rectangleInfoToSummits(topLeft, rectangleInfo.width, rectangleInfo.height);
+        Point topLeft = new Point(this.rectangle.getX(), this.rectangle.getY());
+        return RectangleHelper.rectangleInfoToSummits(topLeft, rectangle.getWidth(), rectangle.getHeight());
     }
 
     private void hideAttachmentPoints() {
@@ -286,18 +279,19 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         double pixelWidth = zoomManager.metersToPixels(width);
         double pixelHeight = zoomManager.metersToPixels(height);
-//        rectangle.setWidth(pixelWidth);
-//        rectangle.setHeight(pixelHeight);
-        rectangleInfo.width = pixelWidth;
-        rectangleInfo.height = pixelHeight;
+        rectangle.setWidth(pixelWidth);
+        rectangle.setHeight(pixelHeight);
     }
 
     public void setPosition(Point position){
 
         Point topLeftCorner = zoomManager.metersToPixels(position);
 
-//        rectangle.setX(topLeftCorner.x);
-//        rectangle.setX(topLeftCorner.y);
-        rectangleInfo.topLeftCorner = topLeftCorner;
+        rectangle.setX(topLeftCorner.x);
+        rectangle.setX(topLeftCorner.y);
+    }
+
+    public void setHole(boolean isHole) {
+        this.isHole = isHole;
     }
 }

@@ -78,7 +78,7 @@ public class AttachmentPointUI {
         rectangle.setOnMouseReleased(mouseEvent -> {
             if (currentlyBeingDragged) {
                 currentlyBeingDragged = false;
-                parentSurface.renderTiles();
+                parentSurface.fill();
             }
         });
 

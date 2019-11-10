@@ -17,10 +17,7 @@
 <!--<?import javafx.scene.control.TreeTableColumn?>-->
 <!--<?import javafx.scene.control.TreeTableView?>-->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="745.0" prefWidth="1041.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
-            onKeyPressed="#handleKeyPressed"
-            onKeyReleased="#handleKeyReleased"
-            fx:controller="sample.UiController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="745.0" prefWidth="1041.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.UiController">
   <children>
     <TabPane prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
       <tabs>
@@ -46,9 +43,9 @@
                 <Button layoutX="159.0" layoutY="14.0" mnemonicParsing="false" onAction="#fillSelectedSurfaceWithTiles" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
                 <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="96.0" text="Inspection" />
                 <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
-                <CheckBox fx:id="snapGridCheckBox" onAction="#snapGridToggle" layoutX="885.0" layoutY="28.0" mnemonicParsing="false" text="Snap grid" />
+                <CheckBox fx:id="snapGridCheckBox" layoutX="885.0" layoutY="28.0" mnemonicParsing="false" onAction="#snapGridToggle" text="Snap grid" />
                 <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
-                <Button onAction="#surfaceFusion" layoutX="446.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
+                <Button layoutX="446.0" layoutY="14.0" mnemonicParsing="false" onAction="#surfaceFusion" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
                 <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="horizontally center" />
                 <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
                 <CheckBox layoutX="776.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
@@ -62,13 +59,9 @@
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="513.0" prefWidth="203.0">
           <children>
-            <Pane onScroll="#handleZoom"
-                  fx:id="pane"
-                  onMouseClicked="#onPaneClicked"
-                  prefHeight="700" prefWidth="750"
-                  style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+            <Pane fx:id="pane" onMouseClicked="#onPaneClicked" onScroll="#handleZoom" prefHeight="700" prefWidth="750" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
               <children>
-                <Pane fx:id="drawingSection"/>
+                <Pane fx:id="drawingSection" />
               </children>
             </Pane>
           </children>
@@ -101,8 +94,8 @@
                         <ChoiceBox fx:id="surfaceColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                           <children>
-                            <TextField layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
-                            <TextField layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="surfacePosotoionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="surfacePosotoionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
                             <Label layoutX="46.0" layoutY="6.0" text="x" />
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>

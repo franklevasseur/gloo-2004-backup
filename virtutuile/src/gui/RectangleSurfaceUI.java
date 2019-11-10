@@ -24,6 +24,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private boolean isHole;
 
     private Rectangle rectangle;
+    private RectangleInfo rectangleInfo;
+
     private boolean isSelected = false;
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
     private Pane parentNode;
@@ -53,6 +55,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         double width = zoomManager.metersToPixels(rectangleInfo.width);
         double height = zoomManager.metersToPixels(rectangleInfo.height);
 
+        this.rectangleInfo = new RectangleInfo(topLeftCorner, width, height);
         rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
         rectangle.setFill(Color.TRANSPARENT);
         rectangle.setStroke(Color.BLACK);
@@ -86,7 +89,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 this.snapToGrid();
 
                 if (!this.isHole) {
-                    renderTiles(controller.fillSurfaceWithDefaults(this.toDto()));
+                    this.fill();
                 }
             }
         });
@@ -100,8 +103,13 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
                 that.currentlyBeingDragged = true;
 
-                rectangle.setX(t.getX() - that.lastPointOfContact.x);
-                rectangle.setY(t.getY() - that.lastPointOfContact.y);
+                double newX = t.getX() - that.lastPointOfContact.x;
+                double newY = t.getY() - that.lastPointOfContact.y;
+                rectangle.setX(newX);
+                rectangle.setY(newY);
+
+                Point newTopLeftCorner = new Point(newX, newY);
+                that.rectangleInfo.topLeftCorner = newTopLeftCorner;
 
                 t.consume();
 
@@ -135,12 +143,16 @@ public class RectangleSurfaceUI implements SurfaceUI {
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
             this.rectangle.setX(nearestGridPoint.x);
             this.rectangle.setY(nearestGridPoint.y);
+
+            Point newTopLeftCorner = new Point(nearestGridPoint.x, nearestGridPoint.y);
+            rectangleInfo.topLeftCorner = nearestGridPoint;
+
             this.controller.updateSurface(this.toDto());
         }
     }
 
-    public void renderTiles() {
-        this.renderTiles(controller.fillSurfaceWithDefaults(this.toDto()));
+    public void fill() {
+        this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
     }
 
     private void renderTiles(List<TileDto> tiles) {
@@ -196,9 +208,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         if (newWidth >=0) {
             rectangle.setWidth(newWidth);
+            rectangleInfo.width = newWidth;
         }
         if (newHeight >= 0) {
             rectangle.setHeight(newHeight);
+            rectangleInfo.height = newHeight;
         }
 
         controller.updateSurface(this.toDto());
@@ -233,8 +247,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     private List<Point> getSummits() {
-        Point topLeft = new Point(rectangle.getX(), rectangle.getY());
-        return RectangleHelper.rectangleInfoToSummits(topLeft, rectangle.getWidth(), rectangle.getHeight());
+        Point topLeft = rectangleInfo.topLeftCorner;
+        return RectangleHelper.rectangleInfoToSummits(topLeft, rectangleInfo.width, rectangleInfo.height);
     }
 
     private void hideAttachmentPoints() {
@@ -267,4 +281,23 @@ public class RectangleSurfaceUI implements SurfaceUI {
         return this.masterTile;
     }
     public SealsInfoDto getSealsInfo(){return this.sealsInfo; }
+
+    public void setSize(double width, double height){
+
+        double pixelWidth = zoomManager.metersToPixels(width);
+        double pixelHeight = zoomManager.metersToPixels(height);
+//        rectangle.setWidth(pixelWidth);
+//        rectangle.setHeight(pixelHeight);
+        rectangleInfo.width = pixelWidth;
+        rectangleInfo.height = pixelHeight;
+    }
+
+    public void setPosition(Point position){
+
+        Point topLeftCorner = zoomManager.metersToPixels(position);
+
+//        rectangle.setX(topLeftCorner.x);
+//        rectangle.setX(topLeftCorner.y);
+        rectangleInfo.topLeftCorner = topLeftCorner;
+    }
 }

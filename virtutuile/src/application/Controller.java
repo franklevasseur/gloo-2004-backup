@@ -50,10 +50,10 @@ public class Controller {
 
     public List<TileDto> fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
         // ...
-        return new ArrayList<TileDto>();
+        return this.fillSurfaceWithDefaults(surface);
     }
 
-    public List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
+    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
         // Let the backend choose a default pattern and sealing and master tile
         // ...
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceToFill.id)).findFirst().get();

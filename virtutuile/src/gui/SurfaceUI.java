@@ -5,6 +5,7 @@ import application.SurfaceDto;
 import application.TileDto;
 import javafx.scene.Node;
 import utils.Id;
+import utils.Point;
 
 public interface SurfaceUI {
 
@@ -20,4 +21,7 @@ public interface SurfaceUI {
     SealsInfoDto getSealsInfo();
     void hideTiles();
     void hide();
+    void fill();
+    void setSize(double width, double height);
+    void setPosition(Point position);
 }

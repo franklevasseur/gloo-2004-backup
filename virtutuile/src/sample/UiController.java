@@ -1,5 +1,6 @@
 package sample;
 
+import Domain.Surface;
 import application.*;
 import gui.*;
 
@@ -18,6 +19,9 @@ import utils.RectangleHelper;
 import utils.RectangleInfo;
 
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,9 @@ public class UiController implements Initializable {
     public TextField sealWidthInputBox;
     public TextField surfaceHeightInputBox;
     public TextField surfaceWidthInputBox;
+    public TextField surfacePosotoionXInputBox;
+    public TextField surfacePosotoionYInputBox;
+
 
     public ChoiceBox surfaceColorChoiceBox;
     public ChoiceBox sealColorChoiceBox;
@@ -39,7 +46,7 @@ public class UiController implements Initializable {
     public CheckBox snapGridCheckBox;
 
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
-    private SelectionManager selectionManager = new SelectionManager();
+    private SelectionManager selectionManager;
     private ZoomManager zoomManager = new ZoomManager();
     private SnapGridUI snapGridUI;
 
@@ -60,6 +67,7 @@ public class UiController implements Initializable {
         drawingSection.setPrefWidth(1);
 
         this.snapGridUI = new SnapGridUI(this.drawingSection);
+        this.selectionManager = new SelectionManager(this::handleSelection);
     }
 
     public void handleZoom(ScrollEvent event) {
@@ -129,50 +137,92 @@ public class UiController implements Initializable {
         selectionManager.unselectAll();
     }
 
+    public Void handleSelection(Void nothing) {
+
+        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+        SurfaceUI firstOne = selectedSurfaces.get(0);
+
+
+        RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(firstOne.toDto().summits);
+        NumberFormat formatter = new DecimalFormat("#0.000");
+        surfaceHeightInputBox.setText(formatter.format(rect.height));
+        surfaceWidthInputBox.setText(formatter.format(rect.width));
+
+        if (firstOne.getMasterTile() != null){
+            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
+            tileHeightInputbox.setText(formatter.format(tileRect.height));
+            tileWidthInputbox.setText(formatter.format(tileRect.width));
+        }
+
+        if(firstOne.getSealsInfo() != null){
+            sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
+        }
+
+        surfacePosotoionXInputBox.setText(formatter.format(rect.topLeftCorner.x));
+        surfacePosotoionYInputBox.setText(formatter.format(rect.topLeftCorner.y));
+//        surfaceColorChoiceBox;
+//        sealColorChoiceBox;
+        return null;
+    }
+
     public void editSurface() {
-        // va chercher la ou les surfaces sélectionnées avec le selectionManager (tu en a un dans cette classe-ci)
-        // tu vas faire les modifications sur la surface (SurfaceUI) avec des setteurs
-        // tu vas ajouter des affaires dans la méthode toDto() de cette classe lèa (SurfaceUI)
-        // tu vas anoncer au controlleur du domaine que tu viens de modifier une surface
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
 
         //Modification du Height d'une tuile
-        for(SurfaceUI chosenSurface: selectedSurfaces) {
+//        for(SurfaceUI chosenSurface: selectedSurfaces) {
+//
+//        }
+
+        SurfaceUI chosenSurface = selectedSurfaces.get(0);
+        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+        try{
 
             //new Tile Height
             CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
-            double newTileHeight = Double.parseDouble(tileHeightInput.toString());
+            Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
+
             //new Tile Width
             CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
-            double newTileWidth = Double.parseDouble(tileWidthInput.toString());
+            Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
+
             //new Seal Width
             CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
-            double newSealWidth = Double.parseDouble(sealWidthInput.toString());
+            Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
+
+
             //new surface height
             CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
-            double newsurfaceHeight = Double.parseDouble(surfaceHeightInput.toString());
+            double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
+
+
             //new surface width
             CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
-            double newSurfaceWidth = Double.parseDouble(surfaceWidthInput.toString());
-
-            chosenSurface.hideTiles();
-            //Changer seal width et couleur
-            SealsInfoDto sealsInfoDto = chosenSurface.getSealsInfo();
-            sealsInfoDto.sealWidth = newSealWidth;
-            sealsInfoDto.sealColor = sealColorChoiceBox.getValue().toString();
-            chosenSurface.setSealsInfo(sealsInfoDto);
-
-            TileDto masterTile = chosenSurface.getMasterTile();
-            RectangleInfo masterTileRect = RectangleHelper.summitsToRectangleInfo(masterTile.summits);
-
-            masterTileRect.width = newTileWidth;
-            masterTileRect.height = newTileHeight;
-            masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
-            chosenSurface.setMasterTile(masterTile);
+            double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
 
 
-            // TODO: mettre un pattern qui vient de la gui + les bonne informations de sealing
-            domainController.fillSurface(chosenSurface.toDto(), chosenSurface.getMasterTile(), PatternDto.DEFAULT, sealsInfoDto);
+            if (newSealWidth != null) {
+                //Changer seal width et couleur
+                SealsInfoDto sealsInfoDto = new SealsInfoDto();
+                sealsInfoDto.sealWidth = newSealWidth;
+//                  sealsInfoDto.sealColor = sealColorChoiceBox.getValue().toString();
+                chosenSurface.setSealsInfo(sealsInfoDto);
+            }
+
+            if (newTileWidth != null && newTileHeight != null) {
+                TileDto masterTile = new TileDto();
+                RectangleInfo masterTileRect = new RectangleInfo(new Point(0,0 ), newTileWidth, newTileHeight);
+
+                masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
+                chosenSurface.setMasterTile(masterTile);
+            }
+
+            chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
+            this.domainController.updateSurface(chosenSurface.toDto());
+            this.renderFromProject();
+        }
+        catch (ParseException e){
+
+            System.out.println("STFU ça pete");
         }
     }
 
@@ -180,7 +230,6 @@ public class UiController implements Initializable {
         Bounds bound = snapGridUI.getOriginBounds();
         Bounds actual = drawingSection.localToParent(bound);
 
-        // TODO: corriger ça calisse de tabarnak
         double xOrigin = actual.getMaxX() - (actual.getWidth() / 2);
         double yOrigin = actual.getMaxY() - (actual.getHeight() / 2);
 
@@ -227,7 +276,7 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
-            this.domainController.fillSurfaceWithDefaults(surface.toDto());
+            surface.fill();
         }
 
         renderFromProject();

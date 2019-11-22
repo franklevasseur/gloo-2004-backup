@@ -4,10 +4,9 @@ import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
 import application.TileDto;
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -23,9 +22,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private List<Rectangle> tiles;
     private boolean isHole;
 
+    private Group rectangleGroup;
     private Rectangle rectangle;
 
-    private boolean isSelected = false;
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
     private Pane parentNode;
     private Controller controller = Controller.getInstance();
@@ -55,8 +54,10 @@ public class RectangleSurfaceUI implements SurfaceUI {
         double height = zoomManager.metersToPixels(rectangleInfo.height);
 
         rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
-        rectangle.setFill(Color.TRANSPARENT);
+        rectangle.setFill(Color.WHITE);
         rectangle.setStroke(Color.BLACK);
+        this.rectangleGroup = new Group(rectangle);
+        rectangleGroup.setCursor(Cursor.HAND);
 
         this.parentNode = parentNode;
         this.zoomManager = zoomManager;
@@ -66,22 +67,22 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         this.renderTiles(surfaceDto.tiles);
 
-        RectangleSurfaceUI that = this;
-        rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
-                selectionManager.selectSurface(that);
-                t.consume();
-            }
+        initializeGroup();
+        this.parentNode.getChildren().add(rectangleGroup);
+    }
+
+    private void initializeGroup() {
+        rectangleGroup.setOnMouseClicked(t -> {
+            selectionManager.selectSurface(this);
+            t.consume();
         });
 
-        rectangle.setOnMousePressed(mouseEvent -> {
+        rectangleGroup.setOnMousePressed(mouseEvent -> {
             this.lastPointOfContact = new Point(mouseEvent.getX() - rectangle.getX(), mouseEvent.getY() - rectangle.getY());
 //            System.out.println(String.format("(%f, %f)", mouseEvent.getX(), mouseEvent.getY()));
         });
 
-        rectangle.setOnMouseReleased(mouseEvent -> {
+        rectangleGroup.setOnMouseReleased(mouseEvent -> {
             if (this.currentlyBeingDragged) {
                 this.currentlyBeingDragged = false;
                 this.snapToGrid();
@@ -92,46 +93,21 @@ public class RectangleSurfaceUI implements SurfaceUI {
             }
         });
 
-        rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
-                hideAttachmentPoints();
-                hideTiles();
+        rectangleGroup.setOnMouseDragged(t -> {
+            hideAttachmentPoints();
+            hideTiles();
 
-                that.currentlyBeingDragged = true;
+            this.currentlyBeingDragged = true;
 
-                double newX = t.getX() - that.lastPointOfContact.x;
-                double newY = t.getY() - that.lastPointOfContact.y;
-                rectangle.setX(newX);
-                rectangle.setY(newY);
+            double newX = t.getX() - this.lastPointOfContact.x;
+            double newY = t.getY() - this.lastPointOfContact.y;
+            rectangle.setX(newX);
+            rectangle.setY(newY);
 
-                Point newTopLeftCorner = new Point(newX, newY);
+            t.consume();
 
-                t.consume();
-
-                controller.updateSurface(that.toDto());
-            }
+            controller.updateSurface(this.toDto());
         });
-
-        rectangle.setOnMouseEntered(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
-                rectangle.setCursor(Cursor.HAND);
-            }
-        });
-
-        rectangle.setOnMouseExited(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
-                rectangle.setCursor(Cursor.DEFAULT);
-            }
-        });
-
-        this.parentNode.getChildren().add(rectangle);
-        rectangle.toFront();
     }
 
     private void snapToGrid() {
@@ -165,32 +141,33 @@ public class RectangleSurfaceUI implements SurfaceUI {
             Rectangle tileUI = new Rectangle(t.topLeftCorner.x, t.topLeftCorner.y, t.width, t.height);
             tileUI.setFill(Color.PALETURQUOISE);
             tileUI.setStroke(Color.DARKTURQUOISE);
+
+            tileUI.setOnMouseEntered(event -> tileUI.setFill(Color.PALEGOLDENROD));
+            tileUI.setOnMouseExited(event -> tileUI.setFill(Color.PALETURQUOISE));
+
             return tileUI;
         }).collect(Collectors.toList());
-        this.parentNode.getChildren().addAll(this.tiles);
-        this.rectangle.toFront();
+        this.rectangleGroup.getChildren().addAll(this.tiles);
     }
 
     public void hideTiles() {
         if (this.tiles != null) {
-            this.parentNode.getChildren().removeIf(this.tiles::contains);
+            this.rectangleGroup.getChildren().removeIf(this.tiles::contains);
             this.tiles.clear();
         }
     }
 
     public Node getNode() {
-        return rectangle;
+        return rectangleGroup;
     }
 
     public void select() {
-        isSelected = true;
         if (attachmentPoints.isEmpty()) {
             displayAttachmentPoints();
         }
     }
 
     public void unselect() {
-        isSelected = false;
         hideAttachmentPoints();
     }
 
@@ -236,7 +213,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
             attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this));
         }
 
-        parentNode.getChildren().addAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
+        rectangleGroup.getChildren().addAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
     }
 
     private List<Point> getSummits() {
@@ -245,7 +222,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     private void hideAttachmentPoints() {
-        parentNode.getChildren().removeAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
+        rectangleGroup.getChildren().removeAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
         attachmentPoints.clear();
     }
 
@@ -265,7 +242,10 @@ public class RectangleSurfaceUI implements SurfaceUI {
         parentNode.getChildren().remove(this.getNode());
     }
 
-    public void setSealsInfo(SealsInfoDto newSealInfos) {this.sealsInfo = newSealInfos; }
+    public void setSealsInfo(SealsInfoDto newSealInfos) {
+        this.sealsInfo = newSealInfos;
+    }
+
     public void setMasterTile(TileDto newMasterTile) {
         this.masterTile = newMasterTile;
     }
@@ -276,7 +256,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public SealsInfoDto getSealsInfo(){return this.sealsInfo; }
 
     public void setSize(double width, double height){
-
         double pixelWidth = zoomManager.metersToPixels(width);
         double pixelHeight = zoomManager.metersToPixels(height);
         rectangle.setWidth(pixelWidth);

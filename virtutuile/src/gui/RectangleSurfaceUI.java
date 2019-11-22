@@ -268,7 +268,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         Point topLeftCorner = zoomManager.metersToPixels(position);
 
         rectangle.setX(topLeftCorner.x);
-        rectangle.setX(topLeftCorner.y);
+        rectangle.setY(topLeftCorner.y);
     }
 
     public void setHole(boolean isHole) {

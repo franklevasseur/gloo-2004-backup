@@ -134,13 +134,93 @@ public class UiController implements Initializable {
             this.renderFromProject();
         }
         selectionManager.unselectAll();
+        hideRectangleInfo();
     }
 
     public Void handleSelection(Void nothing) {
+        afficherRectangleInfo();
+        return null;
+    }
 
+    public void editSurface() {
+        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+
+        //Modification du Height d'une tuile
+//        for(SurfaceUI chosenSurface: selectedSurfaces) {
+//
+//        }
+        if(selectedSurfaces.size() != 0){
+            SurfaceUI chosenSurface = selectedSurfaces.get(0);
+            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+            try{
+
+                //new Tile Height
+                CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
+                Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
+
+                //new Tile Width
+                CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
+                Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
+
+                //new Seal Width
+                CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
+                Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
+
+
+                //new surface height
+                CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
+                double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
+
+
+                //new surface width
+                CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
+                double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
+
+
+                if (newSealWidth != null) {
+                    //Changer seal width et couleur
+                    SealsInfoDto sealsInfoDto = new SealsInfoDto();
+                    sealsInfoDto.sealWidth = newSealWidth;
+//                  sealsInfoDto.sealColor = sealColorChoiceBox.getValue().toString();
+                    chosenSurface.setSealsInfo(sealsInfoDto);
+                }
+
+                if (newTileWidth != null && newTileHeight != null) {
+                    TileDto masterTile = new TileDto();
+                    RectangleInfo masterTileRect = new RectangleInfo(new Point(0,0 ), newTileWidth, newTileHeight);
+
+                    masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
+                    chosenSurface.setMasterTile(masterTile);
+                }
+                //Changer la position de X et de y
+                CharSequence positionXinput = surfacePosotoionXInputBox.getCharacters();
+                CharSequence positionYinput = surfacePosotoionYInputBox.getCharacters();
+                double newPositioinX = format.parse(positionXinput.toString()).doubleValue();
+                double newPositionY = format.parse(positionYinput.toString()).doubleValue();
+                Point position = new Point(newPositioinX,newPositionY);
+                chosenSurface.setPosition(position);
+
+                //surfacePosotoionXInputBox
+                //surfacePosotoionYInputBox
+
+                chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
+                this.domainController.updateSurface(chosenSurface.toDto());
+                chosenSurface.fill();
+                this.renderFromProject();
+                hideRectangleInfo();
+            }
+            catch (ParseException e ) {
+                System.out.println("STFU ça pete");
+                afficherRectangleInfo();
+
+            }
+        }
+
+    }
+
+    private void afficherRectangleInfo(){
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
         SurfaceUI firstOne = selectedSurfaces.get(0);
-
 
         RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(firstOne.toDto().summits);
         NumberFormat formatter = new DecimalFormat("#0.000");
@@ -161,68 +241,16 @@ public class UiController implements Initializable {
         surfacePosotoionYInputBox.setText(formatter.format(rect.topLeftCorner.y));
 //        surfaceColorChoiceBox;
 //        sealColorChoiceBox;
-        return null;
     }
 
-    public void editSurface() {
-        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+    private void hideRectangleInfo(){
 
-        //Modification du Height d'une tuile
-//        for(SurfaceUI chosenSurface: selectedSurfaces) {
-//
-//        }
-
-        SurfaceUI chosenSurface = selectedSurfaces.get(0);
-        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-        try{
-
-            //new Tile Height
-            CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
-            Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
-
-            //new Tile Width
-            CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
-            Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
-
-            //new Seal Width
-            CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
-            Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
-
-
-            //new surface height
-            CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
-            double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
-
-
-            //new surface width
-            CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
-            double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
-
-
-            if (newSealWidth != null) {
-                //Changer seal width et couleur
-                SealsInfoDto sealsInfoDto = new SealsInfoDto();
-                sealsInfoDto.sealWidth = newSealWidth;
-//                  sealsInfoDto.sealColor = sealColorChoiceBox.getValue().toString();
-                chosenSurface.setSealsInfo(sealsInfoDto);
-            }
-
-            if (newTileWidth != null && newTileHeight != null) {
-                TileDto masterTile = new TileDto();
-                RectangleInfo masterTileRect = new RectangleInfo(new Point(0,0 ), newTileWidth, newTileHeight);
-
-                masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
-                chosenSurface.setMasterTile(masterTile);
-            }
-
-            chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
-            this.domainController.updateSurface(chosenSurface.toDto());
-            chosenSurface.fill();
-            this.renderFromProject();
-        }
-        catch (ParseException e) {
-            System.out.println("STFU ça pete");
-        }
+        tileHeightInputbox.clear();
+        tileWidthInputbox.clear();
+        surfaceHeightInputBox.clear();
+        surfaceWidthInputBox.clear();
+        surfacePosotoionXInputBox.clear();
+        surfacePosotoionYInputBox.clear();
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {

@@ -1,5 +1,6 @@
 package sample;
 
+import Domain.Surface;
 import application.*;
 import gui.*;
 
@@ -388,5 +389,17 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
         this.domainController.fusionSurfaces(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()));
         this.renderFromProject();
+    }
+
+    public void surfaceHole(){
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+
+        for (SurfaceUI surface: selectedSurfaces) {
+            surface.setHole(true);
+            domainController.updateSurface(surface.toDto());
+            surface.hideTiles();
+        }
+        hideRectangleInfo();
+        renderFromProject();
     }
 }

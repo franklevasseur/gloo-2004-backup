@@ -15,4 +15,5 @@ public class SurfaceDto {
 
     public List<Point> summits; // summits in meters
     public List<TileDto> tiles;
+    public List<SurfaceDto> childSurfaces;
 }

@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import utils.*;
 
 import java.util.LinkedList;
@@ -272,5 +273,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
     public void setHole(boolean isHole) {
         this.isHole = isHole;
+    }
+
+    public Shape getMainShape() {
+        return this.rectangle;
     }
 }

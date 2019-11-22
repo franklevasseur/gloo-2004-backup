@@ -322,6 +322,18 @@ public class UiController implements Initializable {
                 this.displaySurface(surface);
             }
         }
+
+        if (project.fusionnedSurfaces != null) {
+            for (FusionnedSurfaceDto fsDto: project.fusionnedSurfaces) {
+                List<SurfaceUI> surfaceUIS = fsDto.fusionnedSurfaces.stream().map(surfaceDto -> new RectangleSurfaceUI(surfaceDto,
+                        zoomManager,
+                        selectionManager,
+                        drawingSection,
+                        snapGridUI)).collect(Collectors.toList());
+                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(surfaceUIS, drawingSection);
+                this.allSurfaces.add(fsUI);
+            }
+        }
     }
 
     private void clearDrawings() {
@@ -341,9 +353,12 @@ public class UiController implements Initializable {
     }
 
     public void surfaceFusion() {
+        if (this.selectionManager.getSelectedSurfaces().size() <= 0) {
+            return;
+        }
+
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-        List<SurfaceDto> dtos = selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList());
-        domainController.fusionSurfaces(dtos);
+        this.domainController.fusionSurfaces(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()));
         this.renderFromProject();
     }
 }

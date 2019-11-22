@@ -12,6 +12,11 @@ public class ProjectAssembler {
 
         dto.materials = project.getMaterials().stream().map(s -> MaterialAssembler.toDto(s)).collect(Collectors.toList());
         dto.surfaces = project.getSurfaces().stream().map(s -> SurfaceAssembler.toDto(s)).collect(Collectors.toList());
+        dto.fusionnedSurfaces = project.getFusionnedSurfaces().stream().map(fs -> {
+            FusionnedSurfaceDto fsDto = new FusionnedSurfaceDto();
+            fsDto.fusionnedSurfaces = fs.getFusionnedSurfaces().stream().map(s -> SurfaceAssembler.toDto(s)).collect(Collectors.toList());
+            return fsDto;
+        }).collect(Collectors.toList());
 
         return dto;
     }

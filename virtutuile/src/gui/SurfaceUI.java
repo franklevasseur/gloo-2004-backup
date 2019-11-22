@@ -4,12 +4,14 @@ import application.SealsInfoDto;
 import application.SurfaceDto;
 import application.TileDto;
 import javafx.scene.Node;
+import javafx.scene.shape.Shape;
 import utils.Id;
 import utils.Point;
 
 public interface SurfaceUI {
 
     Node getNode();
+    Shape getMainShape(); // gives the rectangle without the tiles and anchor points
     SurfaceDto toDto();
     void select();
     void unselect();

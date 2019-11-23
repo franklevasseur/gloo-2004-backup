@@ -11,9 +11,9 @@ public class SelectionManager {
 
     private List<SurfaceUI> selectedSurfaces = new ArrayList<>();
     private boolean multipleSelectionAllowed = false;
-    private Function<Void, Void> handler;
+    private Function<Boolean, Void> handler;
 
-    public SelectionManager(Function<Void, Void> handler){
+    public SelectionManager(Function<Boolean, Void> handler){
         this.handler = handler;
     }
 
@@ -28,7 +28,17 @@ public class SelectionManager {
         }
         surface.select();
         selectedSurfaces.add(surface);
-        handler.apply(null);
+        handler.apply(true); // TODO: toutes les surfaces ne sont pas des rectangles, à corriger...
+    }
+
+    // TODO: cette fonction est copié collé sur celle au dessus, trouver une façon dextraire du code commun
+    public void selectFusionnedSurface(FusionedSurfaceUI surface){
+        if(!multipleSelectionAllowed){
+            unselectAll();
+        }
+        surface.select();
+        selectedSurfaces.add(surface);
+        handler.apply(false);
     }
 
     public void unselectSurface(SurfaceUI surface) {

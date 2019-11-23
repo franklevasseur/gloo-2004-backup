@@ -138,8 +138,10 @@ public class UiController implements Initializable {
         hideRectangleInfo();
     }
 
-    public Void handleSelection(Void nothing) {
-        afficherRectangleInfo();
+    public Void handleSelection(boolean isRectangle) {
+        if (isRectangle) {
+            afficherRectangleInfo();
+        }
         return null;
     }
 
@@ -359,7 +361,7 @@ public class UiController implements Initializable {
                         selectionManager,
                         drawingSection,
                         snapGridUI)).collect(Collectors.toList());
-                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(surfaceUIS, drawingSection);
+                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, drawingSection, snapGridUI, surfaceUIS);
                 this.allSurfaces.add(fsUI);
             }
         }

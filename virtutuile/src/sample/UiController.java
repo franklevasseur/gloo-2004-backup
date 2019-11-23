@@ -9,6 +9,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
@@ -39,6 +40,7 @@ public class UiController implements Initializable {
     public TextField surfacePosotoionXInputBox;
     public TextField surfacePosotoionYInputBox;
 
+    public Label tileInfo;
 
     public ChoiceBox surfaceColorChoiceBox;
     public ChoiceBox sealColorChoiceBox;
@@ -360,7 +362,8 @@ public class UiController implements Initializable {
                         zoomManager,
                         selectionManager,
                         drawingSection,
-                        snapGridUI)).collect(Collectors.toList());
+                        snapGridUI,
+                        this.tileInfo)).collect(Collectors.toList());
                 FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, drawingSection, snapGridUI, surfaceUIS);
                 this.allSurfaces.add(fsUI);
             }
@@ -379,7 +382,8 @@ public class UiController implements Initializable {
                 zoomManager,
                 selectionManager,
                 drawingSection,
-                snapGridUI);
+                snapGridUI,
+                this.tileInfo);
         this.allSurfaces.add(surfaceUi);
     }
 

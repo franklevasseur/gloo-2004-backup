@@ -7,6 +7,7 @@ import application.TileDto;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -20,11 +21,13 @@ import java.util.stream.Collectors;
 public class RectangleSurfaceUI implements SurfaceUI {
 
     private Id id;
-    private List<Rectangle> tiles;
+    private List<TileUI> tiles;
     private boolean isHole;
 
     private Group rectangleGroup;
     private Rectangle rectangle;
+
+    private Label tileInfoTextField;
 
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
     private Pane parentNode;
@@ -43,10 +46,14 @@ public class RectangleSurfaceUI implements SurfaceUI {
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
                               Pane parentNode,
-                              SnapGridUI snapGrid) {
+                              SnapGridUI snapGrid,
+                              Label tileInfoTextField
+                              ) {
 
         this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
+
+        this.tileInfoTextField = tileInfoTextField;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
 
@@ -138,22 +145,13 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         hideTiles();
 
-        this.tiles = tilesRect.stream().map(t -> {
-            Rectangle tileUI = new Rectangle(t.topLeftCorner.x, t.topLeftCorner.y, t.width, t.height);
-            tileUI.setFill(Color.PALETURQUOISE);
-            tileUI.setStroke(Color.DARKTURQUOISE);
-
-            tileUI.setOnMouseEntered(event -> tileUI.setFill(Color.PALEGOLDENROD));
-            tileUI.setOnMouseExited(event -> tileUI.setFill(Color.PALETURQUOISE));
-
-            return tileUI;
-        }).collect(Collectors.toList());
-        this.rectangleGroup.getChildren().addAll(this.tiles);
+        this.tiles = tilesRect.stream().map(t -> new TileUI(t, this.tileInfoTextField, this.zoomManager)).collect(Collectors.toList());
+        this.rectangleGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 
     public void hideTiles() {
         if (this.tiles != null) {
-            this.rectangleGroup.getChildren().removeIf(this.tiles::contains);
+            this.rectangleGroup.getChildren().removeIf(c -> this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()).contains(c));
             this.tiles.clear();
         }
     }
@@ -197,11 +195,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         dto.isHole = this.isHole;
 
         if (!this.isHole && this.tiles != null && this.tiles.size() != 0) {
-            dto.tiles = this.tiles.stream().map(r -> {
-                TileDto tile = new TileDto();
-                tile.summits = RectangleHelper.rectangleInfoToSummits(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-                return tile;
-            }).collect(Collectors.toList());
+            dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());
         }
 
         return dto;
@@ -254,7 +248,10 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public TileDto getMasterTile() {
         return this.masterTile;
     }
-    public SealsInfoDto getSealsInfo(){return this.sealsInfo; }
+
+    public SealsInfoDto getSealsInfo() {
+        return this.sealsInfo;
+    }
 
     public void setSize(double width, double height){
         double pixelWidth = zoomManager.metersToPixels(width);

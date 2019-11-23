@@ -98,6 +98,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 if (!this.isHole) {
                     this.fill();
                 }
+
+                controller.updateSurface(this.toDto());
             }
         });
 
@@ -113,8 +115,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
             rectangle.setY(newY);
 
             t.consume();
-
-            controller.updateSurface(this.toDto());
         });
     }
 
@@ -176,13 +176,15 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         hideTiles();
 
-        if (newWidth >=0) {
+        if (newWidth >= 0) {
             rectangle.setWidth(newWidth);
         }
         if (newHeight >= 0) {
             rectangle.setHeight(newHeight);
         }
+    }
 
+    public void commitIncreaseSize() {
         controller.updateSurface(this.toDto());
     }
 

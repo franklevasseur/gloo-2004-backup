@@ -79,6 +79,7 @@ public class AttachmentPointUI {
             if (currentlyBeingDragged) {
                 currentlyBeingDragged = false;
                 parentSurface.fill();
+                parentSurface.commitIncreaseSize();
             }
         });
 

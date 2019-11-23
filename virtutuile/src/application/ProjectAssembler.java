@@ -1,7 +1,12 @@
 package application;
 
+import Domain.FusionnedSurface;
+import Domain.Material;
 import Domain.Project;
+import Domain.Surface;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProjectAssembler {
@@ -19,5 +24,24 @@ public class ProjectAssembler {
         }).collect(Collectors.toList());
 
         return dto;
+    }
+
+    public static Project fromDto(ProjectDto dto) {
+
+        Project project = new Project();
+
+        List<Surface> surfaces = dto.surfaces.stream().map(s -> SurfaceAssembler.fromDto(s)).collect(Collectors.toList());
+        project.setSurfaces(surfaces);
+
+        List<Material> materials = new ArrayList<>(); // TODO: pass the actual materials
+        project.setMaterials(materials);
+
+        List<FusionnedSurface> fusionnedSurfaces = dto.fusionnedSurfaces.stream().map(fs -> {
+            List<Surface> surfacesInTheFusion = fs.fusionnedSurfaces.stream().map(s -> SurfaceAssembler.fromDto(s)).collect(Collectors.toList());
+            return new FusionnedSurface(surfacesInTheFusion);
+        }).collect(Collectors.toList());
+        project.setFusionnedSurfaces(fusionnedSurfaces);
+
+        return project;
     }
 }

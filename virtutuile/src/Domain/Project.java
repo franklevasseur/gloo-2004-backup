@@ -33,4 +33,8 @@ public class Project {
         FusionnedSurface newFusionnedSurface = new FusionnedSurface(surfaces);
         this.fusionnedSurfaces.add(newFusionnedSurface);
     }
+
+    public void setFusionnedSurfaces(List<FusionnedSurface> fusionnedSurfaces) {
+        this.fusionnedSurfaces = fusionnedSurfaces;
+    }
 }

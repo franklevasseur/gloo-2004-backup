@@ -29,4 +29,19 @@ public class CircularStack<T> {
         }
         return array.remove(array.size() - 1);
     }
+
+    public T next() {
+        if (this.array.size() == 0) {
+            return null;
+        }
+        return array.get(array.size() - 1);
+    }
+
+    public void clear() {
+        this.array.clear();
+    }
+
+    public boolean isEmpty() {
+        return array.size() == 0;
+    }
 }

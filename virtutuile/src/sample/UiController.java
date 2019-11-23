@@ -7,10 +7,7 @@ import gui.*;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
@@ -52,6 +49,9 @@ public class UiController implements Initializable {
     private ZoomManager zoomManager = new ZoomManager();
     private SnapGridUI snapGridUI;
 
+    public Button undoButton;
+    public Button redoButton;
+
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
     private boolean stateEnableZooming = false;
@@ -70,6 +70,9 @@ public class UiController implements Initializable {
 
         this.snapGridUI = new SnapGridUI(this.drawingSection);
         this.selectionManager = new SelectionManager(this::handleSelection);
+
+        this.undoButton.setDisable(!this.domainController.undoAvailable());
+        this.redoButton.setDisable(!this.domainController.redoAvailable());
     }
 
     public void handleZoom(ScrollEvent event) {
@@ -347,6 +350,9 @@ public class UiController implements Initializable {
 
         this.clearDrawings();
 
+        this.undoButton.setDisable(!this.domainController.undoAvailable());
+        this.redoButton.setDisable(!this.domainController.redoAvailable());
+
         ProjectDto project = this.domainController.getProject();
         if (project.surfaces != null) {
             for (SurfaceDto surface: project.surfaces) {
@@ -404,6 +410,16 @@ public class UiController implements Initializable {
             surface.hideTiles();
         }
         hideRectangleInfo();
+        renderFromProject();
+    }
+
+    public void undo() {
+        this.domainController.undo();
+        renderFromProject();
+    }
+
+    public void redo() {
+        this.domainController.redo();
         renderFromProject();
     }
 }

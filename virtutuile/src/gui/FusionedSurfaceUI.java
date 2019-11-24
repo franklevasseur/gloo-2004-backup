@@ -1,6 +1,5 @@
 package gui;
 
-import Domain.Surface;
 import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
@@ -8,6 +7,7 @@ import application.TileDto;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -17,8 +17,8 @@ import utils.Point;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     private Id id;
     private List<Rectangle> tiles;
     private boolean isHole;
-    private List<Point> summits = new ArrayList<>();
+    private List<Point> summits;
 
     private Group fusionedSurfaceGroup;
     private Shape shape;
@@ -41,23 +41,20 @@ public class FusionedSurfaceUI implements SurfaceUI {
     private SnapGridUI snapGrid;
 
     private Point lastPointOfContact = new Point(0,0);
-    private Point firstSummit;
+    private Point position;
     private boolean currentlyBeingDragged = false;
 
     private TileDto masterTile;
     private SealsInfoDto sealsInfo;
 
-    private List<SurfaceUI> initalSurfaces;
+    private List<SurfaceUI> allSurfacesToFusion;
 
-    public FusionedSurfaceUI(ZoomManager zoomManager,
-                            SelectionManager selectionManager,
-                            SnapGridUI snapGrid,
-                            List<SurfaceUI> allSurfacesToFusionne) {
+    private SurfaceDto surfaceDto;
 
-        Shape firstShape = allSurfacesToFusionne.get(0).getMainShape();
-        this.shape = firstShape;
+    private void renderShapeFromChilds() {
+        this.shape = allSurfacesToFusion.get(0).getMainShape();
 
-        allSurfacesToFusionne.forEach(s -> {
+        allSurfacesToFusion.forEach(s -> {
             s.hide();
 
             if (s.getMainShape() == this.shape) {
@@ -65,50 +62,43 @@ public class FusionedSurfaceUI implements SurfaceUI {
             }
             this.shape = Shape.union(this.shape, s.getMainShape());
         });
-        this.initalSurfaces = allSurfacesToFusionne;
+        this.fusionedSurfaceGroup.getChildren().add(this.shape);
 
-        this.shape.setFill(firstShape.getFill());
-        this.shape.setStroke(firstShape.getStroke());
+        this.summits = surfaceDto.summits.stream().map(s -> zoomManager.metersToPixels(s)).collect(Collectors.toList());
+        double minX = Collections.min(this.summits.stream().map(s -> s.x).collect(Collectors.toList()));
+        this.position = Collections.min(this.summits.stream().filter(s -> s.x == minX).collect(Collectors.toList()), Comparator.comparing(s -> s.y));
+    }
 
-        List<Point> allSummits = new ArrayList<>();
-        allSurfacesToFusionne.forEach(s ->{
-            List<Point> listes = s.toDto().summits;
-            listes.forEach(p ->{
-                allSummits.add(zoomManager.metersToPixels(p));
-            });
-        });
-        List<Double> x = new ArrayList<>();
-        List<Double> y = new ArrayList<>();
+    public FusionedSurfaceUI(ZoomManager zoomManager,
+                             SelectionManager selectionManager,
+                             SnapGridUI snapGrid,
+                             SurfaceDto surfaceDto
+                             ) {
 
-        allSummits.forEach(s -> {
-            x.add(s.x);
-            y.add(s.y);
-        });
+        this.allSurfacesToFusion
+                = surfaceDto
+                .fusionnedSurface
+                .stream()
+                .map(fs -> new RectangleSurfaceUI(fs, zoomManager, selectionManager, snapGrid, new Label()))
+                .collect(Collectors.toList());
 
-        Double maxX = Collections.max(x);
-        Double minX = Collections.min(x);
-        Double maxY = Collections.max(y);
-        Double minY = Collections.min(y);
+        this.surfaceDto = surfaceDto;
+        this.zoomManager = zoomManager;
 
-        allSummits.forEach(r ->{
-            if(r.x == maxX || r.x == minX || r.y == maxY || r.y == minY){
-                summits.add(r);
-            }
-        });
+        this.fusionedSurfaceGroup = new Group();
+        this.renderShapeFromChilds();
 
-        firstSummit = summits.get(0);
+        this.shape.setFill(Color.WHITE);
+        this.shape.setStroke(Color.BLACK);
 
-        this.id = allSurfacesToFusionne.get(0).getId();
+        this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
 
-        this.fusionedSurfaceGroup = new Group(this.shape);
         fusionedSurfaceGroup.setCursor(Cursor.HAND);
 
         this.zoomManager = zoomManager;
         this.selectionManager = selectionManager;
         this.isHole = false;
-
-        //this.renderTiles(surfaceDto.tiles);
 
         initializeGroup();
     }
@@ -120,7 +110,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
        });
 
        fusionedSurfaceGroup.setOnMousePressed(mouseEvent -> {
-           this.lastPointOfContact = new Point(mouseEvent.getX() - this.firstSummit.x, mouseEvent.getY() - this.firstSummit.y);
+           this.lastPointOfContact = new Point(mouseEvent.getX() - this.position.x, mouseEvent.getY() - this.position.y);
        });
 
        fusionedSurfaceGroup.setOnMouseReleased(mouseEvent -> {
@@ -148,10 +138,10 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     private void snapToGrid() {
         if(this.snapGrid.isVisible()){
-            Point currentFusionedSurfacePosition  = new Point(this.firstSummit.x, this.firstSummit.y);
+            Point currentFusionedSurfacePosition  = new Point(this.position.x, this.position.y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentFusionedSurfacePosition);
-            this.firstSummit.x = nearestGridPoint.x;
-            this.firstSummit.y = nearestGridPoint.y;
+            this.position.x = nearestGridPoint.x;
+            this.position.y = nearestGridPoint.y;
 
             this.controller.updateSurface(this.toDto());
         }
@@ -265,10 +255,18 @@ public class FusionedSurfaceUI implements SurfaceUI {
     @Override
     public void setPosition(Point position) {
         Point pixels = zoomManager.metersToPixels(position);
-        Point translation = Point.diff(pixels, this.firstSummit);
-        this.firstSummit = pixels;
-        this.shape.setTranslateX(translation.x);
-        this.shape.setTranslateY(translation.y);
+        Point translation = Point.diff(pixels, this.position);
+
+        System.out.println(String.format("click : (%f, %f)", position.x, position.y));
+
+        allSurfacesToFusion.forEach(s -> s.translateBy(translation));
+
+        this.fusionedSurfaceGroup.getChildren().remove(this.shape);
+        this.renderShapeFromChilds();
+    }
+
+    public void translateBy(Point translation) {
+
     }
 
     @Override

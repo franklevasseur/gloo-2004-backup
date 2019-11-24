@@ -12,8 +12,9 @@ public class SurfaceDto {
     public boolean isRectangular;
     public boolean isHole;
     public Color surfaceColor;
+    public boolean isFusionned;
 
     public List<Point> summits; // summits in meters
     public List<TileDto> tiles;
-    public List<SurfaceDto> childSurfaces;
+    public List<SurfaceDto> fusionnedSurface;
 }

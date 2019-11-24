@@ -143,4 +143,8 @@ public class Surface {
 
         return value;
     }
+
+    public boolean isFusionned() {
+        return false;
+    }
 }

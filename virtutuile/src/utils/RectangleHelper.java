@@ -18,7 +18,7 @@ public class RectangleHelper {
         Point topRightCorner = new Point(x + width, y, CardinalPoint.NE);
         Point bottomLeftCorner = new Point(x, y + height, CardinalPoint.SW);
         Point bottomRightCorner = new Point(x + width, y + height, CardinalPoint.SE);
-        return Arrays.asList(topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+        return Arrays.asList(topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner);
     }
 
     public static RectangleInfo summitsToRectangleInfo(List<Point> summits) {

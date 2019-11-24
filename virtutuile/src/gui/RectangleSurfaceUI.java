@@ -278,4 +278,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public Shape getMainShape() {
         return this.rectangle;
     }
+
+    public void translateBy(Point translation) {
+        this.setPosition(new Point(this.rectangle.getX() + translation.x, this.rectangle.getY() + translation.y));
+    }
 }

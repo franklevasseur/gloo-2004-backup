@@ -11,8 +11,6 @@ public class SurfaceAssembler {
 
     public static SurfaceDto toDto (Surface surface){
 
-        //TODO: ajouter sealsInfo dans le dto
-
         SurfaceDto dto = new SurfaceDto();
 
         dto.isHole = surface.isHole();
@@ -23,6 +21,7 @@ public class SurfaceAssembler {
         }).collect(Collectors.toList());
         dto.id = surface.getId();
         dto.isRectangular = surface.getIsRectangular();
+        dto.isFusionned = surface.isFusionned();
         dto.tiles = surface.getTiles().stream().map(t -> {
             TileDto tileDto = new TileDto();
             tileDto.summits = t.getSummits().stream().map(p -> {
@@ -32,6 +31,10 @@ public class SurfaceAssembler {
             }).collect(Collectors.toList());
             return tileDto;
         }).collect(Collectors.toList());
+
+        if (surface.isFusionned()) {
+            dto.fusionnedSurface = ((FusionnedSurface) surface).getFusionnedSurfaces().stream().map(fs -> toDto(fs)).collect(Collectors.toList());
+        }
 
         return dto;
     }

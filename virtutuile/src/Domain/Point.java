@@ -12,6 +12,11 @@ public class Point {
         this.y = pY;
     }
 
+    public Point(utils.Point point) {
+        this.x = new Measure(point.x, UnitType.m);
+        this.y = new Measure(point.y, UnitType.m);
+    }
+
     public Point(Measure  x, Measure y, CardinalPoint cardinality) {
         this.x = x;
         this.y = y;

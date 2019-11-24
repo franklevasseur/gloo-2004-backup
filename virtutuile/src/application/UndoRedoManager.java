@@ -13,7 +13,7 @@ public class UndoRedoManager {
 
     private static int num = 0;
     public void justDoIt(ProjectDto project) {
-        System.out.println("debug #" + num);
+//        System.out.println("debug #" + num);
         debugUndoStack.add(num++);
 
         undoStack.add(project);
@@ -24,7 +24,7 @@ public class UndoRedoManager {
         ProjectDto project = undoStack.pop();
 
         Integer fuck = debugUndoStack.pop();
-        System.out.println("undo #" + fuck);
+//        System.out.println("undo #" + fuck);
         debugRedoStack.add(fuck);
 
         redoStack.add(project);
@@ -35,7 +35,7 @@ public class UndoRedoManager {
         ProjectDto project = redoStack.pop();
 
         Integer fuck = debugRedoStack.pop();
-        System.out.println("undo #" + fuck);
+//        System.out.println("undo #" + fuck);
         debugUndoStack.add(fuck);
 
         undoStack.add(project);

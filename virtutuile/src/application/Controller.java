@@ -151,7 +151,9 @@ public class Controller {
     }
 
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {
-        List<Surface> surfaces = surfacesDto.stream().map(dto -> SurfaceAssembler.fromDto(dto)).collect(Collectors.toList());
+        List<Surface> surfaces = surfacesDto.stream().map(dto -> {
+            return this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+        }).collect(Collectors.toList());
         this.vraiProject.fusionSurfaces(surfaces);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }

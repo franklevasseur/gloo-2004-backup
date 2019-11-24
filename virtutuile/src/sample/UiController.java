@@ -129,7 +129,7 @@ public class UiController implements Initializable {
 
         Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
 
-        System.out.println(String.format("click : (%f, %f)", clickCoord.x, clickCoord.y));
+//        System.out.println(String.format("click : (%f, %f)", zoomManager.pixelsToMeters(clickCoord.x), zoomManager.pixelsToMeters(clickCoord.y)));
         if (stateCurrentlyCreatingSurface) {
             pane.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
@@ -217,9 +217,7 @@ public class UiController implements Initializable {
                 hideRectangleInfo();
             }
             catch (ParseException e ) {
-                System.out.println("STFU ça pete");
                 afficherRectangleInfo();
-
             }
         }
 
@@ -359,19 +357,6 @@ public class UiController implements Initializable {
                 this.displaySurface(surface);
             }
         }
-
-        if (project.fusionnedSurfaces != null) {
-            for (FusionnedSurfaceDto fsDto: project.fusionnedSurfaces) {
-                List<SurfaceUI> surfaceUIS = fsDto.fusionnedSurfaces.stream().map(surfaceDto -> new RectangleSurfaceUI(surfaceDto,
-                        zoomManager,
-                        selectionManager,
-                        snapGridUI,
-                        this.tileInfo)).collect(Collectors.toList());
-                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, snapGridUI, surfaceUIS);
-                this.drawingSection.getChildren().add(fsUI.getNode());
-                this.allSurfaces.add(fsUI);
-            }
-        }
     }
 
     private void clearDrawings() {
@@ -383,6 +368,12 @@ public class UiController implements Initializable {
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {
+        if (surfaceDto.isFusionned) {
+            FusionedSurfaceUI surfaceUi = new FusionedSurfaceUI(zoomManager, selectionManager, snapGridUI, surfaceDto);
+            this.drawingSection.getChildren().add(surfaceUi.getNode());
+            this.allSurfaces.add(surfaceUi);
+            return;
+        }
         RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto,
                 zoomManager,
                 selectionManager,

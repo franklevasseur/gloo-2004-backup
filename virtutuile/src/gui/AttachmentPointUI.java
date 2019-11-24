@@ -19,10 +19,6 @@ public class AttachmentPointUI {
     public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {
         rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
 
-        rectangle.setOnMouseEntered(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
 //                if (cardinal == CardinalPoint.NW) {
 //                    rectangle.setCursor(Cursor.NW_RESIZE);
 //                } else if (cardinal == CardinalPoint.NE) {
@@ -40,19 +36,9 @@ public class AttachmentPointUI {
 //                } else if (cardinal == CardinalPoint.S) {
 //                    rectangle.setCursor(Cursor.S_RESIZE);
 //                }
-                if (cardinal == CardinalPoint.SE) {
-                    rectangle.setCursor(Cursor.SE_RESIZE);
-                }
+            if (cardinal == CardinalPoint.SE) {
+                rectangle.setCursor(Cursor.SE_RESIZE);
             }
-        });
-
-        rectangle.setOnMouseExited(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
-                rectangle.setCursor(Cursor.DEFAULT);
-            }
-        });
 
         rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
         {
@@ -97,5 +83,28 @@ public class AttachmentPointUI {
 
     public Node getNode() {
         return rectangle;
+    }
+
+    public AttachmentPointUI(Point coord, FusionedSurfaceUI parentSurface) {
+        rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
+
+        rectangle.setOnMouseReleased(mouseEvent -> {
+            if (currentlyBeingDragged) {
+                currentlyBeingDragged = false;
+                parentSurface.fill();
+            }
+        });
+
+        rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent t) {
+                parentSurface.unselect();
+                parentSurface.select();
+                t.consume();
+            }
+        });
+
+        rectangle.setFill(Color.GRAY);
     }
 }

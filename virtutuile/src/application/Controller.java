@@ -32,14 +32,26 @@ public class Controller {
     }
 
     public void updateSurface(SurfaceDto surfaceDto) {
+        this.internalUpdateSurface(surfaceDto);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+    }
+
+    private void internalUpdateSurface(SurfaceDto surfaceDto) {
         Surface surface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceDto.id)).findFirst().get();
         SurfaceAssembler.fromDto(surfaceDto, surface);
+    }
+
+    // atomic move and fill or resize and fill
+    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing)  {
+        internalUpdateSurface(dto);
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+        return tiles;
     }
 
     public ProjectDto getProject() {
         return ProjectAssembler.toDto(vraiProject);
-        // ...
     }
 
     public void removeSurface(SurfaceDto surface) {
@@ -71,18 +83,17 @@ public class Controller {
         return undoRedoManager.undoAvailable();
     }
 
-    public List<TileDto> fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(surface);
+    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        this.internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 
         return tiles;
     }
 
-    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
+    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto) {
         // Let the backend choose a default pattern and sealing and master tile
         // ...
-        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceToFill.id)).findFirst().get();
-        SurfaceDto surfaceToFillDto = SurfaceAssembler.toDto(desiredSurface);
 
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
@@ -126,9 +137,7 @@ public class Controller {
         }
 
         surfaceToFillDto.tiles = tiles;
-
-        //TODO: je sais c'est pas bin beau
-        this.updateSurface(surfaceToFillDto);
+        surfaceToFillDto.isHole = false;
 
         return tiles;
     }

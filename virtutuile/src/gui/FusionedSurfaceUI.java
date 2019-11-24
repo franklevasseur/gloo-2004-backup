@@ -121,4 +121,8 @@ public class FusionedSurfaceUI implements SurfaceUI {
     public void setHole(boolean isHole) {
 
     }
+
+    public void forceFill() {
+
+    }
 }

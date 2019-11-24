@@ -95,11 +95,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 this.currentlyBeingDragged = false;
                 this.snapToGrid();
 
-                if (!this.isHole) {
-                    this.fill();
+                if (this.isHole) {
+                    controller.updateSurface(this.toDto());
+                    return;
                 }
-
-                controller.updateSurface(this.toDto());
+                this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
             }
         });
 
@@ -131,6 +131,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
     public void fill() {
         this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
+    }
+
+    public void forceFill() {
+        this.isHole = false;
+        fill();
     }
 
     private void renderTiles(List<TileDto> tiles) {
@@ -185,7 +190,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void commitIncreaseSize() {
-        controller.updateSurface(this.toDto());
+        this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
     }
 
     public SurfaceDto toDto() {

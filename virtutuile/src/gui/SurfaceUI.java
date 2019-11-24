@@ -24,6 +24,7 @@ public interface SurfaceUI {
     void hideTiles();
     void hide();
     void fill();
+    void forceFill();
     void setSize(double width, double height);
     void setPosition(Point position);
     void setHole(boolean isHole);

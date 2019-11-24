@@ -309,9 +309,7 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
-            surface.setHole(false);
-            domainController.updateSurface(surface.toDto());
-            surface.fill();
+            surface.forceFill();
         }
 
         renderFromProject();
@@ -401,7 +399,7 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
-    public void surfaceHole(){
+    public void surfaceHole() {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {

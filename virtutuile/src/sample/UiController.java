@@ -1,6 +1,5 @@
 package sample;
 
-import Domain.Surface;
 import application.*;
 import gui.*;
 
@@ -319,6 +318,7 @@ public class UiController implements Initializable {
 
     private void removeSelectedSurfaces() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+        drawingSection.getChildren().removeIf(selectedSurfaces.stream().map(s -> s.getNode()).collect(Collectors.toList())::contains);
         selectedSurfaces.forEach(SurfaceUI::delete);
         allSurfaces.removeIf(selectedSurfaces::contains);
         selectionManager.unselectAll();
@@ -365,7 +365,6 @@ public class UiController implements Initializable {
                 List<SurfaceUI> surfaceUIS = fsDto.fusionnedSurfaces.stream().map(surfaceDto -> new RectangleSurfaceUI(surfaceDto,
                         zoomManager,
                         selectionManager,
-                        drawingSection,
                         snapGridUI,
                         this.tileInfo)).collect(Collectors.toList());
                 FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, drawingSection, snapGridUI, surfaceUIS);
@@ -376,6 +375,7 @@ public class UiController implements Initializable {
 
     private void clearDrawings() {
         this.allSurfaces.forEach(SurfaceUI::hide);
+        drawingSection.getChildren().removeIf(allSurfaces.stream().map(s -> s.getNode()).collect(Collectors.toList())::contains);
         this.selectionManager.unselectAll();
         this.allSurfaces.clear();
         this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
@@ -385,9 +385,9 @@ public class UiController implements Initializable {
         RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto,
                 zoomManager,
                 selectionManager,
-                drawingSection,
                 snapGridUI,
                 this.tileInfo);
+        this.drawingSection.getChildren().add(surfaceUi.getNode());
         this.allSurfaces.add(surfaceUi);
     }
 

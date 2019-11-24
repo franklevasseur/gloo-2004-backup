@@ -30,7 +30,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private Label tileInfoTextField;
 
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
-    private Pane parentNode;
+
     private Controller controller = Controller.getInstance();
     private ZoomManager zoomManager;
     private SelectionManager selectionManager;
@@ -45,7 +45,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
-                              Pane parentNode,
                               SnapGridUI snapGrid,
                               Label tileInfoTextField
                               ) {
@@ -67,7 +66,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.rectangleGroup = new Group(rectangle);
         rectangleGroup.setCursor(Cursor.HAND);
 
-        this.parentNode = parentNode;
         this.zoomManager = zoomManager;
         this.selectionManager = selectionManager;
 
@@ -76,7 +74,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.renderTiles(surfaceDto.tiles);
 
         initializeGroup();
-        this.parentNode.getChildren().add(rectangleGroup);
     }
 
     private void initializeGroup() {
@@ -241,7 +238,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public void hide() {
         this.hideTiles();
         this.unselect();
-        parentNode.getChildren().remove(this.getNode());
     }
 
     public void setSealsInfo(SealsInfoDto newSealInfos) {

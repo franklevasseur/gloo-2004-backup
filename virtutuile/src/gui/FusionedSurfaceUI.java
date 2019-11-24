@@ -34,7 +34,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     private Shape shape;
 
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
-    private Pane parentNode;
+
     private Controller controller = Controller.getInstance();
     private ZoomManager zoomManager;
     private SelectionManager selectionManager;
@@ -51,7 +51,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     public FusionedSurfaceUI(ZoomManager zoomManager,
                             SelectionManager selectionManager,
-                            Pane parentNode,
                             SnapGridUI snapGrid,
                             List<SurfaceUI> allSurfacesToFusionne) {
 
@@ -70,8 +69,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
         this.shape.setFill(firstShape.getFill());
         this.shape.setStroke(firstShape.getStroke());
-
-        parentNode.getChildren().addAll(shape);
 
         List<Point> allSummits = new ArrayList<>();
         allSurfacesToFusionne.forEach(s ->{
@@ -107,7 +104,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.fusionedSurfaceGroup = new Group(this.shape);
         fusionedSurfaceGroup.setCursor(Cursor.HAND);
 
-        this.parentNode = parentNode;
         this.zoomManager = zoomManager;
         this.selectionManager = selectionManager;
         this.isHole = false;
@@ -115,7 +111,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
         //this.renderTiles(surfaceDto.tiles);
 
         initializeGroup();
-        this.parentNode.getChildren().add(fusionedSurfaceGroup);
     }
 
     private void initializeGroup(){
@@ -145,15 +140,13 @@ public class FusionedSurfaceUI implements SurfaceUI {
            double newY = mouseEvent.getY() - this.lastPointOfContact.y;
            Point newPoint = new Point(newX, newY);
 
-           this.firstSummit = newPoint;
+           this.setPosition(newPoint);
 
            mouseEvent.consume();
-
-           controller.updateSurface(this.toDto());
        });
     }
 
-    private void snapToGrid(){
+    private void snapToGrid() {
         if(this.snapGrid.isVisible()){
             Point currentFusionedSurfacePosition  = new Point(this.firstSummit.x, this.firstSummit.y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentFusionedSurfacePosition);
@@ -178,18 +171,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     public SurfaceDto toDto() {
         SurfaceDto dto = new SurfaceDto();
 
-        dto.summits = this.summits; // TODO: vincent, ca cest les summits en pixels, dans le dto on les veut en metre donc sert toi du zoomManager
-        dto.isRectangular = false;
-        dto.id = this.id;
-        dto.isHole = this.isHole;
-
-        if(!this.isHole && this.tiles != null && this.tiles.size() != 0){
-            dto.tiles = this.tiles.stream().map(r -> {
-                TileDto tile = new TileDto();
-                tile.summits = RectangleHelper.rectangleInfoToSummits(r.getX(), r.getY(), r.getWidth(), r.getHeight());
-                return tile;
-            }).collect(Collectors.toList());
-        }
+        // TODO: bad fucking abstraction
 
         return dto;
     }
@@ -251,8 +233,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
     public void hide() {
         this.unselect();
         this.hideTiles();
-        parentNode.getChildren().remove(this.getNode());
-
     }
 
     @Override
@@ -284,17 +264,17 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     @Override
     public void setPosition(Point position) {
-        Point firstSummit = zoomManager.metersToPixels(position);
-
-        this.firstSummit.x = firstSummit.x;
-        this.firstSummit.y = firstSummit.x;
-
+        Point pixels = zoomManager.metersToPixels(position);
+        Point translation = Point.diff(pixels, this.firstSummit);
+        this.firstSummit = pixels;
+        this.shape.setTranslateX(translation.x);
+        this.shape.setTranslateY(translation.y);
     }
 
     @Override
     public void setHole(boolean isHole) { this.isHole = isHole; }
 
-    private void renderTiles(List<TileDto> tiles){
+    private void renderTiles(List<TileDto> tiles) {
         if(this.isHole || tiles == null || tiles.size() == 0){
             return;
         }

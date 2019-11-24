@@ -367,7 +367,8 @@ public class UiController implements Initializable {
                         selectionManager,
                         snapGridUI,
                         this.tileInfo)).collect(Collectors.toList());
-                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, drawingSection, snapGridUI, surfaceUIS);
+                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, snapGridUI, surfaceUIS);
+                this.drawingSection.getChildren().add(fsUI.getNode());
                 this.allSurfaces.add(fsUI);
             }
         }

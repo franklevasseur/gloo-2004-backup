@@ -8,6 +8,10 @@ public class Measure {
     public Measure(){
         this.value = 0;
     }
+    public Measure(double pValue){
+        this.value = pValue;
+        //unit = pUnit;
+    }
     public Measure(double pValue, UnitType pUnit){
         this.value = pValue;
         //unit = pUnit;

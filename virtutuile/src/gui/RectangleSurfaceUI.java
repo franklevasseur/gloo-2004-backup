@@ -187,7 +187,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void commitIncreaseSize() {
-        this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
+        if (!this.isHole) {
+            this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
+            return;
+        }
+        this.controller.updateSurface(this.toDto());
     }
 
     public SurfaceDto toDto() {

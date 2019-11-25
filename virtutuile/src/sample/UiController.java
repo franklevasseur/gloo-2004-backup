@@ -546,25 +546,25 @@ public class UiController implements Initializable {
         dto.materialType = MaterialType.tileMaterial;
         dto.name = materialNameInputBox.getText();
         if(materialColorChoiceBox.getValue() == "BLACK"){
-            dto.color = Color.BLACK;
+            dto.color = utils.Color.BLACK;
 
         }else if(materialColorChoiceBox.getValue() == "WHITE"){
-            dto.color = Color.WHITE;
+            dto.color = utils.Color.WHITE;
 
         }else if(materialColorChoiceBox.getValue() == "YELLOW"){
-            dto.color = Color.YELLOW;
+            dto.color = utils.Color.YELLOW;
 
         }else if(materialColorChoiceBox.getValue() == "GREEN"){
-            dto.color = Color.GREEN;
+            dto.color = utils.Color.GREEN;
 
         }else if(materialColorChoiceBox.getValue() == "BLUE"){
-            dto.color = Color.BLUE;
+            dto.color = utils.Color.BLUE;
 
         }else if(materialColorChoiceBox.getValue() == "RED"){
-            dto.color = Color.RED;
+            dto.color = utils.Color.RED;
 
         }else if(materialColorChoiceBox.getValue() == "VIOLET"){
-            dto.color = Color.VIOLET;
+            dto.color = utils.Color.VIOLET;
 
         }else{
             throw new RuntimeException("Les couleurs petent mon gars");

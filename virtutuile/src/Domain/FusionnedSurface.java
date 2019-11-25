@@ -24,6 +24,10 @@ public class FusionnedSurface extends Surface {
         return true;
     }
 
+    public void setFusionnedSurfaces(List<Surface> surfaces) {
+        this.fusionnedSurfaces = surfaces;
+    }
+
     private static List<Point> extractResultantSummits(List<Surface> fusionnedSurfaces) {
         return FusionHelper.getResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)).stream().map(p -> new Point(p)).collect(Collectors.toList());
     }

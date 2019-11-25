@@ -9,6 +9,8 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import utils.Id;
 import utils.Point;
@@ -21,7 +23,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.lang.Math;
 
 public class UiController implements Initializable {
 
@@ -58,7 +59,7 @@ public class UiController implements Initializable {
     private boolean stateEnableZooming = false;
 
     private Point firstClickCoord;
-    double reset = 0.0;
+    private Rectangle rectangleSurfaceCreationIndicator;
 
     private Controller domainController = Controller.getInstance();
 
@@ -123,6 +124,21 @@ public class UiController implements Initializable {
         }
     }
 
+    public void onMouseMoved(MouseEvent e) {
+        if (stateTopLeftCornerCreated) {
+            drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
+
+            Point mouseCoord = new Point(e.getX(), e.getY());
+            Point topLeft = RectangleHelper.getTopLeft(firstClickCoord, mouseCoord);
+
+            double width = Math.abs(mouseCoord.x - firstClickCoord.x);
+            double heigth = Math.abs(mouseCoord.y - firstClickCoord.y);
+            rectangleSurfaceCreationIndicator = new Rectangle(topLeft.x, topLeft.y, width, heigth);
+            rectangleSurfaceCreationIndicator.setFill(Color.GRAY);
+            drawingSection.getChildren().add(rectangleSurfaceCreationIndicator);
+        }
+    }
+
     public void handleKeyReleased(KeyEvent e) {
         if(e.getCode() == KeyCode.CONTROL) {
             selectionManager.disableMultipleSelection();
@@ -149,6 +165,8 @@ public class UiController implements Initializable {
             stateTopLeftCornerCreated = false;
             createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
 
+
+            drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
             pane.setCursor(Cursor.DEFAULT);
             this.renderFromProject();
             selectionManager.unselectAll();
@@ -337,21 +355,64 @@ public class UiController implements Initializable {
         selectionManager.unselectAll();
     }
 
+//    private void createSurfaceHere(Point location1, Point location2) {
+//
+//        Point topLeft = RectangleHelper.getTopLeft(location1, location2);
+//
+//        double widthPixels = 0.0;
+//        double heightPixels = 0.0;
+//
+//        double calculatedWidth = location2.x - location1.y;
+//        double calulatedHeight = location2.y - location1.y;
+//
+//        if(topLeft.x == location1.x && topLeft.y == location1.y){
+//            widthPixels = location2.x - topLeft.x;
+//            heightPixels = location2.y - topLeft.y;
+//        }
+//
+//        if(topLeft.x == location2.x && topLeft.y == location2.y){
+//            widthPixels = location1.x - location2.x;
+//            heightPixels = location1.x - location2.x;
+//        }
+//
+//        if(calculatedWidth < 0 && calulatedHeight > 0){
+//            widthPixels = location1.x - topLeft.x;
+//            heightPixels = location2.y - topLeft.y;
+//        }
+//
+//        if(calculatedWidth > 0 && calulatedHeight < 0){
+//            widthPixels = location2.x - topLeft.x;
+//            heightPixels = location1.y - topLeft.y;
+//        }
+//
+//        Point desiredPoint1 = new Point(topLeft.x, topLeft.y);
+//        Point actualPoint1 = this.snapGridUI.isVisible() ? this.snapGridUI.getNearestGridPoint(desiredPoint1) : desiredPoint1;
+//
+//        double x = zoomManager.pixelsToMeters(actualPoint1.x);
+//        double y = zoomManager.pixelsToMeters(actualPoint1.y);
+//        double width = zoomManager.pixelsToMeters(widthPixels);
+//        double height = zoomManager.pixelsToMeters(heightPixels);
+//
+//        SurfaceDto surface = new SurfaceDto();
+//        surface.id = new Id();
+//        surface.isHole = false;
+//        surface.isRectangular = true;
+//        surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
+//
+//        domainController.createSurface(surface);
+//    }
+
     private void createSurfaceHere(Point location1, Point location2) {
 
-        double x1Pixels = location1.x;
-        double y1Pixels = location1.y;
-        double x2Pixels = location2.x;
-        double y2Pixels = location2.y;
+        Point topLeft = RectangleHelper.getTopLeft(location1, location2);
 
-        double widthPixels = Math.abs(x2Pixels - x1Pixels);
-        double heightPixels = Math.abs(y2Pixels - y1Pixels);
+        double widthPixels = Math.abs(location2.x - location1.x);
+        double heightPixels = Math.abs(location2.y - location1.y);
 
-        Point desiredPoint1 = new Point(x1Pixels, y1Pixels);
-        Point actualPoint1 = this.snapGridUI.isVisible() ? this.snapGridUI.getNearestGridPoint(desiredPoint1) : desiredPoint1;
+        Point actualPoint = this.snapGridUI.isVisible() ? this.snapGridUI.getNearestGridPoint(topLeft) : topLeft;
 
-        double x = zoomManager.pixelsToMeters(actualPoint1.x);
-        double y = zoomManager.pixelsToMeters(actualPoint1.y);
+        double x = zoomManager.pixelsToMeters(actualPoint.x);
+        double y = zoomManager.pixelsToMeters(actualPoint.y);
         double width = zoomManager.pixelsToMeters(widthPixels);
         double height = zoomManager.pixelsToMeters(heightPixels);
 

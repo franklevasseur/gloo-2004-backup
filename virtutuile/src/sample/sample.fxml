@@ -62,7 +62,10 @@
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="719.0" prefWidth="790.0">
           <children>
-            <Pane fx:id="pane" layoutX="0.0" layoutY="0.0" onMouseClicked="#onPaneClicked" onScroll="#handleZoom" prefHeight="690.0" prefWidth="750.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+            <Pane fx:id="pane" layoutX="0.0" layoutY="0.0"
+                  onMouseClicked="#onPaneClicked"
+                  onMouseMoved="#onMouseMoved"
+                  onScroll="#handleZoom" prefHeight="690.0" prefWidth="750.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
               <children>
                 <Label fx:id="tileInfo" layoutX="15" layoutY="668.0" prefWidth="500" />
                 <Pane fx:id="drawingSection" />

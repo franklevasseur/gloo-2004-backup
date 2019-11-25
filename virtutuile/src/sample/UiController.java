@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.lang.Math;
 
 public class UiController implements Initializable {
 
@@ -33,8 +34,8 @@ public class UiController implements Initializable {
     public TextField sealWidthInputBox;
     public TextField surfaceHeightInputBox;
     public TextField surfaceWidthInputBox;
-    public TextField surfacePosotoionXInputBox;
-    public TextField surfacePosotoionYInputBox;
+    public TextField surfacePositionXInputBox;
+    public TextField surfacePositionYInputBox;
 
     public Label tileInfo;
 
@@ -53,7 +54,11 @@ public class UiController implements Initializable {
 
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
+    private boolean stateTopLeftCornerCreated = false;
     private boolean stateEnableZooming = false;
+
+    private Point firstClickCoord;
+    double reset = 0.0;
 
     private Controller domainController = Controller.getInstance();
 
@@ -130,16 +135,26 @@ public class UiController implements Initializable {
         Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
 
 //        System.out.println(String.format("click : (%f, %f)", zoomManager.pixelsToMeters(clickCoord.x), zoomManager.pixelsToMeters(clickCoord.y)));
-        if (stateCurrentlyCreatingSurface) {
-            pane.setCursor(Cursor.DEFAULT);
-            stateCurrentlyCreatingSurface = false;
+        if (stateCurrentlyCreatingSurface && !stateTopLeftCornerCreated) {
 
-            createSurfaceHere(new Point(clickCoord.x, clickCoord.y), 200, 200);
+            firstClickCoord = new Point(clickCoord.x, clickCoord.y);
 
-            this.renderFromProject();
+            stateTopLeftCornerCreated = true;
         }
-        selectionManager.unselectAll();
-        hideRectangleInfo();
+        else if (stateCurrentlyCreatingSurface && stateTopLeftCornerCreated)
+        {
+
+            Point secondClickCoord = clickCoord;
+            stateCurrentlyCreatingSurface = false;
+            stateTopLeftCornerCreated = false;
+            createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
+
+            pane.setCursor(Cursor.DEFAULT);
+            this.renderFromProject();
+            selectionManager.unselectAll();
+            hideRectangleInfo();
+            firstClickCoord = null;
+        }
     }
 
     public Void handleSelection(boolean isRectangle) {
@@ -200,8 +215,8 @@ public class UiController implements Initializable {
                     chosenSurface.setMasterTile(masterTile);
                 }
                 //Changer la position de X et de y
-                CharSequence positionXinput = surfacePosotoionXInputBox.getCharacters();
-                CharSequence positionYinput = surfacePosotoionYInputBox.getCharacters();
+                CharSequence positionXinput = surfacePositionXInputBox.getCharacters();
+                CharSequence positionYinput = surfacePositionYInputBox.getCharacters();
                 double newPositioinX = format.parse(positionXinput.toString()).doubleValue();
                 double newPositionY = format.parse(positionYinput.toString()).doubleValue();
                 Point position = new Point(newPositioinX,newPositionY);
@@ -242,8 +257,8 @@ public class UiController implements Initializable {
             sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
         }
 
-        surfacePosotoionXInputBox.setText(formatter.format(rect.topLeftCorner.x));
-        surfacePosotoionYInputBox.setText(formatter.format(rect.topLeftCorner.y));
+        surfacePositionXInputBox.setText(formatter.format(rect.topLeftCorner.x));
+        surfacePositionYInputBox.setText(formatter.format(rect.topLeftCorner.y));
 //        surfaceColorChoiceBox;
 //        sealColorChoiceBox;
     }
@@ -254,8 +269,8 @@ public class UiController implements Initializable {
         tileWidthInputbox.clear();
         surfaceHeightInputBox.clear();
         surfaceWidthInputBox.clear();
-        surfacePosotoionXInputBox.clear();
-        surfacePosotoionYInputBox.clear();
+        surfacePositionXInputBox.clear();
+        surfacePositionYInputBox.clear();
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {
@@ -322,22 +337,27 @@ public class UiController implements Initializable {
         selectionManager.unselectAll();
     }
 
-    private void createSurfaceHere(Point location, double widthPixels, double heightPixels) {
+    private void createSurfaceHere(Point location1, Point location2) {
 
-        double xPixels = location.x - (widthPixels / 2);
-        double yPixels = location.y - (heightPixels / 2);
+        double x1Pixels = location1.x;
+        double y1Pixels = location1.y;
+        double x2Pixels = location2.x;
+        double y2Pixels = location2.y;
 
-        Point desiredPoint = new Point(xPixels, yPixels);
-        Point actualPoint = this.snapGridUI.isVisible() ? this.snapGridUI.getNearestGridPoint(desiredPoint) : desiredPoint;
+        double widthPixels = Math.abs(x2Pixels - x1Pixels);
+        double heightPixels = Math.abs(y2Pixels - y1Pixels);
 
-        double x = zoomManager.pixelsToMeters(actualPoint.x);
-        double y = zoomManager.pixelsToMeters(actualPoint.y);
+        Point desiredPoint1 = new Point(x1Pixels, y1Pixels);
+        Point actualPoint1 = this.snapGridUI.isVisible() ? this.snapGridUI.getNearestGridPoint(desiredPoint1) : desiredPoint1;
+
+        double x = zoomManager.pixelsToMeters(actualPoint1.x);
+        double y = zoomManager.pixelsToMeters(actualPoint1.y);
         double width = zoomManager.pixelsToMeters(widthPixels);
         double height = zoomManager.pixelsToMeters(heightPixels);
 
         SurfaceDto surface = new SurfaceDto();
         surface.id = new Id();
-        surface.isHole = true;
+        surface.isHole = false;
         surface.isRectangular = true;
         surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
 

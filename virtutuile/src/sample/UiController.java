@@ -1,7 +1,6 @@
 package sample;
 
 import Domain.MaterialType;
-import Domain.Surface;
 import application.*;
 import gui.*;
 
@@ -502,18 +501,6 @@ public class UiController implements Initializable {
 
 
 
-    }
-    private void creatmaterialTest(){
-        MaterialUI dtoFuckShit = new MaterialUI();
-
-        dtoFuckShit.name = "Bois";
-        dtoFuckShit.numberOfBoxes = "5";
-        dtoFuckShit.tilePerBox = "6";
-        dtoFuckShit.color = "GREEN";
-        dtoFuckShit.pricePerBoxe = "6";
-        dtoFuckShit.totalPrice = "69";
-
-        materialTableView.getItems().add(dtoFuckShit);
     }
 
     public void undo() {

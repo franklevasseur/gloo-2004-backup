@@ -47,8 +47,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     private List<SurfaceUI> allSurfacesToFusion;
 
-    private SurfaceDto surfaceDto;
-
     private void renderShapeFromChilds() {
         this.shape = allSurfacesToFusion.get(0).getMainShape();
 
@@ -92,7 +90,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
                 .map(fs -> new RectangleSurfaceUI(fs, zoomManager, selectionManager, snapGrid, new Label()))
                 .collect(Collectors.toList());
 
-        this.surfaceDto = surfaceDto;
         this.zoomManager = zoomManager;
 
         this.fusionedSurfaceGroup = new Group();
@@ -131,6 +128,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
            if(this.currentlyBeingDragged){
                this.currentlyBeingDragged = false;
                this.snapToGrid();
+               this.controller.updateSurface(this.toDto());
            }
        });
 
@@ -144,7 +142,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
            double newY = mouseEvent.getY() - this.lastPointOfContact.y;
            Point newPoint = new Point(newX, newY);
 
-           this.setPosition(newPoint);
+           this.setPixelPosition(newPoint);
 
            mouseEvent.consume();
        });
@@ -175,7 +173,13 @@ public class FusionedSurfaceUI implements SurfaceUI {
     public SurfaceDto toDto() {
         SurfaceDto dto = new SurfaceDto();
 
-        // TODO: bad fucking abstraction
+        dto.summits = this.summits.stream().map(su -> zoomManager.pixelsToMeters(su)).collect(Collectors.toList());
+        dto.isFusionned = true;
+        dto.isRectangular = false;
+        dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
+        dto.isHole = false;
+//        dto.tiles = null;
+        dto.id = this.id;
 
         return dto;
     }
@@ -188,7 +192,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     private void displayAttachmentPoints(){
-        for(Point summit: summits){
+        for(Point summit: summits) {
             attachmentPoints.add(new AttachmentPointUI(summit, this));
         }
         fusionedSurfaceGroup.getChildren().addAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
@@ -249,6 +253,10 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     @Override
     public void setPosition(Point position) {
+        this.setPixelPosition(zoomManager.metersToPixels(position));
+    }
+
+    private void setPixelPosition(Point position) {
 
         Point translation = Point.diff(position, this.position);
 
@@ -256,7 +264,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 //        System.out.println(String.format("(%.1f, %.1f)", position.x, position.y));
 //        System.out.println(String.format("(%.1f, %.1f)", this.position.x, this.position.y));
 
-        allSurfacesToFusion.forEach(s -> s.translateBy(translation));
+        allSurfacesToFusion.forEach(s -> s.translatePixelBy(translation));
 
 //        String debug = "";
 //        for (SurfaceUI s : allSurfacesToFusion) {
@@ -269,7 +277,9 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.renderShapeFromChilds();
     }
 
-    public void translateBy(Point translation) {}
+    public void translatePixelBy(Point translation) {
+        this.setPixelPosition(new Point(this.position.x + translation.x, this.position.y + translation.y));
+    }
 
     @Override
     public void setHole(boolean isHole) { this.isHole = isHole; }

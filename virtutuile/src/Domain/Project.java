@@ -25,7 +25,17 @@ public class Project {
 
     public void fusionSurfaces(List<Surface> surfaces) {
         this.surfaces.removeIf(s -> surfaces.contains(s));
-        FusionnedSurface newFusionnedSurface = new FusionnedSurface(surfaces);
+
+        List<Surface> baseSurfaces = new ArrayList<>();
+        for (Surface s : surfaces) {
+            if (s.isFusionned()) {
+                baseSurfaces.addAll(((FusionnedSurface) s).getFusionnedSurfaces());
+            } else {
+                baseSurfaces.add(s);
+            }
+        }
+
+        FusionnedSurface newFusionnedSurface = new FusionnedSurface(baseSurfaces);
         this.surfaces.add(newFusionnedSurface);
     }
 }

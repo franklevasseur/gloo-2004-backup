@@ -1,6 +1,7 @@
 package application;
 
 import Domain.*;
+import utils.Color;
 import utils.Point;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class SurfaceAssembler {
                 }).collect(Collectors.toList());
 
                 // TODO: pass the actual material in the dto
-                return new Tile(points, new Material(new Color(), MaterialType.tileMaterial));
+                return new Tile(points, new Material(Color.BLACK, MaterialType.tileMaterial, "petit penis bandé"));
             }).collect(Collectors.toList());
 
             destinationSurface.setTiles(tiles);
@@ -66,6 +67,12 @@ public class SurfaceAssembler {
         destinationSurface.setHole(dto.isHole);
         destinationSurface.setSummits(summits);
         destinationSurface.setIsRectangular(dto.isRectangular);
+
+        if (dto.isFusionned) {
+            FusionnedSurface fusionnedSurface = (FusionnedSurface) destinationSurface;
+            List<Surface> innerSurfaces = dto.fusionnedSurface.stream().map(s -> fromDto(s)).collect(Collectors.toList());
+            fusionnedSurface.setFusionnedSurfaces(innerSurfaces);
+        }
     }
 
     public static Surface fromDto (SurfaceDto dto) {

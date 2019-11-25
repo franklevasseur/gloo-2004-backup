@@ -1,6 +1,7 @@
 package application;
 
 import Domain.*;
+import utils.Color;
 import utils.Point;
 
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class SurfaceAssembler {
                 }).collect(Collectors.toList());
 
                 // TODO: pass the actual material in the dto
-                return new Tile(points, new Material(new Color(), MaterialType.tileMaterial));
+                return new Tile(points, new Material(Color.BLACK, MaterialType.tileMaterial, "petit penis bandé"));
             }).collect(Collectors.toList());
 
             destinationSurface.setTiles(tiles);

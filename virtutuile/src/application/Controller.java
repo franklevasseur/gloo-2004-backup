@@ -1,5 +1,6 @@
 package application;
 
+import Domain.Material;
 import Domain.Project;
 import Domain.Surface;
 import utils.Point;
@@ -121,5 +122,14 @@ public class Controller {
         this.vraiProject.fusionSurfaces(surfaces);
     }
 
-    // ...
+    public void createMaterial(MaterialDto dto) {
+
+        Material material = MaterialAssembler.fromDto(dto); // Philippe, prend pour acquis que tous les assemblers sont èa changer tbnk
+
+        vraiProject.getMaterials().add(material);
+
+        // TODO: avertir undo/redo que ca vient de se passer (Philippe ne pas enlever ce todo, c'est pour Frank)
+
+
+    }
 }

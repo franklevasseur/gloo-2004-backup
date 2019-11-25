@@ -1,24 +1,30 @@
 package Domain;
 
+import utils.Color;
 import utils.Id;
 
 public class Material {
-    private Color color;
+    private utils.Color color;
     private MaterialType materialType;
-    private Id id;
-
-    public Material(Color pColor, MaterialType pType){
+    private String materialName;
+    public Material(Color pColor, MaterialType pType, String pName){
         this.color = pColor;
         this.materialType = pType;
-        id = new Id();
+        this.materialName = pName;
+
+
+    }
+
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
+    }
+
+    public String getMaterialName() {
+        return materialName;
     }
 
     public Color getColor() {
         return color;
-    }
-
-    public Id getId() {
-        return id;
     }
 
     public MaterialType getMaterialType() {

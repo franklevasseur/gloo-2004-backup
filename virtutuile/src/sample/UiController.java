@@ -1,23 +1,21 @@
 package sample;
 
+import Domain.MaterialType;
 import Domain.Surface;
 import application.*;
 import gui.*;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
-import utils.Id;
-import utils.Point;
-import utils.RectangleHelper;
-import utils.RectangleInfo;
+import utils.*;
 
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -31,6 +29,24 @@ public class UiController implements Initializable {
     public Pane pane;
     public Pane drawingSection;
 
+    //Material propreties
+    private ObservableList<String> possibleColor = FXCollections.observableArrayList("BLACK","WHITE","YELLOW","GREEN","BLUE","RED","VIOLET");
+    private ObservableList<String> tilePattern = FXCollections.observableArrayList("Default","Shift","Diagonal","Spinning","X");
+
+    public TextField materialNameInputBox;
+    public TextField tilePerBoxInputBox;
+    public TextField boxPriceInputBox;
+
+    public ChoiceBox<String> materialColorChoiceBox;
+
+    public TableView<MaterialUI> materialTableView;
+    public TableColumn<MaterialUI,String> materialNameColumn;
+    public TableColumn<MaterialUI,String> materialNumberOfBoxInputColumn;
+    public TableColumn<MaterialUI,String> materialTilePerBoxColumn;
+    public TableColumn<MaterialUI,String> materialColorColumn;
+    public TableColumn<MaterialUI,String> materialPricePerBoxColumn;
+    public TableColumn<MaterialUI,String> materialTotalPriceColumn;
+
     // surface properties inputs
     public TextField tileHeightInputbox;
     public TextField tileWidthInputbox;
@@ -42,8 +58,10 @@ public class UiController implements Initializable {
 
     public Label tileInfo;
 
-    public ChoiceBox surfaceColorChoiceBox;
-    public ChoiceBox sealColorChoiceBox;
+    public ChoiceBox<String> materialColorEdit;
+    public ChoiceBox<String> sealColorChoiceBox;
+    public ChoiceBox<String> sealPatternInputBox;
+    public ChoiceBox<String> tileMaterialChoiceBox;
 
     public CheckBox snapGridCheckBox;
 
@@ -67,10 +85,26 @@ public class UiController implements Initializable {
         // Make it look like its infinite in size
         drawingSection.setPrefHeight(1);
         drawingSection.setPrefWidth(1);
+        materialColorChoiceBox.setItems(possibleColor);
+        materialColorEdit.setItems(possibleColor);
+        sealColorChoiceBox.setItems(possibleColor);
+        sealPatternInputBox.setItems(tilePattern);
+
+
+      //  materialTableView = new TableView<>();
+
+
+        materialNameColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI, String>("name"));
+        materialNumberOfBoxInputColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("numberOfBoxes"));
+        materialTilePerBoxColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("tilePerBox"));
+        materialColorColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("color"));
+        materialPricePerBoxColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("pricePerBoxe"));
+        materialTotalPriceColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("totalPrice"));
 
         this.snapGridUI = new SnapGridUI(this.drawingSection);
         this.selectionManager = new SelectionManager(this::handleSelection);
     }
+
 
     public void handleZoom(ScrollEvent event) {
         if (stateEnableZooming) {
@@ -244,8 +278,8 @@ public class UiController implements Initializable {
 
         surfacePosotoionXInputBox.setText(formatter.format(rect.topLeftCorner.x));
         surfacePosotoionYInputBox.setText(formatter.format(rect.topLeftCorner.y));
-//        surfaceColorChoiceBox;
-//        sealColorChoiceBox;
+
+
     }
 
     private void hideRectangleInfo(){
@@ -256,6 +290,10 @@ public class UiController implements Initializable {
         surfaceWidthInputBox.clear();
         surfacePosotoionXInputBox.clear();
         surfacePosotoionYInputBox.clear();
+        materialColorEdit.hide();
+        sealWidthInputBox.clear();
+
+
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {
@@ -407,5 +445,74 @@ public class UiController implements Initializable {
         }
         hideRectangleInfo();
         renderFromProject();
+    }
+    //PHIL A FAIT CETTE MÉTHODE HAHA XD
+    //TODO void ou pas void ?
+    public void createNewMaterial(){
+
+        MaterialUI newMaterialUI = new MaterialUI();
+
+        newMaterialUI.name = materialNameInputBox.getText();
+        //TODO on a pas le nombre de botes
+        newMaterialUI.numberOfBoxes = materialNumberOfBoxInputColumn.getText();
+        newMaterialUI.tilePerBox = tilePerBoxInputBox.getText();
+        newMaterialUI.color = materialColorChoiceBox.getValue();
+        newMaterialUI.pricePerBoxe = boxPriceInputBox.getText();
+        //TODO à coder mais on a pas le nombre de tuiles
+        newMaterialUI.totalPrice = materialTotalPriceColumn.getText();
+
+        materialTableView.getItems().add(newMaterialUI);
+        tileMaterialChoiceBox.getItems().add(materialNameInputBox.getText());
+
+        MaterialDto dto = new MaterialDto();
+        dto.materialType = MaterialType.tileMaterial;
+        dto.name = materialNameInputBox.getText();
+        if(materialColorChoiceBox.getValue() == "BLACK"){
+            dto.color = Color.BLACK;
+
+        }else if(materialColorChoiceBox.getValue() == "WHITE"){
+            dto.color = Color.WHITE;
+
+        }else if(materialColorChoiceBox.getValue() == "YELLOW"){
+            dto.color = Color.YELLOW;
+
+        }else if(materialColorChoiceBox.getValue() == "GREEN"){
+            dto.color = Color.GREEN;
+
+        }else if(materialColorChoiceBox.getValue() == "BLUE"){
+            dto.color = Color.BLUE;
+
+        }else if(materialColorChoiceBox.getValue() == "RED"){
+            dto.color = Color.RED;
+
+        }else if(materialColorChoiceBox.getValue() == "VIOLET"){
+            dto.color = Color.VIOLET;
+
+        }else{
+            throw new RuntimeException("Les couleurs petent mon gars");
+        }
+//        try{
+//
+//        }catch (ParseException e ) {
+//            System.out.println("STFU ça pete");
+//            afficherRectangleInfo();
+//
+//        }
+        domainController.createMaterial(dto);
+
+
+
+    }
+    private void creatmaterialTest(){
+        MaterialUI dtoFuckShit = new MaterialUI();
+
+        dtoFuckShit.name = "Bois";
+        dtoFuckShit.numberOfBoxes = "5";
+        dtoFuckShit.tilePerBox = "6";
+        dtoFuckShit.color = "GREEN";
+        dtoFuckShit.pricePerBoxe = "6";
+        dtoFuckShit.totalPrice = "69";
+
+        materialTableView.getItems().add(dtoFuckShit);
     }
 }

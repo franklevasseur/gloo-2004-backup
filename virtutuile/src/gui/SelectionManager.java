@@ -22,23 +22,15 @@ public class SelectionManager {
         selectedSurfaces.clear();
     }
 
-    public void selectSurface(RectangleSurfaceUI surface) {
+    public void selectSurface(SurfaceUI surface) {
         if (!multipleSelectionAllowed) {
             unselectAll();
+            surface.select(true);
+        } else {
+            surface.select(false);
         }
-        surface.select();
         selectedSurfaces.add(surface);
-        handler.apply(true); // TODO: toutes les surfaces ne sont pas des rectangles, à corriger...
-    }
-
-    // TODO: cette fonction est copié collé sur celle au dessus, trouver une façon dextraire du code commun
-    public void selectFusionnedSurface(FusionedSurfaceUI surface){
-        if(!multipleSelectionAllowed){
-            unselectAll();
-        }
-        surface.select();
-        selectedSurfaces.add(surface);
-        handler.apply(false);
+        handler.apply(surface.toDto().isRectangular); // TODO: toutes les surfaces ne sont pas des rectangles, à corriger...
     }
 
     public void unselectSurface(SurfaceUI surface) {

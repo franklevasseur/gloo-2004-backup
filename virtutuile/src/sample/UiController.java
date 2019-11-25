@@ -1,11 +1,13 @@
 package sample;
 
+import Domain.HoleStatus;
 import Domain.MaterialType;
 import application.*;
 import gui.*;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
@@ -56,6 +58,9 @@ public class UiController implements Initializable {
     public TextField surfaceWidthInputBox;
     public TextField surfacePositionXInputBox;
     public TextField surfacePositionYInputBox;
+
+    public Button fillTilesButton;
+    public boolean stateCurrentlyFilling = true;
 
     public Label tileInfo;
 
@@ -114,6 +119,13 @@ public class UiController implements Initializable {
 
         this.undoButton.setDisable(!this.domainController.undoAvailable());
         this.redoButton.setDisable(!this.domainController.redoAvailable());
+
+        this.pane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (this.stateCurrentlyCreatingSurface) {
+                onPaneClicked(e);
+                e.consume();
+            }
+        });
     }
 
 
@@ -191,31 +203,43 @@ public class UiController implements Initializable {
         if (stateCurrentlyCreatingSurface && !stateTopLeftCornerCreated) {
 
             firstClickCoord = new Point(clickCoord.x, clickCoord.y);
-
             stateTopLeftCornerCreated = true;
         }
         else if (stateCurrentlyCreatingSurface && stateTopLeftCornerCreated)
         {
-
             Point secondClickCoord = clickCoord;
             stateCurrentlyCreatingSurface = false;
             stateTopLeftCornerCreated = false;
-            createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
 
+            if (!secondClickCoord.isSame(firstClickCoord)) {
+                createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
+            }
 
             drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
             pane.setCursor(Cursor.DEFAULT);
             this.renderFromProject();
             selectionManager.unselectAll();
-            hideRectangleInfo();
-            firstClickCoord = null;
+            stateCurrentlyFilling = true;
+            fillTilesButton.setText("Fill tiles");
+            hideRectangleInfo();firstClickCoord = null;
         }
+
+        selectionManager.unselectAll();
     }
 
     public Void handleSelection(boolean isRectangle) {
         if (isRectangle) {
             afficherRectangleInfo();
         }
+
+        if (selectionManager.getSelectedSurfaces().get(0).toDto().isHole == HoleStatus.FILLED) {
+            stateCurrentlyFilling = false;
+            fillTilesButton.setText("Unfill tiles");
+        } else {
+            stateCurrentlyFilling = true;
+            fillTilesButton.setText("Fill tiles");
+        }
+
         return null;
     }
 
@@ -293,7 +317,7 @@ public class UiController implements Initializable {
 
     }
 
-    private void afficherRectangleInfo(){
+    private void afficherRectangleInfo() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
         SurfaceUI firstOne = selectedSurfaces.get(0);
 
@@ -302,13 +326,13 @@ public class UiController implements Initializable {
         surfaceHeightInputBox.setText(formatter.format(rect.height));
         surfaceWidthInputBox.setText(formatter.format(rect.width));
 
-        if (firstOne.getMasterTile() != null){
+        if (firstOne.getMasterTile() != null) {
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
             tileHeightInputbox.setText(formatter.format(tileRect.height));
             tileWidthInputbox.setText(formatter.format(tileRect.width));
         }
 
-        if(firstOne.getSealsInfo() != null){
+        if(firstOne.getSealsInfo() != null) {
             sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
         }
 
@@ -376,11 +400,42 @@ public class UiController implements Initializable {
         return viewBorders;
     }
 
+    public void toggleFill() {
+        if (stateCurrentlyFilling) {
+            fillSelectedSurfaceWithTiles();
+        } else {
+            unfillTiles();
+        }
+    }
+
     public void fillSelectedSurfaceWithTiles() {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
             surface.forceFill();
+        }
+
+        renderFromProject();
+    }
+
+    public void unfillTiles() {
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+
+        for (SurfaceUI surface: selectedSurfaces) {
+            surface.setHole(HoleStatus.NONE);
+            domainController.updateSurface(surface.toDto());
+            surface.hideTiles();
+        }
+        hideRectangleInfo();
+        renderFromProject();
+    }
+
+    public void setHole() {
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+
+        for (SurfaceUI surface: selectedSurfaces) {
+            surface.setHole(HoleStatus.HOLE);
+            domainController.updateSurface(surface.toDto());
         }
 
         renderFromProject();
@@ -457,7 +512,7 @@ public class UiController implements Initializable {
 
         SurfaceDto surface = new SurfaceDto();
         surface.id = new Id();
-        surface.isHole = false;
+        surface.isHole = HoleStatus.NONE;
         surface.isRectangular = true;
         surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
 
@@ -504,7 +559,7 @@ public class UiController implements Initializable {
     }
 
     public void surfaceFusion() {
-        if (this.selectionManager.getSelectedSurfaces().size() <= 0) {
+        if (this.selectionManager.getSelectedSurfaces().size() <= 1) {
             return;
         }
 
@@ -513,20 +568,7 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
-    public void surfaceHole() {
-        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-
-        for (SurfaceUI surface: selectedSurfaces) {
-            surface.setHole(true);
-            domainController.updateSurface(surface.toDto());
-            surface.hideTiles();
-        }
-        hideRectangleInfo();
-        renderFromProject();
-    }
-    //PHIL A FAIT CETTE MÉTHODE HAHA XD
-    //TODO void ou pas void ?
-    public void createNewMaterial(){
+    public void createNewMaterial() {
 
         MaterialUI newMaterialUI = new MaterialUI();
 
@@ -569,13 +611,6 @@ public class UiController implements Initializable {
         }else{
             throw new RuntimeException("Les couleurs petent mon gars");
         }
-//        try{
-//
-//        }catch (ParseException e ) {
-//            System.out.println("STFU ça pete");
-//            afficherRectangleInfo();
-//
-//        }
         domainController.createMaterial(dto);
     }
 

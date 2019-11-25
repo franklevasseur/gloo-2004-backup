@@ -1,5 +1,6 @@
 package gui;
 
+import Domain.HoleStatus;
 import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
@@ -8,24 +9,20 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import utils.FusionHelper;
-import utils.Id;
-import utils.Point;
+import utils.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FusionedSurfaceUI implements SurfaceUI {
 
     private Id id;
-    private List<Rectangle> tiles;
-    private boolean isHole;
+    private List<TileUI> tiles;
+    private HoleStatus isHole;
     private List<Point> summits;
 
     private Group fusionedSurfaceGroup;
@@ -48,29 +45,35 @@ public class FusionedSurfaceUI implements SurfaceUI {
     private List<SurfaceUI> allSurfacesToFusion;
 
     private void renderShapeFromChilds() {
-        this.shape = allSurfacesToFusion.get(0).getMainShape();
+        allSurfacesToFusion = sortFuckingStupidFuckingListDeTabarnakQueJavaCestUnEstiDeLangageDeCulVaChier(allSurfacesToFusion);
+        SurfaceUI firstSurface = allSurfacesToFusion.get(0);
+        this.shape = firstSurface.getMainShape();
 
-        allSurfacesToFusion.forEach(s -> {
+        for (SurfaceUI s : allSurfacesToFusion) {
             s.hide();
 
-            if (s.getMainShape() == this.shape) {
-                return;
+            if (s == firstSurface) {
+                continue;
+            }
+            if (s.toDto().isHole == HoleStatus.HOLE) {
+                this.shape = Shape.subtract(this.shape, s.getMainShape());
+                continue;
             }
             this.shape = Shape.union(this.shape, s.getMainShape());
-        });
+        }
 
         this.setShapeAppearance();
         this.fusionedSurfaceGroup.getChildren().add(this.shape);
 
-        List<List<Point>> allSurfacesSummits = allSurfacesToFusion
+        List<AbstractShape> allSurfacesSummits = allSurfacesToFusion
                 .stream()
-                .map(s -> s.toDto().summits
+                .map(s -> new AbstractShape(s.toDto().summits
                         .stream()
                         .map(su -> zoomManager.metersToPixels(su))
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toList()), s.toDto().isHole == HoleStatus.HOLE))
                 .collect(Collectors.toList());
 
-        this.summits = FusionHelper.getResultSummits(allSurfacesSummits);
+        this.summits = FusionHelper.getFusionResultSummits(allSurfacesSummits).summits;
         double minX = Collections.min(this.summits.stream().map(s -> s.x).collect(Collectors.toList()));
         this.position = Collections.min(this.summits.stream().filter(s -> s.x == minX).collect(Collectors.toList()), Comparator.comparing(s -> s.y));
 
@@ -104,7 +107,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
         this.zoomManager = zoomManager;
         this.selectionManager = selectionManager;
-        this.isHole = false;
+        this.isHole = surfaceDto.isHole;
 
         initializeGroup();
     }
@@ -116,7 +119,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     private void initializeGroup(){
        fusionedSurfaceGroup.setOnMouseClicked(t -> {
-           selectionManager.selectFusionnedSurface(this);
+           selectionManager.selectSurface(this);
            t.consume();
        });
 
@@ -177,7 +180,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
         dto.isFusionned = true;
         dto.isRectangular = false;
         dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
-        dto.isHole = false;
+        dto.isHole = HoleStatus.NONE;
 //        dto.tiles = null;
         dto.id = this.id;
 
@@ -185,9 +188,12 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     @Override
-    public void select() {
-        if(attachmentPoints.isEmpty()){
+    public void select(boolean setToFront) {
+        if(attachmentPoints.isEmpty()) {
             displayAttachmentPoints();
+            if (setToFront) {
+                this.fusionedSurfaceGroup.toFront();
+            }
         }
     }
 
@@ -240,13 +246,23 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     @Override
-    public void hideTiles() {}
+    public void hideTiles() {
+        if (this.tiles != null) {
+            this.fusionedSurfaceGroup.getChildren().removeIf(c -> this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()).contains(c));
+            this.tiles.clear();
+        }
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+        this.hideTiles();
+        this.unselect();
+    }
 
     @Override
-    public void fill() {}
+    public void fill() {
+        this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
+    }
 
     @Override
     public void setSize(double width, double height) {}
@@ -282,9 +298,43 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     @Override
-    public void setHole(boolean isHole) { this.isHole = isHole; }
+    public void setHole(HoleStatus isHole) { this.isHole = isHole; }
 
-    private void renderTiles(List<TileDto> tiles) {}
+    private void renderTiles(List<TileDto> tiles) {
+        if (this.isHole != HoleStatus.FILLED || tiles == null || tiles.size() == 0) {
+            return;
+        }
 
-    public void forceFill() {}
+        List<RectangleInfo> tilesRect = tiles.stream().map(t -> {
+            List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
+            return RectangleHelper.summitsToRectangleInfo(pixelPoints);
+        }).collect(Collectors.toList());
+
+        hideTiles();
+
+        this.tiles = tilesRect.stream().map(t -> new TileUI(t, new Label(), this.zoomManager)).collect(Collectors.toList());
+        this.fusionedSurfaceGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
+    }
+
+    public void forceFill() {
+        this.isHole = HoleStatus.FILLED;
+        fill();
+    }
+
+    private static List<SurfaceUI> sortFuckingStupidFuckingListDeTabarnakQueJavaCestUnEstiDeLangageDeCulVaChier(List<SurfaceUI> surfaces) {
+
+        List<SurfaceUI> laTabarnakDeCalisseDeListeQuonVaRetournerAFinDeLestiDeFonction = new ArrayList<>();
+        List<SurfaceUI> lautreFuckingListeDeTrouEstiDeLaid = new ArrayList<>();
+
+        for (SurfaceUI s : surfaces) {
+            if (s.toDto().isHole != HoleStatus.HOLE) {
+                laTabarnakDeCalisseDeListeQuonVaRetournerAFinDeLestiDeFonction.add(s);
+            } else {
+                lautreFuckingListeDeTrouEstiDeLaid.add(s);
+            }
+        }
+
+        laTabarnakDeCalisseDeListeQuonVaRetournerAFinDeLestiDeFonction.addAll(lautreFuckingListeDeTrouEstiDeLaid);
+        return laTabarnakDeCalisseDeListeQuonVaRetournerAFinDeLestiDeFonction;
+    }
 }

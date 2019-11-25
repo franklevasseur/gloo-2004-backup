@@ -23,4 +23,8 @@ public class Point {
         this.y = y;
         this.cardinality = cardinality;
     }
+
+    public boolean isSame(Point other) {
+        return (this.x == other.x) && (this.y == other.y);
+    }
 }

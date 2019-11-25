@@ -1,16 +1,16 @@
 package application;
 
+import Domain.HoleStatus;
 import utils.Color;
 import utils.Id;
 import utils.Point;
-import utils.Id;
 
 import java.util.List;
 
 public class SurfaceDto {
     public Id id;
     public boolean isRectangular;
-    public boolean isHole;
+    public HoleStatus isHole;
     public Color surfaceColor;
     public boolean isFusionned;
 

@@ -1,5 +1,6 @@
 package gui;
 
+import Domain.HoleStatus;
 import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
@@ -22,7 +23,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
     private Id id;
     private List<TileUI> tiles;
-    private boolean isHole;
+    private HoleStatus isHole;
 
     private Group rectangleGroup;
     private Rectangle rectangle;
@@ -61,8 +62,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         double height = zoomManager.metersToPixels(rectangleInfo.height);
 
         rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
-        rectangle.setFill(Color.WHITE);
-        rectangle.setStroke(Color.BLACK);
+
         this.rectangleGroup = new Group(rectangle);
         rectangleGroup.setCursor(Cursor.HAND);
 
@@ -70,6 +70,13 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.selectionManager = selectionManager;
 
         this.isHole = surfaceDto.isHole;
+        if (this.isHole == HoleStatus.HOLE) {
+            rectangle.setFill(Color.TRANSPARENT);
+            rectangle.setStroke(Color.BLACK);
+        } else {
+            rectangle.setFill(Color.WHITE);
+            rectangle.setStroke(Color.BLACK);
+        }
 
         this.renderTiles(surfaceDto.tiles);
 
@@ -92,7 +99,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 this.currentlyBeingDragged = false;
                 this.snapToGrid();
 
-                if (this.isHole) {
+                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
                     controller.updateSurface(this.toDto());
                     return;
                 }
@@ -131,12 +138,12 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void forceFill() {
-        this.isHole = false;
+        this.isHole = HoleStatus.FILLED;
         fill();
     }
 
     private void renderTiles(List<TileDto> tiles) {
-        if (this.isHole || tiles == null || tiles.size() == 0) {
+        if (this.isHole != HoleStatus.FILLED || tiles == null || tiles.size() == 0) {
             return;
         }
 
@@ -163,8 +170,15 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void select() {
+        this.select(false);
+    }
+
+    public void select(boolean setToFront) {
         if (attachmentPoints.isEmpty()) {
             displayAttachmentPoints();
+            if (setToFront) {
+                this.rectangleGroup.toFront();
+            }
         }
     }
 
@@ -187,7 +201,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void commitIncreaseSize() {
-        if (!this.isHole) {
+        if (this.isHole == HoleStatus.FILLED) {
             this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
             return;
         }
@@ -202,7 +216,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         dto.id = this.id;
         dto.isHole = this.isHole;
 
-        if (!this.isHole && this.tiles != null && this.tiles.size() != 0) {
+        if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());
         }
 
@@ -275,7 +289,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         rectangle.setY(topLeftCorner.y);
     }
 
-    public void setHole(boolean isHole) {
+    public void setHole(HoleStatus isHole) {
         this.isHole = isHole;
     }
 

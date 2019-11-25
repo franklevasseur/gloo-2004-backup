@@ -42,8 +42,8 @@
               <children>
                 <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCreateSurfaceSelected" prefHeight="25.0" prefWidth="101.0" text="Create rectangle surface" />
                 <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create material" />
-                <Button layoutX="159.0" layoutY="14.0" mnemonicParsing="false" onAction="#fillSelectedSurfaceWithTiles" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
-                <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" onAction="#surfaceHole" prefHeight="25.0" prefWidth="96.0" text="Hole" />
+                <Button fx:id="fillTilesButton" layoutX="159.0" layoutY="14.0" mnemonicParsing="false" onAction="#toggleFill" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
+                <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" onAction="#setHole" prefHeight="25.0" prefWidth="96.0" text="Set hole" />
                 <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
                 <CheckBox fx:id="snapGridCheckBox" layoutX="885.0" layoutY="28.0" mnemonicParsing="false" onAction="#snapGridToggle" text="Snap grid" />
                 <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />

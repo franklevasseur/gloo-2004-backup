@@ -577,9 +577,6 @@ public class UiController implements Initializable {
 //
 //        }
         domainController.createMaterial(dto);
-
-
-
     }
 
     public void undo() {
@@ -590,5 +587,38 @@ public class UiController implements Initializable {
     public void redo() {
         this.domainController.redo();
         renderFromProject();
+    }
+
+    public void alignSurfacesVertically(){
+        if(this.selectionManager.getSelectedSurfaces().size() <= 1){
+            return;
+        }
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+        SurfaceUI first = selectedSurfaces.get(0);
+
+        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(first.toDto().summits);
+        double firstX = firstRect.topLeftCorner.x;
+
+        for (SurfaceUI s : selectedSurfaces) {
+            if (s == first) {
+                continue;
+            }
+
+            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
+            double rectY = rect.topLeftCorner.y;
+            s.setPosition(new Point(firstX, rectY));
+            domainController.updateSurface(s.toDto());
+        }
+
+        this.renderFromProject();
+    }
+
+    public void alignSurfacesHorizontally(){
+//        if(this.selectionManager.getSelectedSurfaces().size() <= 1){
+//            return;
+//        }
+//        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+//        this.domainController.alignSurfacesHorizontally(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()));
+//        this.renderFromProject();
     }
 }

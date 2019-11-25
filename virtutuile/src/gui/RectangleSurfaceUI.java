@@ -170,8 +170,15 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void select() {
+        this.select(false);
+    }
+
+    public void select(boolean setToFront) {
         if (attachmentPoints.isEmpty()) {
             displayAttachmentPoints();
+            if (setToFront) {
+                this.rectangleGroup.toFront();
+            }
         }
     }
 

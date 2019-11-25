@@ -247,13 +247,13 @@ public class UiController implements Initializable {
         surfaceHeightInputBox.setText(formatter.format(rect.height));
         surfaceWidthInputBox.setText(formatter.format(rect.width));
 
-        if (firstOne.getMasterTile() != null){
+        if (firstOne.getMasterTile() != null) {
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
             tileHeightInputbox.setText(formatter.format(tileRect.height));
             tileWidthInputbox.setText(formatter.format(tileRect.width));
         }
 
-        if(firstOne.getSealsInfo() != null){
+        if(firstOne.getSealsInfo() != null) {
             sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
         }
 

@@ -14,7 +14,7 @@ public interface SurfaceUI {
     Node getNode();
     Shape getMainShape(); // gives the rectangle without the tiles and anchor points
     SurfaceDto toDto();
-    void select();
+    void select(boolean setToFront);
     void unselect();
     Id getId();
     void delete();

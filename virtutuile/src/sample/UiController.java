@@ -37,6 +37,9 @@ public class UiController implements Initializable {
     public TextField surfacePosotoionXInputBox;
     public TextField surfacePosotoionYInputBox;
 
+    public Button fillTilesButton;
+    public boolean stateCurrentlyFilling = true;
+
     public Label tileInfo;
 
     public ChoiceBox surfaceColorChoiceBox;
@@ -140,6 +143,8 @@ public class UiController implements Initializable {
             this.renderFromProject();
         }
         selectionManager.unselectAll();
+        stateCurrentlyFilling = true;
+        fillTilesButton.setText("Fill tiles");
         hideRectangleInfo();
     }
 
@@ -147,6 +152,15 @@ public class UiController implements Initializable {
         if (isRectangle) {
             afficherRectangleInfo();
         }
+
+        if (selectionManager.getSelectedSurfaces().get(0).toDto().isHole == HoleStatus.FILLED) {
+            stateCurrentlyFilling = false;
+            fillTilesButton.setText("Unfill tiles");
+        } else {
+            stateCurrentlyFilling = true;
+            fillTilesButton.setText("Fill tiles");
+        }
+
         return null;
     }
 
@@ -305,11 +319,42 @@ public class UiController implements Initializable {
         return viewBorders;
     }
 
+    public void toggleFill() {
+        if (stateCurrentlyFilling) {
+            fillSelectedSurfaceWithTiles();
+        } else {
+            unfillTiles();
+        }
+    }
+
     public void fillSelectedSurfaceWithTiles() {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
             surface.forceFill();
+        }
+
+        renderFromProject();
+    }
+
+    public void unfillTiles() {
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+
+        for (SurfaceUI surface: selectedSurfaces) {
+            surface.setHole(HoleStatus.NONE);
+            domainController.updateSurface(surface.toDto());
+            surface.hideTiles();
+        }
+        hideRectangleInfo();
+        renderFromProject();
+    }
+
+    public void setHole() {
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+
+        for (SurfaceUI surface: selectedSurfaces) {
+            surface.setHole(HoleStatus.HOLE);
+            domainController.updateSurface(surface.toDto());
         }
 
         renderFromProject();
@@ -385,25 +430,13 @@ public class UiController implements Initializable {
     }
 
     public void surfaceFusion() {
-        if (this.selectionManager.getSelectedSurfaces().size() <= 0) {
+        if (this.selectionManager.getSelectedSurfaces().size() <= 1) {
             return;
         }
 
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
         this.domainController.fusionSurfaces(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()));
         this.renderFromProject();
-    }
-
-    public void surfaceHole() {
-        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-
-        for (SurfaceUI surface: selectedSurfaces) {
-            surface.setHole(HoleStatus.NONE);
-            domainController.updateSurface(surface.toDto());
-            surface.hideTiles();
-        }
-        hideRectangleInfo();
-        renderFromProject();
     }
 
     public void undo() {

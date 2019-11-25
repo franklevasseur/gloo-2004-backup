@@ -62,8 +62,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         double height = zoomManager.metersToPixels(rectangleInfo.height);
 
         rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
-        rectangle.setFill(Color.WHITE);
-        rectangle.setStroke(Color.BLACK);
+
         this.rectangleGroup = new Group(rectangle);
         rectangleGroup.setCursor(Cursor.HAND);
 
@@ -71,6 +70,13 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.selectionManager = selectionManager;
 
         this.isHole = surfaceDto.isHole;
+        if (this.isHole == HoleStatus.HOLE) {
+            rectangle.setFill(Color.TRANSPARENT);
+            rectangle.setStroke(Color.BLACK);
+        } else {
+            rectangle.setFill(Color.WHITE);
+            rectangle.setStroke(Color.BLACK);
+        }
 
         this.renderTiles(surfaceDto.tiles);
 

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -9,17 +7,19 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+
 <!--<?import javafx.scene.control.TreeTableColumn?>-->
 <!--<?import javafx.scene.control.TreeTableView?>-->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="820.0" prefWidth="1041.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="sample.UiController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="920.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.UiController">
   <children>
     <TabPane prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
       <tabs>
@@ -40,7 +40,7 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCreateSurfaceSelected" prefHeight="25.0" prefWidth="101.0" text="Create Surface" />
+                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCreateSurfaceSelected" prefHeight="25.0" prefWidth="101.0" text="Create rectangle surface" />
                 <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create material" />
                 <Button fx:id="fillTilesButton" layoutX="159.0" layoutY="14.0" mnemonicParsing="false" onAction="#toggleFill" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
                 <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" onAction="#setHole" prefHeight="25.0" prefWidth="96.0" text="Set hole" />
@@ -58,11 +58,14 @@
         </Tab>
       </tabs>
     </TabPane>
-    <SplitPane dividerPositions="0.7632338787295476" prefHeight="720.0" prefWidth="1041.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+    <SplitPane dividerPositions="0.7122232916265641" prefHeight="720.0" prefWidth="1041.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="719.0" prefWidth="790.0">
           <children>
-            <Pane fx:id="pane" layoutX="0.0" layoutY="0.0" onMouseClicked="#onPaneClicked" onScroll="#handleZoom" prefHeight="690.0" prefWidth="750.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;">
+            <Pane fx:id="pane" layoutX="0.0" layoutY="0.0"
+                  onMouseClicked="#onPaneClicked"
+                  onMouseMoved="#onMouseMoved"
+                  onScroll="#handleZoom" prefHeight="718.0" prefWidth="737.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
                 <Label fx:id="tileInfo" layoutX="15" layoutY="668.0" prefWidth="500" />
                 <Pane fx:id="drawingSection" />
@@ -88,18 +91,18 @@
                         <Label text="Seal color" GridPane.rowIndex="12" />
                         <TextField fx:id="tileHeightInputbox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="tileWidthInputbox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <ChoiceBox fx:id="tileMaterialChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <ChoiceBox fx:id="sealPatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <TextField fx:id="sealWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="11" />
                         <ChoiceBox fx:id="sealColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                         <Label text="Surface propreties" GridPane.rowIndex="3" />
                         <Label text="Seal propreties" GridPane.rowIndex="10" />
-                        <Label text="Surface color" GridPane.rowIndex="9" />
-                        <ChoiceBox fx:id="surfaceColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label text="Material Color" GridPane.rowIndex="9" />
+                        <ChoiceBox fx:id="materialColorEdit" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                           <children>
-                            <TextField fx:id="surfacePosotoionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
-                            <TextField fx:id="surfacePosotoionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="surfacePositionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="surfacePositionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
                             <Label layoutX="46.0" layoutY="6.0" text="x" />
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>
@@ -139,21 +142,56 @@
                     <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                       <items>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                          <!--                                       <children>-->
-                          <!--                                          <TreeTableView prefHeight="614.0" prefWidth="280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">-->
-                          <!--                                             <columns>-->
-                          <!--&lt;!&ndash;                                                <TreeTableColumn prefWidth="75.0" text="Name" />&ndash;&gt;-->
-                          <!--&lt;!&ndash;                                                <TreeTableColumn prefWidth="75.0" text="Quantity" />&ndash;&gt;-->
-                          <!--&lt;!&ndash;                                                <TreeTableColumn prefWidth="114.0" text="Number of boxe" />&ndash;&gt;-->
-                          <!--                                             </columns>-->
-                          <!--                                          </TreeTableView>-->
-                          <!--                                       </children>-->
-                        </AnchorPane>
+                                       <children>
+                                          <TableView fx:id="materialTableView" layoutX="31.0" layoutY="27.0" prefHeight="304.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <columns>
+                                              <TableColumn fx:id="materialNameColumn" prefWidth="87.0" text="Material name" />
+                                              <TableColumn fx:id="materialNumberOfBoxInputColumn" minWidth="2.0" prefWidth="30.0" text="Box" />
+                                                <TableColumn fx:id="materialTilePerBoxColumn" prefWidth="56.0" text="Tile/box" />
+                                                <TableColumn fx:id="materialColorColumn" prefWidth="62.0" text="color" />
+                                                <TableColumn fx:id="materialPricePerBoxColumn" prefWidth="64.0" text="Price/box" />
+                                                <TableColumn fx:id="materialTotalPriceColumn" prefWidth="69.0" text="total price" />
+                                            </columns>
+                                          </TableView>
+                                       </children></AnchorPane>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="297.0" />
                       </items>
                     </SplitPane>
                   </content>
                 </Tab>
+                        <Tab text="Material">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <GridPane layoutX="43.0" layoutY="99.0" prefHeight="614.0" prefWidth="285.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="179.0" minWidth="10.0" prefWidth="147.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.0" minWidth="10.0" prefWidth="138.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
+                                        <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
+                                        <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
+                                          <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
+                                          <RowConstraints maxHeight="541.0" minHeight="10.0" prefHeight="514.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Material Name" />
+                                          <Label text="Number of tile per boxe" GridPane.rowIndex="1" />
+                                          <Label text="Material color" GridPane.rowIndex="2" />
+                                          <TextField fx:id="materialNameInputBox" GridPane.columnIndex="1" />
+                                          <TextField fx:id="tilePerBoxInputBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Button mnemonicParsing="false" onAction="#createNewMaterial" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="boxPriceInputBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Label text="Box price" GridPane.rowIndex="3" />
+                                          <ChoiceBox fx:id="materialColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </Tab>
               </tabs>
             </TabPane>
           </children>

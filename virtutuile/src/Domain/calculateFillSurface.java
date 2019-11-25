@@ -1,18 +1,9 @@
 package Domain;
 
-import application.SealsInfoDto;
-import application.SurfaceAssembler;
-import application.SurfaceDto;
-import application.TileDto;
-//import utils.Point;
-import utils.RectangleHelper;
-import utils.RectangleInfo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import utils.Id;
-import utils.CardinalPoint;
+
 
 
 
@@ -23,12 +14,13 @@ public class calculateFillSurface {
     private boolean isRectangular;
     private Tile masterTile;
 
-    public calculateFillSurface(){}
+    public calculateFillSurface() {
+    }
 
     /**
      * Type 1 pattern
      */
-    public List<Tile> fillSurfaceWithType1(List<Point> pSurface,Tile pStartTile, Tile pMasterTile, SealsInfo pSealsInfo,  boolean pIsRectangle){
+    public List<Tile> fillSurfaceWithType1(List<Point> pSurface, Tile pStartTile, Tile pMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
 
         //setup des tuiles de base avec le seal
         List<Tile> outTiles = new ArrayList<>();
@@ -49,10 +41,10 @@ public class calculateFillSurface {
             // TODO: find another logic
 
             throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");
-        }else {
+        } else {
 
-            for (int line = 0; line < amountOfLines ; line++) {
-                for (int column = 0; column < amountOfColumns ; column++) {
+            for (int line = 0; line < amountOfLines; line++) {
+                for (int column = 0; column < amountOfColumns; column++) {
                     Tile nextTile = new Tile();
 
                     Point topLeftCorner = Point.translate(pSurface.get(0), column * unitOfWidth, line * unitOfHeight);
@@ -80,7 +72,7 @@ public class calculateFillSurface {
     /**
      * Type 2 pattern
      */
-    public List<Tile> fillSurfaceWithType2(List<Point> pSurface,Tile pStartTile, Tile pMasterTile, SealsInfo pSealsInfo,  boolean pIsRectangle){
+    public List<Tile> fillSurfaceWithType2(List<Point> pSurface, Tile pStartTile, Tile pMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
         List<Tile> outTiles = new ArrayList<>();
         Tile startTileWtSeal = new Tile();
 
@@ -99,11 +91,11 @@ public class calculateFillSurface {
             // TODO: find another logic
 
             throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");
-        }else {
+        } else {
 
 
-            for (int line = 0; line < amountOfLines ; line++) {
-                for (int column = 0; column < amountOfColumns ; column++) {
+            for (int line = 0; line < amountOfLines; line++) {
+                for (int column = 0; column < amountOfColumns; column++) {
 
                     Tile nextTile = new Tile();
                     double bottomSurfaceBound;
@@ -133,17 +125,17 @@ public class calculateFillSurface {
                     Measure MlowerY = new Measure(lowerY - topLeftCorner.getY().getValue());
                     Point finalLeftCorner;
 
-                    if (isLowerBoundX){
-                        if (isLowerBoundY){
+                    if (isLowerBoundX) {
+                        if (isLowerBoundY) {
                             finalLeftCorner = new Point(MlowerX, MlowerY);
-                        }else {
+                        } else {
                             finalLeftCorner = new Point(MlowerX, topLeftCorner.getY());
                         }
 
-                    }else {
-                        if (isLowerBoundY){
+                    } else {
+                        if (isLowerBoundY) {
                             finalLeftCorner = new Point(topLeftCorner.getX(), MlowerY);
-                        }else {
+                        } else {
                             finalLeftCorner = new Point(topLeftCorner.getY(), topLeftCorner.getY());
                         }
                     }
@@ -168,13 +160,20 @@ public class calculateFillSurface {
     /**
      * Type 3 pattern
      */
-    public List<Tile> fillSurfaceWithType3(List<Point> pSurface, Tile pMasterTile, SealsInfo pSealsInfo,  boolean pIsRectangle){
+    public List<Tile> fillSurfaceWithType3(List<Point> pSurface, Tile pMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
         List<Tile> outTiles = new ArrayList<>();
+        List<Point> oldCorner = new ArrayList<>();
         boolean notFilled = true;
+
+        //prendre les vrais valeur de longueur et largeur de la tuile
         double unitOfWidth = pMasterTile.getWidth().getValue() + pSealsInfo.getWidth().getValue();
         double unitOfHeight = pMasterTile.getHeight().getValue() + pSealsInfo.getWidth().getValue();
 
+        //prendre la valeur du offset du coin gauche
+        double offsetX = pMasterTile.getSummits().get(0).getX().getValue() - pSurface.get(0).getX().getValue();
+        double offsetY = pMasterTile.getSummits().get(0).getY().getValue() - pSurface.get(0).getY().getValue();
 
+        //prendre les limites supérieur de la surface
         double rightSurfaceBound = pSurface.get(0).getX().getValue() + getWidth(pSurface).getValue();
         double bottomSurfaceBound = pSurface.get(0).getY().getValue() + getHeight(pSurface).getValue();
 
@@ -186,195 +185,135 @@ public class calculateFillSurface {
         double actualWidth;
         double actualHeight;
 
-        boolean checker;
+        boolean checker = true;
+
+        int testCount = 0;
 
         while (notFilled) {
             Tile nextTile = new Tile();
             Point nextTopCorner;
-            if(outTiles.size() == 0){
-
-                nextTopCorner = pSurface.get(0);
-
-                isTileOverflowX = nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound;
-                isTileOverflowY = nextTopCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-
-                actualWidth = isTileOverflowX ? rightSurfaceBound - nextTopCorner.getX().getValue() : pMasterTile.getWidth().getValue();
-                actualHeight = isTileOverflowY ? bottomSurfaceBound - nextTopCorner.getY().getValue() : pMasterTile.getHeight().getValue();
-
-                if(pMasterTile.getSummits().get(0).getX().getValue() < pSurface.get(0).getX().getValue()){
-                    isTileUnderflowX = pMasterTile.getSummits().get(0).getX().getValue() < pSurface.get(0).getX().getValue();
-                    actualWidth = isTileUnderflowX ? pMasterTile.getWidth().getValue() - Math.abs(pMasterTile.getSummits().get(0).getX().getValue() - pSurface.get(0).getX().getValue())
-                            : pMasterTile.getWidth().getValue();
-                    //nextTopCorner = Point.translate(nextTopCorner, pMasterTile.getWidth().getValue() + actualWidth, 0);
-                }
-                if(pMasterTile.getSummits().get(0).getY().getValue() < pSurface.get(0).getY().getValue()){
-                    isTileUnderflowY = pMasterTile.getSummits().get(0).getX().getValue() < pSurface.get(0).getX().getValue();
-                    actualHeight = isTileUnderflowY ? pMasterTile.getHeight().getValue() - Math.abs(pMasterTile.getSummits().get(0).getX().getValue() - pSurface.get(0).getY().getValue())
-                            : pMasterTile.getHeight().getValue();
-
-                    //nextTopCorner = Point.translate(nextTopCorner, 0,
-                            //pMasterTile.getHeight().getValue() + actualHeight);
-                }
-
-                nextTile.setSummits(rectangleInfoToSummits(nextTopCorner, actualWidth, actualHeight));
-                nextTile.setMaterial(pMasterTile.getMaterial());
+            if (outTiles.size() == 0) {
+                nextTopCorner = pMasterTile.getSummits().get(0);
+                nextTile = trimTile(pSurface, pMasterTile, nextTopCorner);
                 outTiles.add(nextTile);
-            }else{
+                oldCorner.add(nextTopCorner);
+            }else {
+                for (Point element : oldCorner){
+                    nextTopCorner = Point.translate(element, unitOfWidth, 0);
+                    checker = checkExisting(oldCorner, nextTopCorner);
 
-                for (Tile element : outTiles){
-                    /******************************************************************************************/
-                    nextTopCorner = Point.translate(element.getSummits().get(0), unitOfWidth, 0);
-                    checker = checkExisting(outTiles, nextTopCorner);
-
-                    isTileOverflowX = nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound;
-                    isTileOverflowY = nextTopCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-                    actualWidth = isTileOverflowX ? rightSurfaceBound - nextTopCorner.getX().getValue() : pMasterTile.getWidth().getValue();
-                    actualHeight = isTileOverflowY ? bottomSurfaceBound - nextTopCorner.getY().getValue() : pMasterTile.getHeight().getValue();
-                    if(nextTopCorner.getX().getValue() >= rightSurfaceBound){
-                        checker = false;
-                    }
-                    /******************************************************************************************/
-
-
-                    /******************************************************************************************/
-                    if (!checker){
-                        nextTopCorner = Point.translate(element.getSummits().get(0), 0, unitOfHeight);
-                        checker = checkExisting(outTiles, nextTopCorner);
-
-                        isTileOverflowX = nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound;
-                        isTileOverflowY = nextTopCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-                        actualWidth = isTileOverflowX ? rightSurfaceBound - nextTopCorner.getX().getValue() : pMasterTile.getWidth().getValue();
-                        actualHeight = isTileOverflowY ? bottomSurfaceBound - nextTopCorner.getY().getValue() : pMasterTile.getHeight().getValue();
-                        if(nextTopCorner.getY().getValue() >= bottomSurfaceBound){
-                            checker = false;
-                        }
-                    }
-                    /******************************************************************************************/
-                    if (!checker){
-                        nextTopCorner = Point.translate(element.getSummits().get(0), unitOfWidth, unitOfHeight);
-                        checker = checkExisting(outTiles, nextTopCorner);
-
-                        isTileOverflowX = nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound;
-                        isTileOverflowY = nextTopCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-                        actualWidth = isTileOverflowX ? rightSurfaceBound - nextTopCorner.getX().getValue() : pMasterTile.getWidth().getValue();
-                        actualHeight = isTileOverflowY ? bottomSurfaceBound - nextTopCorner.getY().getValue() : pMasterTile.getHeight().getValue();
-                        if(nextTopCorner.getX().getValue() >= rightSurfaceBound || nextTopCorner.getY().getValue() >= bottomSurfaceBound){
-                            checker = false;
-                        }
-                    }
-                    /******************************************************************************************/
-
-                    /******************************************************************************************/
-                    if (!checker){
-                        nextTopCorner = Point.translate(element.getSummits().get(0), -unitOfWidth, 0);
-                        checker = true;
-                        checker = checkExisting(outTiles, nextTopCorner);
-
-                        if (nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() <= pSurface.get(0).getX().getValue()){
-                            checker = false;
-                        }else {
-                            isTileUnderflowX = nextTopCorner.getX().getValue() < pSurface.get(0).getX().getValue();
-                            isTileOverflowY = nextTopCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-                            actualWidth = isTileUnderflowX ? pMasterTile.getWidth().getValue() - (nextTopCorner.getX().getValue() - pSurface.get(0).getX().getValue()) : pMasterTile.getWidth().getValue();
-                            actualHeight = isTileOverflowY ? bottomSurfaceBound - nextTopCorner.getY().getValue() : pMasterTile.getHeight().getValue();
-
-                            nextTopCorner = Point.translate(nextTopCorner, pMasterTile.getWidth().getValue() + actualWidth, unitOfHeight);
-                        }
-                    }
-                    /******************************************************************************************/
-
-                    if (!checker){
-                        nextTopCorner = Point.translate(element.getSummits().get(0), -unitOfWidth, unitOfHeight);
-                        checker = true;
-                        checker = checkExisting(outTiles, nextTopCorner);
-
-                        if (nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() <= pSurface.get(0).getX().getValue()
-                                || nextTopCorner.getY().getValue() > bottomSurfaceBound){
-                            checker = false;
-                        }else {
-                            isTileUnderflowX = nextTopCorner.getX().getValue() < pSurface.get(0).getX().getValue();
-                            isTileOverflowY = nextTopCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-                            actualWidth = isTileUnderflowX ? pMasterTile.getWidth().getValue() - (nextTopCorner.getX().getValue() - pSurface.get(0).getX().getValue()) : pMasterTile.getWidth().getValue();
-                            actualHeight = isTileOverflowY ? bottomSurfaceBound - nextTopCorner.getY().getValue() : pMasterTile.getHeight().getValue();
-
-                            nextTopCorner = Point.translate(nextTopCorner, pMasterTile.getWidth().getValue() + actualWidth, unitOfHeight);
-                        }
+                    if(!checker || !tileInBound(pSurface, pMasterTile, nextTopCorner)){
+                        nextTopCorner = Point.translate(element, -unitOfWidth, 0);
+                        checker = checkExisting(oldCorner, nextTopCorner);
                     }
 
-
-                    /***
-                    if (!checker){
-                        nextTopCorner = Point.translate(element.getSummits().get(0), unitOfWidth, -unitOfHeight);
-                        checker = true;
-                        checker = checkExisting(outTiles, nextTopCorner);
-                        if(nextTopCorner.getX().getValue() > rightSurfaceBound
-                                && nextTopCorner.getY().getValue()  + pMasterTile.getHeight().getValue()  < pSurface.get(0).getX().getValue()){
-                            checker = false;
-                        }else {
-                            isTileOverflowX = nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound;
-                            isTileUnderflowY = nextTopCorner.getY().getValue() < pSurface.get(0).getX().getValue();
-                            actualWidth = isTileOverflowX ? rightSurfaceBound - nextTopCorner.getX().getValue() : pMasterTile.getWidth().getValue();
-                            actualHeight = isTileUnderflowY ? pMasterTile.getHeight().getValue() - (nextTopCorner.getY().getValue() - pSurface.get(0).getY().getValue()) : pMasterTile.getHeight().getValue();
-
-                            nextTopCorner = Point.translate(nextTopCorner, unitOfWidth, pMasterTile.getHeight().getValue() + actualHeight);
-                        }
+                    if(!checker || !tileInBound(pSurface, pMasterTile, nextTopCorner)){
+                        nextTopCorner = Point.translate(element, 0, unitOfHeight);
+                        checker = checkExisting(oldCorner, nextTopCorner);
                     }
 
-                    if (!checker){
-                        nextTopCorner = Point.translate(element.getSummits().get(0), -unitOfWidth, -unitOfHeight);
-                        checker = true;
-                        checker = checkExisting(outTiles, nextTopCorner);
-
-                        if(nextTopCorner.getX().getValue() + pMasterTile.getWidth().getValue() < pSurface.get(0).getX().getValue()
-                                && nextTopCorner.getY().getValue() < pSurface.get(0).getX().getValue() + pMasterTile.getHeight().getValue()){
-                            checker = false;
-                        }else {
-                            isTileUnderflowX = nextTopCorner.getX().getValue() < pSurface.get(0).getX().getValue();
-                            isTileUnderflowY = nextTopCorner.getY().getValue() < pSurface.get(0).getX().getValue();
-                            actualWidth = isTileUnderflowX ? pMasterTile.getWidth().getValue() - (nextTopCorner.getX().getValue() - pSurface.get(0).getX().getValue()) : pMasterTile.getWidth().getValue();
-                            actualHeight = isTileUnderflowY ? pMasterTile.getHeight().getValue() - (nextTopCorner.getY().getValue() - pSurface.get(0).getY().getValue()) : pMasterTile.getHeight().getValue();
-
-                            nextTopCorner = Point.translate(nextTopCorner, pMasterTile.getWidth().getValue() + actualWidth,
-                                    pMasterTile.getHeight().getValue() + actualHeight);
-                        }
+                    if(!checker || !tileInBound(pSurface, pMasterTile, nextTopCorner)){
+                        nextTopCorner = Point.translate(element, 0, -unitOfHeight);
+                        checker = checkExisting(oldCorner, nextTopCorner);
                     }
-*/
-                    if(element == outTiles.get(outTiles.size() - 1)){
-                        if(!checker){
+                    /**********************************************************************************/
+
+                    if(!checker || !tileInBound(pSurface, pMasterTile, nextTopCorner)){
+                        if(element == oldCorner.get(oldCorner.size() - 1)){
                             notFilled = false;
-                        }else {
-                            nextTile.setSummits(rectangleInfoToSummits(nextTopCorner, actualWidth, actualHeight));
-                            nextTile.setMaterial(pMasterTile.getMaterial());
-
-                            outTiles.add(nextTile);
-                            break;
-                        }
-                    } else {
-                        if(!checker){
-
-                        }else {
-                            nextTile.setSummits(rectangleInfoToSummits(nextTopCorner, actualWidth, actualHeight));
-                            nextTile.setMaterial(pMasterTile.getMaterial());
-
-                            outTiles.add(nextTile);
                             break;
                         }
 
+                    }else{
+                        nextTile = trimTile(pSurface, pMasterTile, nextTopCorner);
+                        outTiles.add(nextTile);
+                        oldCorner.add(nextTopCorner);
+
+                        break;
                     }
                 }
-
-
 
             }
         }
         return outTiles;
     }
 
-    public boolean checkExisting(List<Tile> pTiles, Point pPoint){
+    /**
+     * Prend en paramètre le coin gauche de la tuile la surface qui la contient et la tuile de base
+     * retourne les 4 sommets qui fit dans la surface
+     */
+    public Tile  trimTile(List<Point> pSurface, Tile pMasterTile, Point topLeftCorner) {
+        List<Point> temp = new ArrayList<>();
+
+        Point A = new Point(new Measure(0), new Measure(0));
+        Point B = new Point(new Measure(0), new Measure(0));
+        Point C = new Point(new Measure(0), new Measure(0));
+        Point D = new Point(new Measure(0), new Measure(0));
+
+        boolean isTileOverflowX = false;
+        boolean isTileOverflowY = false;
+        boolean isTileUnderflowX = false;
+        boolean isTileUnderflowY = false;
+
+        //prendre les limites supérieur de la surface
+        double rightSurfaceBound = pSurface.get(0).getX().getValue() + getWidth(pSurface).getValue();
+        double bottomSurfaceBound = pSurface.get(0).getY().getValue() + getHeight(pSurface).getValue();
+
+        double offsetX = Math.abs(topLeftCorner.getX().getValue() - pSurface.get(0).getX().getValue());
+        double offsetY = Math.abs(topLeftCorner.getY().getValue() - pSurface.get(0).getY().getValue());
+
+        //check si le coin est à lexterieur gauche de la surface
+        if (topLeftCorner.getX().getValue() < pSurface.get(0).getX().getValue()){
+            A.setX(pSurface.get(0).getX());
+            C.setX(pSurface.get(0).getX());
+            isTileUnderflowX = true;
+        }else{
+            A.setX(topLeftCorner.getX());
+            C.setX(topLeftCorner.getX());
+        }
+        if (topLeftCorner.getY().getValue() < pSurface.get(0).getY().getValue()){
+            A.setY(pSurface.get(0).getY());
+            B.setY(pSurface.get(0).getY());
+            isTileOverflowY = true;
+        }else{
+            A.setY(topLeftCorner.getY());
+            B.setY(topLeftCorner.getY());
+        }
+
+        if(topLeftCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound){
+            B.setX(new Measure( A.getX().getValue() + rightSurfaceBound - topLeftCorner.getX().getValue()));
+            D.setX(new Measure(C.getX().getValue() +rightSurfaceBound - topLeftCorner.getX().getValue()));
+        }else if (!isTileUnderflowX){
+            B.setX(new Measure(A.getX().getValue() + pMasterTile.getWidth().getValue()));
+            D.setX(new Measure(C.getX().getValue() +pMasterTile.getWidth().getValue()));
+        } else {
+            B.setX(new Measure(A.getX().getValue() + pMasterTile.getWidth().getValue() - offsetX));
+            D.setX(new Measure(C.getX().getValue() +pMasterTile.getWidth().getValue() - offsetX));
+        }
+        if(topLeftCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound){
+            C.setY(new Measure(A.getY().getValue() + bottomSurfaceBound - topLeftCorner.getY().getValue() ));
+            D.setY(new Measure(B.getY().getValue() + bottomSurfaceBound - topLeftCorner.getY().getValue() ));
+        }else if (!isTileOverflowY){
+            C.setY(new Measure(A.getY().getValue() + pMasterTile.getHeight().getValue()));
+            D.setY(new Measure(B.getY().getValue() + pMasterTile.getHeight().getValue()));
+        } else {
+            C.setY(new Measure(A.getY().getValue() + pMasterTile.getHeight().getValue() - offsetY));
+            D.setY(new Measure(B.getY().getValue() + pMasterTile.getHeight().getValue() - offsetY));
+        }
+
+        temp.add(A);
+        temp.add(B);
+        temp.add(C);
+        temp.add(D);
+        Tile t = new Tile(temp, pMasterTile.getMaterial());
+        return t;
+    }
+
+    public boolean checkExisting(List<Point> pOld, Point pPoint){
         boolean checker = true;
-        for (Tile check : pTiles){
-            if (pPoint.getX().getValue() == check.getSummits().get(0).getX().getValue()
-                    && pPoint.getY().getValue() == check.getSummits().get(0).getY().getValue()){
+        for (Point check : pOld){
+            if (pPoint.getX().getValue() == check.getX().getValue()
+                    && pPoint.getY().getValue() == check.getY().getValue()){
                 checker = false;
                 break;
             }
@@ -382,6 +321,26 @@ public class calculateFillSurface {
         return checker;
     }
 
+    public boolean tileInBound(List<Point> pSurface, Tile pMasterTile, Point topLeftCorner){
+        //prendre les limites supérieur de la surface
+        double rightSurfaceBound = pSurface.get(0).getX().getValue() + getWidth(pSurface).getValue();
+        double bottomSurfaceBound = pSurface.get(0).getY().getValue() + getHeight(pSurface).getValue();
+
+        if (topLeftCorner.getX().getValue() + pMasterTile.getWidth().getValue() <= pSurface.get(0).getX().getValue()){
+            return false;
+        }
+        if(topLeftCorner.getY().getValue() + pMasterTile.getHeight().getValue() <= pSurface.get(0).getY().getValue()){
+            return false;
+        }
+        if(topLeftCorner.getX().getValue() >= rightSurfaceBound ){
+            return false;
+        }
+        if (topLeftCorner.getY().getValue() >= bottomSurfaceBound){
+            return false;
+        }
+
+        return true;
+    }
     /***
      * Other usefull fonctions
      */
@@ -455,5 +414,13 @@ public class calculateFillSurface {
         return value;
     }
 
-
+    public Tile getFirstTile(List<Point> pSurface, Tile pMasterTile){
+        Tile t = new Tile();
+        return t;
+    }
 }
+
+
+
+
+

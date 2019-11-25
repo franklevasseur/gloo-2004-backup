@@ -59,4 +59,10 @@ public class RectangleHelper {
 
         return xs.size() == 2 && ys.size() == 2;
     }
+
+    public static Point getTopLeft(Point point1, Point point2) {
+        double minX = point1.x < point2.x ? point1.x : point2.x;
+        double minY = point1.y < point2.y ? point1.y : point2.y;
+        return new Point(minX, minY);
+    }
 }

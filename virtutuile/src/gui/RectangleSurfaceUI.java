@@ -99,7 +99,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 this.currentlyBeingDragged = false;
                 this.snapToGrid();
 
-                if (this.isHole != HoleStatus.FILLED) {
+                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
                     controller.updateSurface(this.toDto());
                     return;
                 }

@@ -80,7 +80,7 @@ public class Surface {
                 tiles = filler.fillSurfaceWithType1(summits, masterTile, tileType, pSealsInfo, isRectangular);
                 break;
             case TYPE2:
-                tiles = filler.fillSurfaceWithType2(summits, masterTile, tileType, pSealsInfo, isRectangular);
+                tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
                 break;
             case TYPE3:
                 tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);

@@ -1,9 +1,6 @@
 package gui;
 
-import application.Controller;
-import application.SealsInfoDto;
-import application.SurfaceDto;
-import application.TileDto;
+import application.*;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -140,6 +137,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
             return;
         }
 
+        MaterialDto materialDto = tiles.get(0).material;
+
         List<RectangleInfo> tilesRect = tiles.stream().map(t -> {
             List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
             return RectangleHelper.summitsToRectangleInfo(pixelPoints);
@@ -147,7 +146,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         hideTiles();
 
-        this.tiles = tilesRect.stream().map(t -> new TileUI(t, this.tileInfoTextField, this.zoomManager)).collect(Collectors.toList());
+        this.tiles = tilesRect.stream().map(t -> new TileUI(t, this.tileInfoTextField, this.zoomManager, materialDto)).collect(Collectors.toList());
         this.rectangleGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 

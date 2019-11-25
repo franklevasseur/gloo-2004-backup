@@ -54,10 +54,10 @@ public class UiController implements Initializable {
     public TextField surfaceWidthInputBox;
     public TextField surfacePosotoionXInputBox;
     public TextField surfacePosotoionYInputBox;
+    public TextField materialColorDisplay;
 
     public Label tileInfo;
 
-    public ChoiceBox<String> materialColorEdit;
     public ChoiceBox<String> sealColorChoiceBox;
     public ChoiceBox<String> sealPatternInputBox;
     public ChoiceBox<String> tileMaterialChoiceBox;
@@ -88,7 +88,6 @@ public class UiController implements Initializable {
         drawingSection.setPrefHeight(1);
         drawingSection.setPrefWidth(1);
         materialColorChoiceBox.setItems(possibleColor);
-        materialColorEdit.setItems(possibleColor);
         sealColorChoiceBox.setItems(possibleColor);
         sealPatternInputBox.setItems(tilePattern);
 
@@ -108,6 +107,9 @@ public class UiController implements Initializable {
 
         this.undoButton.setDisable(!this.domainController.undoAvailable());
         this.redoButton.setDisable(!this.domainController.redoAvailable());
+
+        defaultMaterial();
+        renderFromProject();
     }
 
 
@@ -189,10 +191,7 @@ public class UiController implements Initializable {
     public void editSurface() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
 
-        //Modification du Height d'une tuile
-//        for(SurfaceUI chosenSurface: selectedSurfaces) {
-//
-//        }
+
         if(selectedSurfaces.size() != 0){
             SurfaceUI chosenSurface = selectedSurfaces.get(0);
             NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
@@ -220,6 +219,12 @@ public class UiController implements Initializable {
                 CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
 
+//                //Changer Tile material
+//                MaterialDto newMaterial = new MaterialDto();
+//
+//                newMaterial.color =;
+//                chosenSurface.toDto().tiles.get(0).material =;
+
 
                 if (newSealWidth != null) {
                     //Changer seal width et couleur
@@ -244,12 +249,13 @@ public class UiController implements Initializable {
                 Point position = new Point(newPositioinX,newPositionY);
                 chosenSurface.setPosition(position);
 
-                //surfacePosotoionXInputBox
-                //surfacePosotoionYInputBox
-
                 chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
                 this.domainController.updateSurface(chosenSurface.toDto());
-                chosenSurface.fill();
+
+                //Si ce n'est pas un trou
+                if(!chosenSurface.toDto().isHole){
+                    chosenSurface.fill();
+                }
                 this.renderFromProject();
                 hideRectangleInfo();
             }
@@ -268,12 +274,11 @@ public class UiController implements Initializable {
         NumberFormat formatter = new DecimalFormat("#0.000");
         surfaceHeightInputBox.setText(formatter.format(rect.height));
         surfaceWidthInputBox.setText(formatter.format(rect.width));
-
-        if (firstOne.getMasterTile() != null){
-            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
-            tileHeightInputbox.setText(formatter.format(tileRect.height));
-            tileWidthInputbox.setText(formatter.format(tileRect.width));
-        }
+//        if (firstOne.getMasterTile() != null){
+//            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
+//            tileHeightInputbox.setText(formatter.format(tileRect.height));
+//            tileWidthInputbox.setText(formatter.format(tileRect.width));
+//        }
 
         if(firstOne.getSealsInfo() != null){
             sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
@@ -281,6 +286,44 @@ public class UiController implements Initializable {
 
         surfacePosotoionXInputBox.setText(formatter.format(rect.topLeftCorner.x));
         surfacePosotoionYInputBox.setText(formatter.format(rect.topLeftCorner.y));
+        if(!firstOne.toDto().isHole ){
+            String tileMaterial = firstOne.toDto().tiles.get(0).material.name;
+            Color tilecolor = firstOne.toDto().tiles.get(0).material.color;
+            String materialColor;
+            tileMaterialChoiceBox.setValue(tileMaterial);
+            //TODO mettre le vrai pattern
+            sealPatternInputBox.setValue("Default");
+
+
+            //TODO Sealinfo ->sealWidth/sealColor n'est jamais modifié
+//            sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
+//            sealColorChoiceBox.setValue(firstOne.getSealsInfo().sealColor);
+
+            if(tilecolor == Color.BLACK){
+                materialColor = "BLACK";
+            }else if(tilecolor == Color.WHITE){
+                materialColor = "WHITE";
+            }else if(tilecolor == Color.YELLOW){
+                materialColor = "YELLOW";
+            }else if(tilecolor == Color.GREEN){
+                materialColor = "GREEN";
+            }else if(tilecolor == Color.BLUE){
+                materialColor = "BLUE";
+            }else if(tilecolor == Color.RED){
+                materialColor = "RED";
+            }else if(tilecolor == Color.VIOLET){
+                materialColor = "VIOLET";
+            }else{
+                throw new RuntimeException("Les couleurs petent mon gars");
+            }
+            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.toDto().tiles.get(0).summits);
+
+            tileHeightInputbox.setText(formatter.format(tileRect.height));
+            tileWidthInputbox.setText(formatter.format(tileRect.height));
+            materialColorDisplay.setText(materialColor);
+        }else{
+            materialColorDisplay.setText("c'est un trou");
+        }
 
 
     }
@@ -293,9 +336,8 @@ public class UiController implements Initializable {
         surfaceWidthInputBox.clear();
         surfacePosotoionXInputBox.clear();
         surfacePosotoionYInputBox.clear();
-        materialColorEdit.hide();
+        materialColorDisplay.clear();
         sealWidthInputBox.clear();
-
 
     }
 
@@ -348,6 +390,7 @@ public class UiController implements Initializable {
     public void fillSelectedSurfaceWithTiles() {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
+
         for (SurfaceUI surface: selectedSurfaces) {
             surface.forceFill();
         }
@@ -398,6 +441,49 @@ public class UiController implements Initializable {
                 this.displaySurface(surface);
             }
         }
+
+        if (project.materials != null) {
+            this.tileMaterialChoiceBox.getItems().clear();
+            for (MaterialDto mDto: project.materials) {
+                String mColor;
+
+                if(mDto.color == Color.BLACK){
+                    mColor = "BLACK";
+
+                }else if(mDto.color == Color.WHITE){
+                    mColor = "WHITE";
+
+                }else if(mDto.color == Color.YELLOW){
+                    mColor = "YELLOW";
+
+                }else if(mDto.color == Color.GREEN){
+                    mColor = "GREEN";
+
+                }else if(mDto.color == Color.BLUE){
+                    mColor = "BLUE";
+
+                }else if(mDto.color == Color.RED){
+                    mColor = "RED";
+
+                }else if(mDto.color == Color.VIOLET){
+                    mColor = "VIOLET";
+
+                }else{
+                    throw new RuntimeException("Les couleurs petent mon gars");
+                }
+                //TODO accounting stuff
+                MaterialUI materialUI = new MaterialUI();
+                materialUI.name = mDto.name;
+                materialUI.pricePerBoxe = "50";
+                materialUI.color = mColor;
+                materialUI.tilePerBox = "50";
+                materialUI.numberOfBoxes = "50";
+                materialUI.totalPrice = "50$";
+
+                materialTableView.getItems().add(materialUI);
+                tileMaterialChoiceBox.getItems().add(materialUI.name);
+            }
+        }
     }
 
     private void clearDrawings() {
@@ -406,6 +492,7 @@ public class UiController implements Initializable {
         this.selectionManager.unselectAll();
         this.allSurfaces.clear();
         this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
+        this.materialTableView.getItems().clear();
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {
@@ -446,61 +533,43 @@ public class UiController implements Initializable {
         renderFromProject();
     }
     //PHIL A FAIT CETTE MÉTHODE HAHA XD
-    //TODO void ou pas void ?
     public void createNewMaterial(){
+        if(materialColorChoiceBox.getValue() != null){
+            MaterialDto dto = new MaterialDto();
+            dto.materialType = MaterialType.tileMaterial;
+            dto.name = materialNameInputBox.getText();
+            if(materialColorChoiceBox.getValue() == "BLACK"){
+                dto.color = Color.BLACK;
 
-        MaterialUI newMaterialUI = new MaterialUI();
+            }else if(materialColorChoiceBox.getValue() == "WHITE"){
+                dto.color = Color.WHITE;
 
-        newMaterialUI.name = materialNameInputBox.getText();
-        //TODO on a pas le nombre de botes
-        newMaterialUI.numberOfBoxes = materialNumberOfBoxInputColumn.getText();
-        newMaterialUI.tilePerBox = tilePerBoxInputBox.getText();
-        newMaterialUI.color = materialColorChoiceBox.getValue();
-        newMaterialUI.pricePerBoxe = boxPriceInputBox.getText();
-        //TODO à coder mais on a pas le nombre de tuiles
-        newMaterialUI.totalPrice = materialTotalPriceColumn.getText();
+            }else if(materialColorChoiceBox.getValue() == "YELLOW"){
+                dto.color = Color.YELLOW;
 
-        materialTableView.getItems().add(newMaterialUI);
-        tileMaterialChoiceBox.getItems().add(materialNameInputBox.getText());
+            }else if(materialColorChoiceBox.getValue() == "GREEN"){
+                dto.color = Color.GREEN;
 
-        MaterialDto dto = new MaterialDto();
-        dto.materialType = MaterialType.tileMaterial;
-        dto.name = materialNameInputBox.getText();
-        if(materialColorChoiceBox.getValue() == "BLACK"){
-            dto.color = Color.BLACK;
+            }else if(materialColorChoiceBox.getValue() == "BLUE"){
+                dto.color = Color.BLUE;
 
-        }else if(materialColorChoiceBox.getValue() == "WHITE"){
-            dto.color = Color.WHITE;
+            }else if(materialColorChoiceBox.getValue() == "RED"){
+                dto.color = Color.RED;
 
-        }else if(materialColorChoiceBox.getValue() == "YELLOW"){
-            dto.color = Color.YELLOW;
+            }else if(materialColorChoiceBox.getValue() == "VIOLET"){
+                dto.color = Color.VIOLET;
 
-        }else if(materialColorChoiceBox.getValue() == "GREEN"){
-            dto.color = Color.GREEN;
+            }else{
+                throw new RuntimeException("Les couleurs petent mon gars");
+            }
+            domainController.createMaterial(dto);
+            renderFromProject();
+            clearCreatMaterial();
 
-        }else if(materialColorChoiceBox.getValue() == "BLUE"){
-            dto.color = Color.BLUE;
-
-        }else if(materialColorChoiceBox.getValue() == "RED"){
-            dto.color = Color.RED;
-
-        }else if(materialColorChoiceBox.getValue() == "VIOLET"){
-            dto.color = Color.VIOLET;
-
-        }else{
-            throw new RuntimeException("Les couleurs petent mon gars");
         }
-//        try{
-//
-//        }catch (ParseException e ) {
-//            System.out.println("STFU ça pete");
-//            afficherRectangleInfo();
-//
+//        else{
+//            throw new RuntimeException("Vous n'avez pas choisis ce couleurs");
 //        }
-        domainController.createMaterial(dto);
-
-
-
     }
 
     public void undo() {
@@ -512,4 +581,51 @@ public class UiController implements Initializable {
         this.domainController.redo();
         renderFromProject();
     }
+
+    private void defaultMaterial(){
+        //TODO ajouter les infos dans accounting
+
+        MaterialDto dto = new MaterialDto();
+        dto.color = Color.GREEN;
+        dto.name = "Melon d'eau";
+        dto.materialType = MaterialType.tileMaterial;
+
+        domainController.createMaterial(dto);
+    }
+
+    private void clearCreatMaterial(){
+        materialNameInputBox.clear();
+        boxPriceInputBox.clear();
+        tilePerBoxInputBox.clear();
+
+    }
+
+//    public Color choiceBoxToEnum(String choiceBoxColor, Color enumColor){
+//        Color color;
+//        if(materialColorChoiceBox.getValue() == "BLACK"){
+//            enumColor.color = Color.BLACK;
+//
+//        }else if(materialColorChoiceBox.getValue() == "WHITE"){
+//            newMaterial.color = Color.WHITE;
+//
+//        }else if(materialColorChoiceBox.getValue() == "YELLOW"){
+//            newMaterial.color = Color.YELLOW;
+//
+//        }else if(materialColorChoiceBox.getValue() == "GREEN"){
+//            newMaterial.color = Color.GREEN;
+//
+//        }else if(materialColorChoiceBox.getValue() == "BLUE"){
+//            newMaterial.color = Color.BLUE;
+//
+//        }else if(materialColorChoiceBox.getValue() == "RED"){
+//            newMaterial.color = Color.RED;
+//
+//        }else if(materialColorChoiceBox.getValue() == "VIOLET"){
+//            newMaterial.color = Color.VIOLET;
+//        }else{
+//            throw new RuntimeException("Les couleurs petent mon gars");
+//        }
+//        return color;
+//
+//    }
 }

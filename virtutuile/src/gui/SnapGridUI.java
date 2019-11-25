@@ -37,6 +37,10 @@ public class SnapGridUI {
     }
 
     public void renderForViewBox(List<Point> viewBoxSummits) {
+        if (!this.isVisible) {
+            return;
+        }
+
         removeGrid();
         RectangleInfo viewBoxRectangle = RectangleHelper.summitsToRectangleInfo(viewBoxSummits);
 
@@ -54,11 +58,9 @@ public class SnapGridUI {
         yAxis.setEndY(viewBoxRectangle.topLeftCorner.y + viewBoxRectangle.height);
         yAxis.setStrokeWidth(viewBoxRectangle.width / 750);
 
-        if (this.isVisible) {
-            this.renderLines(viewBoxRectangle);
-            this.renderColumn(viewBoxRectangle);
-            this.parentNode.getChildren().addAll(displayedLines);
-        }
+        this.renderLines(viewBoxRectangle);
+        this.renderColumn(viewBoxRectangle);
+        this.parentNode.getChildren().addAll(displayedLines);
     }
 
     public Bounds getOriginBounds() {

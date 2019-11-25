@@ -132,6 +132,7 @@ public class Controller {
                 double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
 
                 nextTile.summits = RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight);
+                nextTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
 
                 tiles.add(nextTile);
             }

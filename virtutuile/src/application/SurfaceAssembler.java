@@ -30,6 +30,7 @@ public class SurfaceAssembler {
                 double y = p.getY().getValue();
                 return new Point(x, y);
             }).collect(Collectors.toList());
+            tileDto.material = MaterialAssembler.toDto(t.getMaterial());
             return tileDto;
         }).collect(Collectors.toList());
 
@@ -57,8 +58,8 @@ public class SurfaceAssembler {
                     return new Domain.Point(xMeasure, yMeasure);
                 }).collect(Collectors.toList());
 
-                // TODO: pass the actual material in the dto
-                return new Tile(points, new Material(Color.BLACK, MaterialType.tileMaterial, "petit penis bandé"));
+                Material material = MaterialAssembler.fromDto(tDto.material);
+                return new Tile(points, material);
             }).collect(Collectors.toList());
 
             destinationSurface.setTiles(tiles);

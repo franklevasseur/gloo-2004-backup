@@ -457,7 +457,7 @@ public class UiController implements Initializable {
 
         SurfaceDto surface = new SurfaceDto();
         surface.id = new Id();
-        surface.isHole = false;
+        surface.isHole = true;
         surface.isRectangular = true;
         surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
 

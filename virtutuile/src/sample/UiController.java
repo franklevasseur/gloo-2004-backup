@@ -1,5 +1,6 @@
 package sample;
 
+import Domain.HoleStatus;
 import application.*;
 import gui.*;
 
@@ -337,7 +338,7 @@ public class UiController implements Initializable {
 
         SurfaceDto surface = new SurfaceDto();
         surface.id = new Id();
-        surface.isHole = true;
+        surface.isHole = HoleStatus.NONE;
         surface.isRectangular = true;
         surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
 
@@ -397,7 +398,7 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
-            surface.setHole(true);
+            surface.setHole(HoleStatus.NONE);
             domainController.updateSurface(surface.toDto());
             surface.hideTiles();
         }

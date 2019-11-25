@@ -1,5 +1,6 @@
 package gui;
 
+import Domain.HoleStatus;
 import application.SealsInfoDto;
 import application.SurfaceDto;
 import application.TileDto;
@@ -28,5 +29,5 @@ public interface SurfaceUI {
     void setSize(double width, double height);
     void setPosition(Point position);
     void translatePixelBy(Point translation);
-    void setHole(boolean isHole);
+    void setHole(HoleStatus isHole);
 }

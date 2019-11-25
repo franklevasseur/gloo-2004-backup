@@ -1,5 +1,6 @@
 package gui;
 
+import Domain.HoleStatus;
 import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
@@ -25,7 +26,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
     private Id id;
     private List<Rectangle> tiles;
-    private boolean isHole;
+    private HoleStatus isHole;
     private List<Point> summits;
 
     private Group fusionedSurfaceGroup;
@@ -104,7 +105,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
         this.zoomManager = zoomManager;
         this.selectionManager = selectionManager;
-        this.isHole = false;
+        this.isHole = surfaceDto.isHole;
 
         initializeGroup();
     }
@@ -177,7 +178,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
         dto.isFusionned = true;
         dto.isRectangular = false;
         dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
-        dto.isHole = false;
+        dto.isHole = HoleStatus.NONE;
 //        dto.tiles = null;
         dto.id = this.id;
 
@@ -282,7 +283,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     @Override
-    public void setHole(boolean isHole) { this.isHole = isHole; }
+    public void setHole(HoleStatus isHole) { this.isHole = isHole; }
 
     private void renderTiles(List<TileDto> tiles) {}
 

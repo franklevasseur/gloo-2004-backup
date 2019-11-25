@@ -11,7 +11,7 @@ public class FusionnedSurface extends Surface {
     private List<Surface> fusionnedSurfaces;
 
     public FusionnedSurface(List<Surface> fusionnedSurfaces) {
-        super(false, extractResultantSummits(fusionnedSurfaces), false);
+        super(HoleStatus.NONE, extractResultantSummits(fusionnedSurfaces), false);
         this.fusionnedSurfaces = fusionnedSurfaces;
     }
 

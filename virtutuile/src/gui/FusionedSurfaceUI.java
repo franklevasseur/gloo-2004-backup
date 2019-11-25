@@ -8,14 +8,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import utils.FusionHelper;
 import utils.Id;
 import utils.Point;
-import utils.RectangleHelper;
-import utils.RectangleInfo;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,11 +60,23 @@ public class FusionedSurfaceUI implements SurfaceUI {
             }
             this.shape = Shape.union(this.shape, s.getMainShape());
         });
+
+        this.setShapeAppearance();
         this.fusionedSurfaceGroup.getChildren().add(this.shape);
 
-        this.summits = surfaceDto.summits.stream().map(s -> zoomManager.metersToPixels(s)).collect(Collectors.toList());
+        List<List<Point>> allSurfacesSummits = allSurfacesToFusion
+                .stream()
+                .map(s -> s.toDto().summits
+                        .stream()
+                        .map(su -> zoomManager.metersToPixels(su))
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
+
+        this.summits = FusionHelper.getResultSummits(allSurfacesSummits);
         double minX = Collections.min(this.summits.stream().map(s -> s.x).collect(Collectors.toList()));
         this.position = Collections.min(this.summits.stream().filter(s -> s.x == minX).collect(Collectors.toList()), Comparator.comparing(s -> s.y));
+
+//        System.out.println(String.format("(%f, %f)", this.position.x, this.position.y));
     }
 
     public FusionedSurfaceUI(ZoomManager zoomManager,
@@ -88,8 +98,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.fusionedSurfaceGroup = new Group();
         this.renderShapeFromChilds();
 
-        this.shape.setFill(Color.WHITE);
-        this.shape.setStroke(Color.BLACK);
+        this.setShapeAppearance();
 
         this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
@@ -101,6 +110,11 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.isHole = false;
 
         initializeGroup();
+    }
+
+    private void setShapeAppearance() {
+        this.shape.setFill(Color.WHITE);
+        this.shape.setStroke(Color.BLACK);
     }
 
     private void initializeGroup(){
@@ -191,7 +205,9 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     @Override
-    public Id getId() { return id; }
+    public Id getId() {
+        return id;
+    }
 
     @Override
     public void delete() {
@@ -200,104 +216,65 @@ public class FusionedSurfaceUI implements SurfaceUI {
     }
 
     @Override
-    public void setMasterTile(TileDto newMasterTile) { this.masterTile = newMasterTile; }
-
-    @Override
-    public TileDto getMasterTile() { return this.masterTile; }
-
-    @Override
-    public void setSealsInfo(SealsInfoDto newSealInfos) { this.sealsInfo = newSealInfos; }
-
-    @Override
-    public SealsInfoDto getSealsInfo() {return this.sealsInfo; }
-
-    @Override
-    public void hideTiles() {
-        if(this.tiles != null){
-            this.fusionedSurfaceGroup.getChildren().removeIf(this.tiles::contains);
-            this.tiles.clear();
-        }
+    public void setMasterTile(TileDto newMasterTile) {
+        this.masterTile = newMasterTile;
     }
 
     @Override
-    public void hide() {
-        this.unselect();
-        this.hideTiles();
+    public TileDto getMasterTile() {
+        return this.masterTile;
     }
 
     @Override
-    public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
+    public void setSealsInfo(SealsInfoDto newSealInfos) {
+        this.sealsInfo = newSealInfos;
     }
 
     @Override
-    public void setSize(double width, double height) {
-        double pixelWidth = zoomManager.metersToPixels(width);
-        double pixelHeight = zoomManager.metersToPixels(height);
+    public SealsInfoDto getSealsInfo() {
+        return this.sealsInfo;
     }
 
-    /*public void increaseSizeBy(double deltaWidth, double deltaHeight){
-        //double newWidth = shape.getWidth() + delatWidth;
-        //double newHeight = shape.getWidth() + deltaHeight
+    @Override
+    public void hideTiles() {}
 
-        hideTiles();
+    @Override
+    public void hide() {}
 
-        //if (newWidth >=0) {
-            //shape.setWidth(newWidth);
-        //}
-        //if (newHeight >= 0) {
-            //shape.setHeight(newHeight);
-        //}
+    @Override
+    public void fill() {}
 
-        controller.updateSurface(this.toDto());*//*
-    }*/
+    @Override
+    public void setSize(double width, double height) {}
 
     @Override
     public void setPosition(Point position) {
-        Point pixels = zoomManager.metersToPixels(position);
-        Point translation = Point.diff(pixels, this.position);
 
-        System.out.println(String.format("click : (%f, %f)", position.x, position.y));
+        Point translation = Point.diff(position, this.position);
+
+//        System.out.println(String.format("(%.1f, %.1f)", translation.x, translation.y));
+//        System.out.println(String.format("(%.1f, %.1f)", position.x, position.y));
+//        System.out.println(String.format("(%.1f, %.1f)", this.position.x, this.position.y));
 
         allSurfacesToFusion.forEach(s -> s.translateBy(translation));
+
+//        String debug = "";
+//        for (SurfaceUI s : allSurfacesToFusion) {
+//            Rectangle rect = (Rectangle)s.getMainShape();
+//            debug += String.format("(%.1f, %.1f) \n", rect.getX(), rect.getY());
+//        }
+//        System.out.println(debug);
 
         this.fusionedSurfaceGroup.getChildren().remove(this.shape);
         this.renderShapeFromChilds();
     }
 
-    public void translateBy(Point translation) {
-
-    }
+    public void translateBy(Point translation) {}
 
     @Override
     public void setHole(boolean isHole) { this.isHole = isHole; }
 
-    private void renderTiles(List<TileDto> tiles) {
-        if(this.isHole || tiles == null || tiles.size() == 0){
-            return;
-        }
+    private void renderTiles(List<TileDto> tiles) {}
 
-        List<RectangleInfo>  tilesRect = tiles.stream().map(t -> {
-            List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
-            return RectangleHelper.summitsToRectangleInfo(pixelPoints);
-        }).collect(Collectors.toList());
-
-        hideTiles();
-
-        this.tiles = tilesRect.stream().map(t -> {
-            Rectangle tileUi = new Rectangle(t.topLeftCorner.x, t.topLeftCorner.y, t.width, t.height);
-            tileUi.setFill(Color.PALETURQUOISE);
-            tileUi.setStroke(Color.DARKTURQUOISE);
-
-            tileUi.setOnMouseEntered(event -> tileUi.setFill(Color.PALEGOLDENROD));
-            tileUi.setOnMouseExited(event -> tileUi.setFill(Color.PALETURQUOISE));
-
-            return tileUi;
-        }).collect(Collectors.toList());
-        this.fusionedSurfaceGroup.getChildren().addAll(this.tiles);
-    }
-
-    public void forceFill() {
-
-    }
+    public void forceFill() {}
 }

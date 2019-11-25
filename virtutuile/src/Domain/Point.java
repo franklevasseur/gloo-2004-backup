@@ -23,6 +23,10 @@ public class Point {
         this.cardinality = cardinality;
     }
 
+    public utils.Point toAbstract() {
+        return new utils.Point(this.x.getValue(), this.y.getValue());
+    }
+
     public Measure getX() {
         return x;
     }

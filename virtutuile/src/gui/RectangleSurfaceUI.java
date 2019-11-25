@@ -280,6 +280,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
     }
 
     public void translateBy(Point translation) {
-        this.setPosition(new Point(this.rectangle.getX() + translation.x, this.rectangle.getY() + translation.y));
+        rectangle.setX(this.rectangle.getX() + translation.x);
+        rectangle.setY(this.rectangle.getY() + translation.y);
     }
 }

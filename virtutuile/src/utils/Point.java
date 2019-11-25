@@ -9,6 +9,10 @@ public class Point {
         return new Point(oldPoint.x + delatX, oldPoint.y + deltaY);
     }
 
+    public static Point diff(Point pt1, Point pt2) {
+        return new Point(pt1.x - pt2.x, pt1.y - pt2.y);
+    }
+
     public Point(double x, double y) {
         this.x = x;
         this.y = y;

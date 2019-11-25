@@ -70,6 +70,9 @@ public class UiController implements Initializable {
     private ZoomManager zoomManager = new ZoomManager();
     private SnapGridUI snapGridUI;
 
+    public Button undoButton;
+    public Button redoButton;
+
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingSurface = false;
     private boolean stateEnableZooming = false;
@@ -103,6 +106,9 @@ public class UiController implements Initializable {
 
         this.snapGridUI = new SnapGridUI(this.drawingSection);
         this.selectionManager = new SelectionManager(this::handleSelection);
+
+        this.undoButton.setDisable(!this.domainController.undoAvailable());
+        this.redoButton.setDisable(!this.domainController.redoAvailable());
     }
 
 
@@ -161,7 +167,7 @@ public class UiController implements Initializable {
 
         Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
 
-        System.out.println(String.format("click : (%f, %f)", clickCoord.x, clickCoord.y));
+//        System.out.println(String.format("click : (%f, %f)", zoomManager.pixelsToMeters(clickCoord.x), zoomManager.pixelsToMeters(clickCoord.y)));
         if (stateCurrentlyCreatingSurface) {
             pane.setCursor(Cursor.DEFAULT);
             stateCurrentlyCreatingSurface = false;
@@ -249,9 +255,7 @@ public class UiController implements Initializable {
                 hideRectangleInfo();
             }
             catch (ParseException e ) {
-                System.out.println("STFU ça pete");
                 afficherRectangleInfo();
-
             }
         }
 
@@ -346,9 +350,7 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
-            surface.setHole(false);
-            domainController.updateSurface(surface.toDto());
-            surface.fill();
+            surface.forceFill();
         }
 
         renderFromProject();
@@ -356,6 +358,7 @@ public class UiController implements Initializable {
 
     private void removeSelectedSurfaces() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+        drawingSection.getChildren().removeIf(selectedSurfaces.stream().map(s -> s.getNode()).collect(Collectors.toList())::contains);
         selectedSurfaces.forEach(SurfaceUI::delete);
         allSurfaces.removeIf(selectedSurfaces::contains);
         selectionManager.unselectAll();
@@ -387,41 +390,38 @@ public class UiController implements Initializable {
 
         this.clearDrawings();
 
+        this.undoButton.setDisable(!this.domainController.undoAvailable());
+        this.redoButton.setDisable(!this.domainController.redoAvailable());
+
         ProjectDto project = this.domainController.getProject();
         if (project.surfaces != null) {
             for (SurfaceDto surface: project.surfaces) {
                 this.displaySurface(surface);
             }
         }
-
-        if (project.fusionnedSurfaces != null) {
-            for (FusionnedSurfaceDto fsDto: project.fusionnedSurfaces) {
-                List<SurfaceUI> surfaceUIS = fsDto.fusionnedSurfaces.stream().map(surfaceDto -> new RectangleSurfaceUI(surfaceDto,
-                        zoomManager,
-                        selectionManager,
-                        drawingSection,
-                        snapGridUI,
-                        this.tileInfo)).collect(Collectors.toList());
-                FusionedSurfaceUI fsUI = new FusionedSurfaceUI(zoomManager, selectionManager, drawingSection, snapGridUI, surfaceUIS);
-                this.allSurfaces.add(fsUI);
-            }
-        }
     }
 
     private void clearDrawings() {
         this.allSurfaces.forEach(SurfaceUI::hide);
+        drawingSection.getChildren().removeIf(allSurfaces.stream().map(s -> s.getNode()).collect(Collectors.toList())::contains);
         this.selectionManager.unselectAll();
         this.allSurfaces.clear();
         this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {
+        if (surfaceDto.isFusionned) {
+            FusionedSurfaceUI surfaceUi = new FusionedSurfaceUI(zoomManager, selectionManager, snapGridUI, surfaceDto);
+            this.drawingSection.getChildren().add(surfaceUi.getNode());
+            this.allSurfaces.add(surfaceUi);
+            return;
+        }
         RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto,
                 zoomManager,
                 selectionManager,
-                drawingSection,
                 snapGridUI,
                 this.tileInfo);
+        this.drawingSection.getChildren().add(surfaceUi.getNode());
         this.allSurfaces.add(surfaceUi);
     }
 
@@ -435,7 +435,7 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
-    public void surfaceHole(){
+    public void surfaceHole() {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
         for (SurfaceUI surface: selectedSurfaces) {
@@ -514,5 +514,15 @@ public class UiController implements Initializable {
         dtoFuckShit.totalPrice = "69";
 
         materialTableView.getItems().add(dtoFuckShit);
+    }
+
+    public void undo() {
+        this.domainController.undo();
+        renderFromProject();
+    }
+
+    public void redo() {
+        this.domainController.redo();
+        renderFromProject();
     }
 }

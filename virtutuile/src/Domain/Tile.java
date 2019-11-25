@@ -4,11 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tile {
-    private List<Point> summits;
+    private List<Point> summits = new ArrayList<>();
     private Material material;
+
+    public Tile(){
+
+    }
 
     public Tile(List<Point> pSummit, Material pMaterial){
         summits = pSummit;
+        material = pMaterial;
+    }
+
+    public Tile(Measure pHauteur, Measure pLargeur, Material pMaterial){
+        Measure tempX = new Measure();
+        Measure tempY = new Measure();
+        Point tempA = new Point(tempX, tempY);
+        Point tempB = new Point(pLargeur, tempY);
+        Point tempC = new Point(tempX, pHauteur);
+        Point tempD = new Point(pLargeur, pHauteur);
+        summits.add(tempA);
+        summits.add(tempB);
+        summits.add(tempC);
+        summits.add(tempD);
         material = pMaterial;
     }
 
@@ -37,14 +55,14 @@ public class Tile {
         double minX;
         double maxX;
 
-        minX = summits.get(0).getY().getValue();
+        minX = summits.get(0).getX().getValue();
         maxX = summits.get(0).getY().getValue();
         for (Point i:summits){
-            if (minX > i.getY().getValue()){
-                minX = i.getY().getValue();
+            if (minX > i.getX().getValue()){
+                minX = i.getX().getValue();
             }
-            if (maxX < i.getY().getValue()){
-                maxX = i.getY().getValue();
+            if (maxX < i.getX().getValue()){
+                maxX = i.getX().getValue();
             }
         }
         value.setValue(maxX - minX);
@@ -64,4 +82,17 @@ public class Tile {
     public void setSummits(ArrayList<Point> summits) {
         this.summits = summits;
     }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
+    public void setSummits(List<Point> summits) {
+        this.summits = summits;
+    }
+
 }

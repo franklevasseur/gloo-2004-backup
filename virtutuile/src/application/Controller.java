@@ -17,48 +17,84 @@ public class Controller {
     public static Controller getInstance() {
         return instance;
     }
+    private UndoRedoManager undoRedoManager = new UndoRedoManager();
 
-    private Project vraiProject = new Project();
+    private Project vraiProject;
+
+    private Controller() {
+        this.vraiProject = new Project();
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+    }
 
     public void createSurface(SurfaceDto newSurfaceDto) {
         Surface newSurface = SurfaceAssembler.fromDto(newSurfaceDto);
         vraiProject.getSurfaces().add(newSurface);
-        // ...
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 
     public void updateSurface(SurfaceDto surfaceDto) {
+        this.internalUpdateSurface(surfaceDto);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+    }
 
+    private void internalUpdateSurface(SurfaceDto surfaceDto) {
         Surface surface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceDto.id)).findFirst().get();
         SurfaceAssembler.fromDto(surfaceDto, surface);
     }
 
+    // atomic move and fill or resize and fill
+    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing)  {
+        internalUpdateSurface(dto);
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        internalUpdateSurface(dto);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+        return tiles;
+    }
+
     public ProjectDto getProject() {
         return ProjectAssembler.toDto(vraiProject);
-        // ...
     }
 
     public void removeSurface(SurfaceDto surface) {
         this.vraiProject.getSurfaces().removeIf(s -> s.getId().isSame(surface.id));
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 
     public void undo() {
-        // ...
+        ProjectDto dto = undoRedoManager.undo();
+        if (dto == null) {
+            return;
+        }
+        this.vraiProject = ProjectAssembler.fromDto(dto);
     }
 
     public void redo() {
-        // ...
+        ProjectDto dto = undoRedoManager.redo();
+        if (dto == null) {
+            return;
+        }
+        this.vraiProject = ProjectAssembler.fromDto(dto);
     }
 
-    public List<TileDto> fillSurface(SurfaceDto surface, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-        // ...
-        return this.fillSurfaceWithDefaults(surface);
+    public boolean redoAvailable() {
+        return undoRedoManager.redoAvailable();
     }
 
-    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFill) {
+    public boolean undoAvailable() {
+        return undoRedoManager.undoAvailable();
+    }
+
+    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        this.internalUpdateSurface(dto);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+
+        return tiles;
+    }
+
+    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto) {
         // Let the backend choose a default pattern and sealing and master tile
         // ...
-        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceToFill.id)).findFirst().get();
-        SurfaceDto surfaceToFillDto = SurfaceAssembler.toDto(desiredSurface);
 
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
@@ -102,9 +138,7 @@ public class Controller {
         }
 
         surfaceToFillDto.tiles = tiles;
-
-        //TODO: je sais c'est pas bin beau
-        this.updateSurface(surfaceToFillDto);
+        surfaceToFillDto.isHole = false;
 
         return tiles;
     }
@@ -118,8 +152,11 @@ public class Controller {
     }
 
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {
-        List<Surface> surfaces = surfacesDto.stream().map(dto -> SurfaceAssembler.fromDto(dto)).collect(Collectors.toList());
+        List<Surface> surfaces = surfacesDto.stream().map(dto -> {
+            return this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+        }).collect(Collectors.toList());
         this.vraiProject.fusionSurfaces(surfaces);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 
     public void createMaterial(MaterialDto dto) {

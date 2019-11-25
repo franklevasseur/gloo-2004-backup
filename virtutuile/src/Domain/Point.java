@@ -1,12 +1,30 @@
 package Domain;
 
+import utils.CardinalPoint;
+
 public class Point {
     private Measure x;
     private Measure y;
+    private CardinalPoint cardinality = null;
 
     public Point(Measure pX, Measure pY){
         this.x = pX;
         this.y = pY;
+    }
+
+    public Point(utils.Point point) {
+        this.x = new Measure(point.x, UnitType.m);
+        this.y = new Measure(point.y, UnitType.m);
+    }
+
+    public Point(Measure  x, Measure y, CardinalPoint cardinality) {
+        this.x = x;
+        this.y = y;
+        this.cardinality = cardinality;
+    }
+
+    public utils.Point toAbstract() {
+        return new utils.Point(this.x.getValue(), this.y.getValue());
     }
 
     public Measure getX() {
@@ -25,4 +43,18 @@ public class Point {
         this.y = y;
     }
 
+    public CardinalPoint getCardinality() {
+        return cardinality;
+    }
+
+    public void setCardinality(CardinalPoint cardinality) {
+        this.cardinality = cardinality;
+    }
+
+    public static Point translate(Point oldPoint, double delatX, double deltaY) {
+
+        Measure tempX = new Measure(oldPoint.x.getValue() + delatX);
+        Measure tempY = new Measure(oldPoint.y.getValue() + deltaY);
+        return new Point(tempX, tempY);
+    }
 }

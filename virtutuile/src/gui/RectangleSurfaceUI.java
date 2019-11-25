@@ -30,7 +30,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
     private Label tileInfoTextField;
 
     private List<AttachmentPointUI> attachmentPoints = new LinkedList<>();
-    private Pane parentNode;
+
     private Controller controller = Controller.getInstance();
     private ZoomManager zoomManager;
     private SelectionManager selectionManager;
@@ -45,7 +45,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
-                              Pane parentNode,
                               SnapGridUI snapGrid,
                               Label tileInfoTextField
                               ) {
@@ -67,7 +66,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.rectangleGroup = new Group(rectangle);
         rectangleGroup.setCursor(Cursor.HAND);
 
-        this.parentNode = parentNode;
         this.zoomManager = zoomManager;
         this.selectionManager = selectionManager;
 
@@ -76,7 +74,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.renderTiles(surfaceDto.tiles);
 
         initializeGroup();
-        this.parentNode.getChildren().add(rectangleGroup);
     }
 
     private void initializeGroup() {
@@ -95,9 +92,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
                 this.currentlyBeingDragged = false;
                 this.snapToGrid();
 
-                if (!this.isHole) {
-                    this.fill();
+                if (this.isHole) {
+                    controller.updateSurface(this.toDto());
+                    return;
                 }
+                this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
             }
         });
 
@@ -113,8 +112,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
             rectangle.setY(newY);
 
             t.consume();
-
-            controller.updateSurface(this.toDto());
         });
     }
 
@@ -131,6 +128,11 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
     public void fill() {
         this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
+    }
+
+    public void forceFill() {
+        this.isHole = false;
+        fill();
     }
 
     private void renderTiles(List<TileDto> tiles) {
@@ -176,14 +178,20 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         hideTiles();
 
-        if (newWidth >=0) {
+        if (newWidth >= 0) {
             rectangle.setWidth(newWidth);
         }
         if (newHeight >= 0) {
             rectangle.setHeight(newHeight);
         }
+    }
 
-        controller.updateSurface(this.toDto());
+    public void commitIncreaseSize() {
+        if (!this.isHole) {
+            this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
+            return;
+        }
+        this.controller.updateSurface(this.toDto());
     }
 
     public SurfaceDto toDto() {
@@ -234,7 +242,6 @@ public class RectangleSurfaceUI implements SurfaceUI {
     public void hide() {
         this.hideTiles();
         this.unselect();
-        parentNode.getChildren().remove(this.getNode());
     }
 
     public void setSealsInfo(SealsInfoDto newSealInfos) {
@@ -274,5 +281,10 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
     public Shape getMainShape() {
         return this.rectangle;
+    }
+
+    public void translatePixelBy(Point translation) {
+        rectangle.setX(this.rectangle.getX() + translation.x);
+        rectangle.setY(this.rectangle.getY() + translation.y);
     }
 }

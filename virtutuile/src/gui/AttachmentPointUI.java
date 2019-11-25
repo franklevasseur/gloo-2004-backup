@@ -64,7 +64,7 @@ public class AttachmentPointUI {
         rectangle.setOnMouseReleased(mouseEvent -> {
             if (currentlyBeingDragged) {
                 currentlyBeingDragged = false;
-                parentSurface.fill();
+                parentSurface.commitIncreaseSize();
             }
         });
 

@@ -64,9 +64,32 @@ public class Surface {
 
     //endregion
 
-    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo){
+    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType){
+        // TODO: Ajouter paramètre de la tuile type
         //this.tiles = pTile;
+        calculateFillSurface filler = new calculateFillSurface();
+        Measure tempX = new Measure(1.4);
+        Measure tempY = new Measure(1.4);
+        //variable pour les dimension dune tuile normal
+        Tile tileType = new Tile(tempX, tempY, masterTile.getMaterial());
         this.sealsInfo = pSealsInfo;
+
+        switch(pType) {
+            case TYPE1:
+
+                tiles = filler.fillSurfaceWithType1(summits, masterTile, tileType, pSealsInfo, isRectangular);
+                break;
+            case TYPE2:
+                tiles = filler.fillSurfaceWithType2(summits, masterTile, tileType, pSealsInfo, isRectangular);
+                break;
+            case TYPE3:
+                tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
+                break;
+            default:
+                // code block
+        }
+
+        //return tiles;
     }
 
     public void setSummits(List<Point> summits) {
@@ -79,5 +102,49 @@ public class Surface {
 
     public void setIsRectangular(boolean isRectangular) {
         this.isRectangular = isRectangular;
+    }
+
+    public Measure getHeight(){
+        Measure value = new Measure();
+        double minY;
+        double maxY;
+
+        minY = summits.get(0).getY().getValue();
+        maxY = summits.get(0).getY().getValue();
+        for (Point i:summits){
+            if (minY > i.getY().getValue()){
+                minY = i.getY().getValue();
+            }
+            if (maxY < i.getY().getValue()){
+                maxY = i.getY().getValue();
+            }
+        }
+        value.setValue(maxY - minY);
+
+        return value;
+    }
+
+    public Measure getWidth(){
+        Measure value = new Measure();
+        double minX;
+        double maxX;
+
+        minX = summits.get(0).getY().getValue();
+        maxX = summits.get(0).getY().getValue();
+        for (Point i:summits){
+            if (minX > i.getY().getValue()){
+                minX = i.getY().getValue();
+            }
+            if (maxX < i.getY().getValue()){
+                maxX = i.getY().getValue();
+            }
+        }
+        value.setValue(maxX - minX);
+
+        return value;
+    }
+
+    public boolean isFusionned() {
+        return false;
     }
 }

@@ -7,6 +7,7 @@ import gui.*;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
@@ -118,6 +119,13 @@ public class UiController implements Initializable {
 
         this.undoButton.setDisable(!this.domainController.undoAvailable());
         this.redoButton.setDisable(!this.domainController.redoAvailable());
+
+        this.pane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            if (this.stateCurrentlyCreatingSurface) {
+                onPaneClicked(e);
+                e.consume();
+            }
+        });
     }
 
 
@@ -195,26 +203,28 @@ public class UiController implements Initializable {
         if (stateCurrentlyCreatingSurface && !stateTopLeftCornerCreated) {
 
             firstClickCoord = new Point(clickCoord.x, clickCoord.y);
-
             stateTopLeftCornerCreated = true;
         }
         else if (stateCurrentlyCreatingSurface && stateTopLeftCornerCreated)
         {
-
             Point secondClickCoord = clickCoord;
             stateCurrentlyCreatingSurface = false;
             stateTopLeftCornerCreated = false;
-            createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
 
+            if (!secondClickCoord.isSame(firstClickCoord)) {
+                createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
+            }
 
             drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
             pane.setCursor(Cursor.DEFAULT);
             this.renderFromProject();
             selectionManager.unselectAll();
             stateCurrentlyFilling = true;
-        fillTilesButton.setText("Fill tiles");
-        hideRectangleInfo();firstClickCoord = null;
+            fillTilesButton.setText("Fill tiles");
+            hideRectangleInfo();firstClickCoord = null;
         }
+
+        selectionManager.unselectAll();
     }
 
     public Void handleSelection(boolean isRectangle) {
@@ -307,7 +317,7 @@ public class UiController implements Initializable {
 
     }
 
-    private void afficherRectangleInfo(){
+    private void afficherRectangleInfo() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
         SurfaceUI firstOne = selectedSurfaces.get(0);
 

@@ -4,9 +4,6 @@ package Domain;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
 public class calculateFillSurface {
 
     public calculateFillSurface() {
@@ -14,6 +11,7 @@ public class calculateFillSurface {
 
     /**
      * Type 1 pattern
+     * cest de la poubelle cette fonction ne pas utiliser
      */
     public List<Tile> fillSurfaceWithType1(List<Point> pSurface, Tile pStartTile, Tile pMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
 

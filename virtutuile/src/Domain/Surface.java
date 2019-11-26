@@ -65,9 +65,8 @@ public class Surface {
     //endregion
 
     public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType){
-        // TODO: Ajouter paramètre de la tuile type
-        //this.tiles = pTile;
         calculateFillSurface filler = new calculateFillSurface();
+        /*** variable pour test ***/
         Measure tempX = new Measure(1.4);
         Measure tempY = new Measure(0.4);
         //variable pour les dimension dune tuile normal
@@ -89,7 +88,6 @@ public class Surface {
                 // code block
         }
 
-        //return tiles;
     }
 
     public void setSummits(List<Point> summits) {

@@ -225,7 +225,8 @@ public class UiController implements Initializable {
             selectionManager.unselectAll();
             stateCurrentlyFilling = true;
             fillTilesButton.setText("Fill tiles");
-            hideRectangleInfo();firstClickCoord = null;
+            hideRectangleInfo();
+            firstClickCoord = null;
         }
 
         selectionManager.unselectAll();
@@ -268,11 +269,17 @@ public class UiController implements Initializable {
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
 
+                CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
+                Color newSealColor = ColorHelper.laTiteStringToUtils(sealColorInput.toString());
+
+                SealsInfoDto newSealInfo = new SealsInfoDto();
+                newSealInfo.color = newSealColor;
+                newSealInfo.sealWidth = newSealWidth;
+                chosenSurface.setSealsInfo(newSealInfo);
 
                 //new surface height
                 CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
                 double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
-
 
                 //new surface width
                 CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
@@ -311,18 +318,17 @@ public class UiController implements Initializable {
                 chosenSurface.setPosition(position);
 
                 chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
-                if (masterTile == null) {
+                if (masterTile == null || newSealInfo == null) {
                     this.domainController.updateSurface(chosenSurface.toDto());
                 } else {
                     // TODO: Mettre les bonnes infos
-                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternDto.DEFAULT, new SealsInfoDto());
+                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternDto.DEFAULT, newSealInfo);
                 }
 
-
-                //Si ce n'est pas un trou
-                if(chosenSurface.toDto().isHole == HoleStatus.FILLED){
-                    chosenSurface.fill();
-                }
+//                //Si ce n'est pas un trou
+//                if(chosenSurface.toDto().isHole == HoleStatus.FILLED){
+//                    chosenSurface.fill();
+//                }
                 this.renderFromProject();
                 hideRectangleInfo();
             }
@@ -341,14 +347,10 @@ public class UiController implements Initializable {
         NumberFormat formatter = new DecimalFormat("#0.000");
         surfaceHeightInputBox.setText(formatter.format(rect.height));
         surfaceWidthInputBox.setText(formatter.format(rect.width));
-//        if (firstOne.getMasterTile() != null) {
-//            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
-//            tileHeightInputbox.setText(formatter.format(tileRect.height));
-//            tileWidthInputbox.setText(formatter.format(tileRect.width));
-//        }
 
         if(firstOne.getSealsInfo() != null) {
             sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
+            sealColorChoiceBox.setValue(ColorHelper.utilsColorToLaTiteString(firstOne.getSealsInfo().color));
         }
 
         surfacePositionXInputBox.setText(formatter.format(rect.topLeftCorner.x));

@@ -38,7 +38,6 @@ public class TileUI {
         }else if(material.color == utils.Color.VIOLET){
             rectangle.setFill(Color.VIOLET);
         }
-        rectangle.setStroke(Color.DARKTURQUOISE);
 
         rectangle.setOnMouseEntered(event -> select());
         rectangle.setOnMouseExited(event -> unselect());

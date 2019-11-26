@@ -28,6 +28,9 @@ public class SurfaceAssembler {
         if (surface.getMasterTile() != null) {
             dto.masterTile = toDto(surface.getMasterTile());
         }
+        if (surface.getSealsInfo() != null) {
+            dto.sealsInfoDto = toDto(surface.getSealsInfo());
+        }
 
         if (surface.isFusionned()) {
             dto.fusionnedSurface = ((FusionnedSurface) surface).getFusionnedSurfaces().stream().map(fs -> toDto(fs)).collect(Collectors.toList());
@@ -36,6 +39,41 @@ public class SurfaceAssembler {
         return dto;
     }
 
+    public static void fromDto (SurfaceDto dto, Surface destinationSurface){
+
+        List<Domain.Point> summits = dto.summits.stream().map(s -> {
+            Measure xMeasure = new Measure(s.x, UnitType.m);
+            Measure yMeasure = new Measure(s.y, UnitType.m);
+            return new Domain.Point(xMeasure, yMeasure);
+        }).collect(Collectors.toList());
+
+        if (dto.tiles != null) {
+            List<Tile> tiles = dto.tiles.stream().map(tDto -> fromDto(tDto)).collect(Collectors.toList());
+            destinationSurface.setTiles(tiles);
+        }
+
+        destinationSurface.setHole(dto.isHole);
+        destinationSurface.setSummits(summits);
+        destinationSurface.setIsRectangular(dto.isRectangular);
+        if (dto.masterTile != null) {
+            destinationSurface.setMasterTile(fromDto(dto.masterTile));
+        }
+        if (dto.sealsInfoDto != null) {
+            destinationSurface.setSealsInfo(fromDto(dto.sealsInfoDto));
+        }
+
+        if (dto.isFusionned) {
+            FusionnedSurface fusionnedSurface = (FusionnedSurface) destinationSurface;
+            List<Surface> innerSurfaces = dto.fusionnedSurface.stream().map(s -> fromDto(s)).collect(Collectors.toList());
+            fusionnedSurface.setFusionnedSurfaces(innerSurfaces);
+        }
+    }
+
+    public static Surface fromDto (SurfaceDto dto) {
+        Surface surface = new Surface(dto.isHole, new ArrayList<Domain.Point>(), dto.isRectangular);
+        SurfaceAssembler.fromDto(dto, surface);
+        return surface;
+    }
     public static TileDto toDto(Tile tile) {
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits().stream().map(p -> {
@@ -58,36 +96,16 @@ public class SurfaceAssembler {
         return new Tile(points, material);
     }
 
-    public static void fromDto (SurfaceDto dto, Surface destinationSurface){
-
-        List<Domain.Point> summits = dto.summits.stream().map(s -> {
-            Measure xMeasure = new Measure(s.x, UnitType.m);
-            Measure yMeasure = new Measure(s.y, UnitType.m);
-            return new Domain.Point(xMeasure, yMeasure);
-        }).collect(Collectors.toList());
-
-        if (dto.tiles != null) {
-            List<Tile> tiles = dto.tiles.stream().map(tDto -> fromDto(tDto)).collect(Collectors.toList());
-            destinationSurface.setTiles(tiles);
-        }
-
-        destinationSurface.setHole(dto.isHole);
-        destinationSurface.setSummits(summits);
-        destinationSurface.setIsRectangular(dto.isRectangular);
-        if (dto.masterTile != null) {
-            destinationSurface.setMasterTile(fromDto(dto.masterTile));
-        }
-
-        if (dto.isFusionned) {
-            FusionnedSurface fusionnedSurface = (FusionnedSurface) destinationSurface;
-            List<Surface> innerSurfaces = dto.fusionnedSurface.stream().map(s -> fromDto(s)).collect(Collectors.toList());
-            fusionnedSurface.setFusionnedSurfaces(innerSurfaces);
-        }
+    public static SealsInfoDto toDto(SealsInfo sealsInfo) {
+        SealsInfoDto dto = new SealsInfoDto();
+        dto.sealWidth = sealsInfo.getWidth().getValue();
+        dto.color = sealsInfo.getColor();
+        return dto;
     }
 
-    public static Surface fromDto (SurfaceDto dto) {
-        Surface surface = new Surface(dto.isHole, new ArrayList<Domain.Point>(), dto.isRectangular);
-        SurfaceAssembler.fromDto(dto, surface);
-        return surface;
+    public static SealsInfo fromDto(SealsInfoDto sDto) {
+        Measure width = new Measure(sDto.sealWidth);
+        SealsInfo sealsInfo = new SealsInfo(width, sDto.color);
+        return  sealsInfo;
     }
 }

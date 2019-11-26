@@ -1,25 +1,27 @@
 package Domain;
 
 
+import utils.Color;
+
 public class SealsInfo {
     private Measure width;
-    private Material material;
+    private Color color;
 
-    public SealsInfo(Measure pWidth, Material pMaterial){
+    public SealsInfo(Measure pWidth, Color color){
         width = pWidth;
-        material = pMaterial;
+        this.color = color;
     }
 
-    public Material getMaterial() {
-        return material;
+    public Color getColor() {
+        return color;
     }
 
     public Measure getWidth() {
         return width;
     }
 
-    public void setMaterial(Material material) {
-        this.material = material;
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public void setWidth(Measure width) {

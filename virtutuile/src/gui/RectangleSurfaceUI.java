@@ -51,6 +51,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.snapGrid = snapGrid;
 
         this.masterTile = surfaceDto.masterTile;
+        this.sealsInfo = surfaceDto.sealsInfoDto;
         this.tileInfoTextField = tileInfoTextField;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
@@ -70,6 +71,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.isHole = surfaceDto.isHole;
         if (this.isHole == HoleStatus.HOLE) {
             rectangle.setFill(Color.TRANSPARENT);
+            rectangle.setStroke(Color.BLACK);
+        } else if (sealsInfo != null) {
+            rectangle.setFill(ColorHelper.utilsColorToMofackingJavafxColorTiChum(sealsInfo.color));
             rectangle.setStroke(Color.BLACK);
         } else {
             rectangle.setFill(Color.WHITE);

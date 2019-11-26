@@ -1,9 +1,7 @@
 package application;
 
-import Domain.HoleStatus;
-import Domain.Material;
-import Domain.Project;
-import Domain.Surface;
+import Domain.*;
+import utils.Color;
 import utils.Point;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
@@ -104,6 +102,15 @@ public class Controller {
             actualUsedMasterTile = masterTile;
         }
 
+        SealsInfoDto actualSealInfo;
+        if (sealing == null) {
+            actualSealInfo = new SealsInfoDto();
+            actualSealInfo.color = Color.BLUE;
+            actualSealInfo.sealWidth = 0.02;
+        } else {
+            actualSealInfo = sealing;
+        }
+
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
             throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");
@@ -115,13 +122,10 @@ public class Controller {
         double tileWidth = info.width;
         double tileHeight = info.height;
 
-        SealsInfoDto defaultSealInfo = new SealsInfoDto();
-        defaultSealInfo.sealWidth = 0.02;
-
         List<TileDto> tiles = new ArrayList<>();
 
-        double unitOfWidth = tileWidth + defaultSealInfo.sealWidth;
-        double unitOfHeight = tileHeight + defaultSealInfo.sealWidth;
+        double unitOfWidth = tileWidth + actualSealInfo.sealWidth;
+        double unitOfHeight = tileHeight + actualSealInfo.sealWidth;
 
         int amountOfLines = (int) Math.ceil(surfaceRectangle.height / unitOfHeight);
         int amountOfColumns = (int) Math.ceil(surfaceRectangle.width / unitOfWidth);
@@ -149,6 +153,7 @@ public class Controller {
 
         surfaceToFillDto.tiles = tiles;
         surfaceToFillDto.isHole = HoleStatus.FILLED;
+        surfaceToFillDto.sealsInfoDto = actualSealInfo;
 
         return tiles;
     }

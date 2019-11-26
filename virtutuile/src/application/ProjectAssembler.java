@@ -1,11 +1,8 @@
 package application;
 
-import Domain.FusionnedSurface;
-import Domain.Material;
 import Domain.Project;
 import Domain.Surface;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,8 +25,7 @@ public class ProjectAssembler {
         List<Surface> surfaces = dto.surfaces.stream().map(s -> SurfaceAssembler.fromDto(s)).collect(Collectors.toList());
         project.setSurfaces(surfaces);
 
-        List<Material> materials = new ArrayList<>(); // TODO: pass the actual materials
-        project.setMaterials(materials);
+        project.setMaterials(dto.materials.stream().map(m -> MaterialAssembler.fromDto(m)).collect(Collectors.toList()));
 
         return project;
     }

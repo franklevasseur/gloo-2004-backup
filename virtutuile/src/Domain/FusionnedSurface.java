@@ -1,6 +1,6 @@
 package Domain;
 
-import javafx.scene.shape.*;
+import utils.AbstractShape;
 import utils.FusionHelper;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class FusionnedSurface extends Surface {
     private List<Surface> fusionnedSurfaces;
 
     public FusionnedSurface(List<Surface> fusionnedSurfaces) {
-        super(false, extractResultantSummits(fusionnedSurfaces), false);
+        super(HoleStatus.NONE, extractResultantSummits(fusionnedSurfaces), false);
         this.fusionnedSurfaces = fusionnedSurfaces;
     }
 
@@ -29,13 +29,13 @@ public class FusionnedSurface extends Surface {
     }
 
     private static List<Point> extractResultantSummits(List<Surface> fusionnedSurfaces) {
-        return FusionHelper.getResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)).stream().map(p -> new Point(p)).collect(Collectors.toList());
+        return FusionHelper.getFusionResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)).summits.stream().map(p -> new Point(p)).collect(Collectors.toList());
     }
 
-    private static List<List<utils.Point>> extractAllInnerSurfacesPoints(List<Surface> fusionnedSurfaces) {
+    private static List<AbstractShape> extractAllInnerSurfacesPoints(List<Surface> fusionnedSurfaces) {
         return fusionnedSurfaces
-                .stream().map(s -> s.getSummits()
-                        .stream().map(su -> su.toAbstract()).collect(Collectors.toList()))
+                .stream().map(s -> new AbstractShape(s.getSummits()
+                        .stream().map(su -> su.toAbstract()).collect(Collectors.toList()), s.isHole() == HoleStatus.HOLE))
                 .collect(Collectors.toList());
     }
 }

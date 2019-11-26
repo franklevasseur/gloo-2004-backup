@@ -100,7 +100,7 @@ public class AttachmentPointUI {
             @Override
             public void handle(MouseEvent t) {
                 parentSurface.unselect();
-                parentSurface.select();
+                parentSurface.select(false);
                 t.consume();
             }
         });

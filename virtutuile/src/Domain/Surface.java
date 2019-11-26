@@ -7,13 +7,13 @@ import java.util.List;
 
 public class Surface {
     private Id id;
-    private boolean isHole;
+    private HoleStatus isHole;
     private List<Tile> tiles = new ArrayList<>();
     private List<Point> summits;
     private SealsInfo sealsInfo;
     private boolean isRectangular = true;
 
-    public Surface(boolean pIsHole, List<Point> pSummits, boolean isRectangular){
+    public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular){
         this.isHole = pIsHole;
         this.summits = pSummits;
         this.id = new Id();
@@ -36,7 +36,7 @@ public class Surface {
         return tiles;
     }
 
-    public boolean isHole() {
+    public HoleStatus isHole() {
         return isHole;
     }
 
@@ -54,7 +54,7 @@ public class Surface {
         this.sealsInfo = sealsInfo;
     }
 
-    public void setHole(boolean hole) {
+    public void setHole(HoleStatus hole) {
         isHole = hole;
     }
 
@@ -80,7 +80,7 @@ public class Surface {
                 tiles = filler.fillSurfaceWithType1(summits, masterTile, tileType, pSealsInfo, isRectangular);
                 break;
             case TYPE2:
-                tiles = filler.fillSurfaceWithType2(summits, masterTile, tileType, pSealsInfo, isRectangular);
+                tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
                 break;
             case TYPE3:
                 tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);

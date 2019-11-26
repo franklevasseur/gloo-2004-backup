@@ -40,10 +40,10 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCreateSurfaceSelected" prefHeight="25.0" prefWidth="101.0" text="Create Surface" />
+                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#onCreateSurfaceSelected" prefHeight="25.0" prefWidth="101.0" text="Create rectangle surface" />
                 <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Create material" />
-                <Button layoutX="159.0" layoutY="14.0" mnemonicParsing="false" onAction="#fillSelectedSurfaceWithTiles" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
-                <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" onAction="#surfaceHole" prefHeight="25.0" prefWidth="96.0" text="Hole" />
+                <Button fx:id="fillTilesButton" layoutX="159.0" layoutY="14.0" mnemonicParsing="false" onAction="#toggleFill" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
+                <Button layoutX="159.0" layoutY="37.0" mnemonicParsing="false" onAction="#setHole" prefHeight="25.0" prefWidth="96.0" text="Set hole" />
                 <CheckBox layoutX="776.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
                 <CheckBox fx:id="snapGridCheckBox" layoutX="885.0" layoutY="28.0" mnemonicParsing="false" onAction="#snapGridToggle" text="Snap grid" />
                 <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
@@ -62,7 +62,10 @@
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="719.0" prefWidth="790.0">
           <children>
-            <Pane fx:id="pane" layoutX="0.0" layoutY="0.0" onMouseClicked="#onPaneClicked" onScroll="#handleZoom" prefHeight="718.0" prefWidth="737.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Pane fx:id="pane" layoutX="0.0" layoutY="0.0"
+                  onMouseClicked="#onPaneClicked"
+                  onMouseMoved="#onMouseMoved"
+                  onScroll="#handleZoom" prefHeight="718.0" prefWidth="737.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
                 <Label fx:id="tileInfo" layoutX="15" layoutY="668.0" prefWidth="500" />
                 <Pane fx:id="drawingSection" />
@@ -97,8 +100,8 @@
                         <Label text="Material Color" GridPane.rowIndex="9" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                           <children>
-                            <TextField fx:id="surfacePosotoionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
-                            <TextField fx:id="surfacePosotoionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="surfacePositionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="surfacePositionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
                             <Label layoutX="46.0" layoutY="6.0" text="x" />
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>

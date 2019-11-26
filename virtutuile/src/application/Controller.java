@@ -1,5 +1,6 @@
 package application;
 
+import Domain.HoleStatus;
 import Domain.Material;
 import Domain.Project;
 import Domain.Surface;
@@ -139,7 +140,7 @@ public class Controller {
         }
 
         surfaceToFillDto.tiles = tiles;
-        surfaceToFillDto.isHole = false;
+        surfaceToFillDto.isHole = HoleStatus.FILLED;
 
         return tiles;
     }

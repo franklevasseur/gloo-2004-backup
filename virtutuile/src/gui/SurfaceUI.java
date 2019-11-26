@@ -1,5 +1,6 @@
 package gui;
 
+import Domain.HoleStatus;
 import application.SealsInfoDto;
 import application.SurfaceDto;
 import application.TileDto;
@@ -13,7 +14,7 @@ public interface SurfaceUI {
     Node getNode();
     Shape getMainShape(); // gives the rectangle without the tiles and anchor points
     SurfaceDto toDto();
-    void select();
+    void select(boolean setToFront);
     void unselect();
     Id getId();
     void delete();
@@ -28,5 +29,5 @@ public interface SurfaceUI {
     void setSize(double width, double height);
     void setPosition(Point position);
     void translatePixelBy(Point translation);
-    void setHole(boolean isHole);
+    void setHole(HoleStatus isHole);
 }

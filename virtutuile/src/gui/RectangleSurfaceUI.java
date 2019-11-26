@@ -50,6 +50,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
 
+        this.masterTile = surfaceDto.masterTile;
         this.tileInfoTextField = tileInfoTextField;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
@@ -214,6 +215,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         dto.isRectangular = true;
         dto.id = this.id;
         dto.isHole = this.isHole;
+        dto.masterTile = this.masterTile;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());

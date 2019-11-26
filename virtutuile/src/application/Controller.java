@@ -46,7 +46,7 @@ public class Controller {
     // atomic move and fill or resize and fill
     public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing)  {
         internalUpdateSurface(dto);
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto, masterTile, patternDto, sealing);
         internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
         return tiles;
@@ -86,16 +86,23 @@ public class Controller {
     }
 
     public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto, masterTile, patternDto, sealing);
         this.internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 
         return tiles;
     }
 
-    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto) {
-        // Let the backend choose a default pattern and sealing and master tile
-        // ...
+    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
+
+        TileDto actualUsedMasterTile;
+        if (masterTile == null) {
+            actualUsedMasterTile = new TileDto();
+            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits).topLeftCorner, 0.2, 0.3);
+            actualUsedMasterTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
+        } else {
+            actualUsedMasterTile = masterTile;
+        }
 
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
@@ -104,8 +111,9 @@ public class Controller {
 
         RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits);
 
-        double tileWidth = 0.3;
-        double tileHeight = 0.2;
+        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(actualUsedMasterTile.summits);
+        double tileWidth = info.width;
+        double tileHeight = info.height;
 
         SealsInfoDto defaultSealInfo = new SealsInfoDto();
         defaultSealInfo.sealWidth = 0.02;
@@ -133,7 +141,7 @@ public class Controller {
                 double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
 
                 nextTile.summits = RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight);
-                nextTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
+                nextTile.material = actualUsedMasterTile.material;
 
                 tiles.add(nextTile);
             }

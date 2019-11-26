@@ -13,6 +13,8 @@ public class Surface {
     private SealsInfo sealsInfo;
     private boolean isRectangular = true;
 
+    private Tile masterTile;
+
     public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular){
         this.isHole = pIsHole;
         this.summits = pSummits;
@@ -146,5 +148,13 @@ public class Surface {
 
     public boolean isFusionned() {
         return false;
+    }
+
+    public Tile getMasterTile() {
+        return masterTile;
+    }
+
+    public void setMasterTile(Tile masterTile) {
+        this.masterTile = masterTile;
     }
 }

@@ -761,7 +761,7 @@ public class UiController implements Initializable {
 
     }
 
-    public void alignSurfacesVertically(){
+    public void alignSurfacesVertically() {
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }
@@ -780,7 +780,7 @@ public class UiController implements Initializable {
             double halfWidth = rect.width/2;
             double rectY = rect.topLeftCorner.y;
             s.setPosition(new Point((firstX + centerX) - halfWidth, rectY));
-            domainController.updateSurface(s.toDto());
+            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
         }
         this.renderFromProject();
     }
@@ -804,7 +804,7 @@ public class UiController implements Initializable {
             double halfHeight = rect.height/2;
             double rectX = rect.topLeftCorner.x;
             s.setPosition(new Point(rectX, (firstY + centerY) - halfHeight));
-            this.domainController.updateSurface(s.toDto());
+            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
         }
         this.renderFromProject();
     }

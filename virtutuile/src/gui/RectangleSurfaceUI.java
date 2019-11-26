@@ -6,7 +6,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -69,20 +68,28 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.selectionManager = selectionManager;
 
         this.isHole = surfaceDto.isHole;
+        this.setRectangleColor();
+
+        this.renderTiles(surfaceDto.tiles);
+
+        initializeGroup();
+    }
+
+    private void setRectangleColor() {
         if (this.isHole == HoleStatus.HOLE) {
             rectangle.setFill(Color.TRANSPARENT);
             rectangle.setStroke(Color.BLACK);
-        } else if (sealsInfo != null) {
+        } else if (this.isHole == HoleStatus.NONE) {
+            rectangle.setFill(Color.WHITE);
+            rectangle.setStroke(Color.BLACK);
+        }
+        else if (sealsInfo != null) {
             rectangle.setFill(ColorHelper.utilsColorToMofackingJavafxColorTiChum(sealsInfo.color));
             rectangle.setStroke(Color.BLACK);
         } else {
             rectangle.setFill(Color.WHITE);
             rectangle.setStroke(Color.BLACK);
         }
-
-        this.renderTiles(surfaceDto.tiles);
-
-        initializeGroup();
     }
 
     private void initializeGroup() {
@@ -137,6 +144,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
     public void fill() {
         this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
+        setRectangleColor();
     }
 
     public void forceFill() {

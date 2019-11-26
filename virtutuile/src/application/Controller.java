@@ -83,53 +83,45 @@ public class Controller {
         return undoRedoManager.undoAvailable();
     }
 
-    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
-
-        //TODO : INCLURE RENTRÉ LES VALEUR DE LA MASTER TILE FOURNIS PAR LE UI
-        //variable matéraux HARCODÉ
-        Material tempMaterialA = new Material(Color.BLUE, MaterialType.sealMaterial, "grosseConne");
-        Material tempMaterial = new Material(Color.BLUE, MaterialType.sealMaterial, "ptiteConne");
-        SealsInfo tempSeal = new SealsInfo(new Measure(0.1), tempMaterialA);
-        Tile plote = new Tile();
-
-        //variable pour décaler la première tuile HARDCODÉ
-        Domain.Point grosseConne = Domain.Point.translate(desiredSurface.getSummits().get(0), -1, -1);
-
-        //variable qui créer la tuile type avec sa position d'origine HARDCODÉ
-        plote.setSummits(calculateFillSurface.rectangleInfoToSummits(grosseConne, 1.4, 1.4));
-        plote.setMaterial(tempMaterial);
-
-        //TODO : PATTERNTYPE DEVRAIT ETRE REMPLACÉ PAR LE PARTTERN DTO
-        desiredSurface.fillSurface(plote, tempSeal, PatternType.TYPE1);
-
-        SurfaceDto tiles = SurfaceAssembler.toDto(desiredSurface);
-
-        this.internalUpdateSurface(dto);
-        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
-
-        return tiles.tiles;
-    }
-
-    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-
+    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternDto patternDto, SealsInfoDto sealingDto) {
         TileDto actualUsedMasterTile;
-        if (masterTile == null) {
+        if (masterTileDto == null) {
             actualUsedMasterTile = new TileDto();
-            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits).topLeftCorner, 0.2, 0.3);
+            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(RectangleHelper.summitsToRectangleInfo(dto.summits).topLeftCorner, 0.2, 0.3);
             actualUsedMasterTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
         } else {
-            actualUsedMasterTile = masterTile;
+            actualUsedMasterTile = masterTileDto;
         }
 
         SealsInfoDto actualSealInfo;
-        if (sealing == null) {
+        if (sealingDto == null) {
             actualSealInfo = new SealsInfoDto();
             actualSealInfo.color = Color.BLUE;
             actualSealInfo.sealWidth = 0.02;
         } else {
-            actualSealInfo = sealing;
+            actualSealInfo = sealingDto;
         }
+
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto, actualUsedMasterTile, patternDto, actualSealInfo);
+        this.internalUpdateSurface(dto);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+
+        return tiles;
+
+        // TODO: Arnaud essaye donc de décommenter ce qui est en bas pis de faire marcher ca plz
+//        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+//
+//        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.TYPE1);
+//
+//        SurfaceDto tiles = SurfaceAssembler.toDto(desiredSurface);
+//
+//        this.internalUpdateSurface(dto);
+//        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+//
+//        return tiles.tiles;
+    }
+
+    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
 
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
@@ -138,14 +130,14 @@ public class Controller {
 
         RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits);
 
-        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(actualUsedMasterTile.summits);
+        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.summits);
         double tileWidth = info.width;
         double tileHeight = info.height;
 
         List<TileDto> tiles = new ArrayList<>();
 
-        double unitOfWidth = tileWidth + actualSealInfo.sealWidth;
-        double unitOfHeight = tileHeight + actualSealInfo.sealWidth;
+        double unitOfWidth = tileWidth + sealing.sealWidth;
+        double unitOfHeight = tileHeight + sealing.sealWidth;
 
         int amountOfLines = (int) Math.ceil(surfaceRectangle.height / unitOfHeight);
         int amountOfColumns = (int) Math.ceil(surfaceRectangle.width / unitOfWidth);
@@ -165,7 +157,7 @@ public class Controller {
                 double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
 
                 nextTile.summits = RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight);
-                nextTile.material = actualUsedMasterTile.material;
+                nextTile.material = masterTile.material;
 
                 tiles.add(nextTile);
             }
@@ -173,7 +165,7 @@ public class Controller {
 
         surfaceToFillDto.tiles = tiles;
         surfaceToFillDto.isHole = HoleStatus.FILLED;
-        surfaceToFillDto.sealsInfoDto = actualSealInfo;
+        surfaceToFillDto.sealsInfoDto = sealing;
 
         return tiles;
     }

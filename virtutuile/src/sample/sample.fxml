@@ -48,7 +48,7 @@
                 <CheckBox fx:id="snapGridCheckBox" layoutX="885.0" layoutY="28.0" mnemonicParsing="false" onAction="#snapGridToggle" text="Snap grid" />
                 <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
                 <Button layoutX="446.0" layoutY="14.0" mnemonicParsing="false" onAction="#surfaceFusion" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
-                <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" onAction="#alignSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="horizontally center" />
+                <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" onAction="#alignSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Horizontally center" />
                 <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" onAction="#alignSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
                 <CheckBox layoutX="776.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
                 <Button layoutX="306.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Inspection" />

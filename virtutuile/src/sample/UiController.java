@@ -629,31 +629,46 @@ public class UiController implements Initializable {
             return;
         }
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-        SurfaceUI first = selectedSurfaces.get(0);
+        SurfaceUI mainSurface = selectedSurfaces.get(0);
 
-        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(first.toDto().summits);
+        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
         double firstX = firstRect.topLeftCorner.x;
+        double centerX = firstRect.width/2;
 
         for (SurfaceUI s : selectedSurfaces) {
-            if (s == first) {
+            if (s == mainSurface) {
                 continue;
             }
-
             RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
+            double halfWidth = rect.width/2;
             double rectY = rect.topLeftCorner.y;
-            s.setPosition(new Point(firstX, rectY));
+            s.setPosition(new Point((firstX + centerX) - halfWidth, rectY));
             domainController.updateSurface(s.toDto());
         }
-
         this.renderFromProject();
     }
 
     public void alignSurfacesHorizontally(){
-//        if(this.selectionManager.getSelectedSurfaces().size() <= 1){
-//            return;
-//        }
-//        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
-//        this.domainController.alignSurfacesHorizontally(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()));
-//        this.renderFromProject();
+        if(this.selectionManager.getSelectedSurfaces().size() <= 1){
+            return;
+        }
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+        SurfaceUI mainSurface = selectedSurfaces.get(0);
+
+        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
+        double firstY = firstRect.topLeftCorner.y;
+        double centerY = firstRect.height/2;
+
+        for(SurfaceUI s: selectedSurfaces){
+            if(s == mainSurface){
+                continue;
+            }
+            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
+            double halfHeight = rect.height/2;
+            double rectX = rect.topLeftCorner.x;
+            s.setPosition(new Point(rectX, (firstY + centerY) - halfHeight));
+            this.domainController.updateSurface(s.toDto());
+        }
+        this.renderFromProject();
     }
 }

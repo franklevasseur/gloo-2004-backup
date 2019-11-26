@@ -1,9 +1,7 @@
 package application;
 
-import Domain.HoleStatus;
-import Domain.Material;
-import Domain.Project;
-import Domain.Surface;
+import Domain.*;
+import utils.Color;
 import utils.Point;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
@@ -46,7 +44,7 @@ public class Controller {
     // atomic move and fill or resize and fill
     public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing)  {
         internalUpdateSurface(dto);
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing);
         internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
         return tiles;
@@ -86,11 +84,31 @@ public class Controller {
     }
 
     public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+
+        //TODO : INCLURE RENTRÉ LES VALEUR DE LA MASTER TILE FOURNIS PAR LE UI
+        //variable matéraux HARCODÉ
+        Material tempMaterialA = new Material(Color.BLUE, MaterialType.sealMaterial, "grosseConne");
+        Material tempMaterial = new Material(Color.BLUE, MaterialType.sealMaterial, "ptiteConne");
+        SealsInfo tempSeal = new SealsInfo(new Measure(0.1), tempMaterialA);
+        Tile plote = new Tile();
+
+        //variable pour décaler la première tuile HARDCODÉ
+        Domain.Point grosseConne = Domain.Point.translate(desiredSurface.getSummits().get(0), -1, -1);
+
+        //variable qui créer la tuile type avec sa position d'origine HARDCODÉ
+        plote.setSummits(calculateFillSurface.rectangleInfoToSummits(grosseConne, 1.4, 1.4));
+        plote.setMaterial(tempMaterial);
+
+        //TODO : PATTERNTYPE DEVRAIT ETRE REMPLACÉ PAR LE PARTTERN DTO
+        desiredSurface.fillSurface(plote, tempSeal, PatternType.TYPE1);
+
+        SurfaceDto tiles = SurfaceAssembler.toDto(desiredSurface);
+
         this.internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 
-        return tiles;
+        return tiles.tiles;
     }
 
     private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto) {

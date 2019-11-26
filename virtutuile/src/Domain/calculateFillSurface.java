@@ -136,6 +136,12 @@ public class calculateFillSurface {
                 }
 
             }
+            /**
+            if(testCount == 1){
+                notFilled = false;
+            }else {
+                testCount++;
+            }*/
         }
         return outTiles;
     }

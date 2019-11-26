@@ -23,15 +23,14 @@ public class SurfaceAssembler {
         dto.id = surface.getId();
         dto.isRectangular = surface.getIsRectangular();
         dto.isFusionned = surface.isFusionned();
-        dto.tiles = surface.getTiles().stream().map(t -> {
-            TileDto tileDto = new TileDto();
-            tileDto.summits = t.getSummits().stream().map(p -> {
-                double x = p.getX().getValue();
-                double y = p.getY().getValue();
-                return new Point(x, y);
-            }).collect(Collectors.toList());
-            return tileDto;
-        }).collect(Collectors.toList());
+        dto.tiles = surface.getTiles().stream().map(t -> toDto(t)).collect(Collectors.toList());
+
+        if (surface.getMasterTile() != null) {
+            dto.masterTile = toDto(surface.getMasterTile());
+        }
+        if (surface.getSealsInfo() != null) {
+            dto.sealsInfoDto = toDto(surface.getSealsInfo());
+        }
 
         if (surface.isFusionned()) {
             dto.fusionnedSurface = ((FusionnedSurface) surface).getFusionnedSurfaces().stream().map(fs -> toDto(fs)).collect(Collectors.toList());
@@ -42,7 +41,6 @@ public class SurfaceAssembler {
 
     public static void fromDto (SurfaceDto dto, Surface destinationSurface){
 
-        // TODO: aller chercher sealsInfo dans le dto
         List<Domain.Point> summits = dto.summits.stream().map(s -> {
             Measure xMeasure = new Measure(s.x, UnitType.m);
             Measure yMeasure = new Measure(s.y, UnitType.m);
@@ -50,23 +48,19 @@ public class SurfaceAssembler {
         }).collect(Collectors.toList());
 
         if (dto.tiles != null) {
-            List<Tile> tiles = dto.tiles.stream().map(tDto -> {
-                List<Domain.Point> points = tDto.summits.stream().map(p -> {
-                    Measure xMeasure = new Measure(p.x, UnitType.m);
-                    Measure yMeasure = new Measure(p.y, UnitType.m);
-                    return new Domain.Point(xMeasure, yMeasure);
-                }).collect(Collectors.toList());
-
-                // TODO: pass the actual material in the dto
-                return new Tile(points, new Material(Color.BLACK, MaterialType.tileMaterial, "petit penis bandé"));
-            }).collect(Collectors.toList());
-
+            List<Tile> tiles = dto.tiles.stream().map(tDto -> fromDto(tDto)).collect(Collectors.toList());
             destinationSurface.setTiles(tiles);
         }
 
         destinationSurface.setHole(dto.isHole);
         destinationSurface.setSummits(summits);
         destinationSurface.setIsRectangular(dto.isRectangular);
+        if (dto.masterTile != null) {
+            destinationSurface.setMasterTile(fromDto(dto.masterTile));
+        }
+        if (dto.sealsInfoDto != null) {
+            destinationSurface.setSealsInfo(fromDto(dto.sealsInfoDto));
+        }
 
         if (dto.isFusionned) {
             FusionnedSurface fusionnedSurface = (FusionnedSurface) destinationSurface;
@@ -79,5 +73,39 @@ public class SurfaceAssembler {
         Surface surface = new Surface(dto.isHole, new ArrayList<Domain.Point>(), dto.isRectangular);
         SurfaceAssembler.fromDto(dto, surface);
         return surface;
+    }
+    public static TileDto toDto(Tile tile) {
+        TileDto tileDto = new TileDto();
+        tileDto.summits = tile.getSummits().stream().map(p -> {
+            double x = p.getX().getValue();
+            double y = p.getY().getValue();
+            return new Point(x, y);
+        }).collect(Collectors.toList());
+        tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
+        return tileDto;
+    }
+
+    public static Tile fromDto(TileDto tDto) {
+        List<Domain.Point> points = tDto.summits.stream().map(p -> {
+            Measure xMeasure = new Measure(p.x, UnitType.m);
+            Measure yMeasure = new Measure(p.y, UnitType.m);
+            return new Domain.Point(xMeasure, yMeasure);
+        }).collect(Collectors.toList());
+
+        Material material = MaterialAssembler.fromDto(tDto.material);
+        return new Tile(points, material);
+    }
+
+    public static SealsInfoDto toDto(SealsInfo sealsInfo) {
+        SealsInfoDto dto = new SealsInfoDto();
+        dto.sealWidth = sealsInfo.getWidth().getValue();
+        dto.color = sealsInfo.getColor();
+        return dto;
+    }
+
+    public static SealsInfo fromDto(SealsInfoDto sDto) {
+        Measure width = new Measure(sDto.sealWidth);
+        SealsInfo sealsInfo = new SealsInfo(width, sDto.color);
+        return  sealsInfo;
     }
 }

@@ -1,6 +1,8 @@
 package application;
 
+import utils.Color;
+
 public class SealsInfoDto {
     public double sealWidth;
-    public String sealColor;
+    public Color color;
 }

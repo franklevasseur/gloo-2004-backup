@@ -1,5 +1,6 @@
 package gui;
 
+import application.MaterialDto;
 import application.TileDto;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -13,14 +14,30 @@ public class TileUI {
     private Rectangle rectangle;
     private Label tileInfoTextField;
     private ZoomManager zoomManager;
+    private MaterialDto material;
 
-    public TileUI(RectangleInfo rectInfo, Label tileInfoTextField, ZoomManager zoomManager) {
+    public TileUI(RectangleInfo rectInfo, Label tileInfoTextField, ZoomManager zoomManager, MaterialDto material) {
         this.tileInfoTextField = tileInfoTextField;
         this.zoomManager = zoomManager;
+        this.material = material;
 
         rectangle = new Rectangle(rectInfo.topLeftCorner.x, rectInfo.topLeftCorner.y, rectInfo.width, rectInfo.height);
-        rectangle.setFill(Color.PALETURQUOISE);
-        rectangle.setStroke(Color.DARKTURQUOISE);
+
+        if (material.color == utils.Color.BLACK) {
+            rectangle.setFill(Color.BLACK);
+        }else if(material.color == utils.Color.WHITE){
+            rectangle.setFill(Color.WHITE);
+        }else if(material.color == utils.Color.YELLOW){
+            rectangle.setFill(Color.YELLOW);
+        }else if(material.color == utils.Color.GREEN){
+            rectangle.setFill(Color.GREEN);
+        }else if(material.color == utils.Color.BLUE){
+            rectangle.setFill(Color.BLUE);
+        }else if(material.color == utils.Color.RED){
+            rectangle.setFill(Color.RED);
+        }else if(material.color == utils.Color.VIOLET){
+            rectangle.setFill(Color.VIOLET);
+        }
 
         rectangle.setOnMouseEntered(event -> select());
         rectangle.setOnMouseExited(event -> unselect());
@@ -33,6 +50,7 @@ public class TileUI {
     public TileDto toDto() {
         TileDto tile = new TileDto();
         tile.summits = RectangleHelper.rectangleInfoToSummits(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+        tile.material = this.material;
         return tile;
     }
 
@@ -42,7 +60,21 @@ public class TileUI {
     }
 
     private void unselect() {
-        rectangle.setFill(Color.PALETURQUOISE);
+        if (material.color == utils.Color.BLACK) {
+            rectangle.setFill(Color.BLACK);
+        }else if(material.color == utils.Color.WHITE){
+            rectangle.setFill(Color.WHITE);
+        }else if(material.color == utils.Color.YELLOW){
+            rectangle.setFill(Color.YELLOW);
+        }else if(material.color == utils.Color.GREEN){
+            rectangle.setFill(Color.GREEN);
+        }else if(material.color == utils.Color.BLUE){
+            rectangle.setFill(Color.BLUE);
+        }else if(material.color == utils.Color.RED){
+            rectangle.setFill(Color.RED);
+        }else if(material.color == utils.Color.VIOLET){
+            rectangle.setFill(Color.VIOLET);
+        }
         tileInfoTextField.setText("");
     }
 

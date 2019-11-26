@@ -13,6 +13,8 @@ public class SurfaceDto {
     public HoleStatus isHole;
     public Color surfaceColor;
     public boolean isFusionned;
+    public TileDto masterTile;
+    public SealsInfoDto sealsInfoDto;
 
     public List<Point> summits; // summits in meters
     public List<TileDto> tiles;

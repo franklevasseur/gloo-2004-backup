@@ -56,7 +56,7 @@ public class Tile {
         double maxX;
 
         minX = summits.get(0).getX().getValue();
-        maxX = summits.get(0).getY().getValue();
+        maxX = summits.get(0).getX().getValue();
         for (Point i:summits){
             if (minX > i.getX().getValue()){
                 minX = i.getX().getValue();

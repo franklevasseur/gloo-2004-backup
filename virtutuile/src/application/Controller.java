@@ -1,9 +1,7 @@
 package application;
 
-import Domain.HoleStatus;
-import Domain.Material;
-import Domain.Project;
-import Domain.Surface;
+import Domain.*;
+import utils.Color;
 import utils.Point;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
@@ -46,7 +44,7 @@ public class Controller {
     // atomic move and fill or resize and fill
     public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing)  {
         internalUpdateSurface(dto);
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+        List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing);
         internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
         return tiles;
@@ -85,17 +83,45 @@ public class Controller {
         return undoRedoManager.undoAvailable();
     }
 
-    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto);
+    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternDto patternDto, SealsInfoDto sealingDto) {
+        TileDto actualUsedMasterTile;
+        if (masterTileDto == null) {
+            actualUsedMasterTile = new TileDto();
+            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(RectangleHelper.summitsToRectangleInfo(dto.summits).topLeftCorner, 0.2, 0.3);
+            actualUsedMasterTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
+        } else {
+            actualUsedMasterTile = masterTileDto;
+        }
+
+        SealsInfoDto actualSealInfo;
+        if (sealingDto == null) {
+            actualSealInfo = new SealsInfoDto();
+            actualSealInfo.color = Color.BLUE;
+            actualSealInfo.sealWidth = 0.02;
+        } else {
+            actualSealInfo = sealingDto;
+        }
+
+        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto, actualUsedMasterTile, patternDto, actualSealInfo);
         this.internalUpdateSurface(dto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 
         return tiles;
+
+        // TODO: Arnaud essaye donc de décommenter ce qui est en bas pis de faire marcher ca plz
+//        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+//
+//        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.TYPE1);
+//
+//        SurfaceDto tiles = SurfaceAssembler.toDto(desiredSurface);
+//
+//        this.internalUpdateSurface(dto);
+//        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+//
+//        return tiles.tiles;
     }
 
-    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto) {
-        // Let the backend choose a default pattern and sealing and master tile
-        // ...
+    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
 
         if (!surfaceToFillDto.isRectangular) {
             // TODO: find another logic
@@ -104,16 +130,14 @@ public class Controller {
 
         RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits);
 
-        double tileWidth = 0.3;
-        double tileHeight = 0.2;
-
-        SealsInfoDto defaultSealInfo = new SealsInfoDto();
-        defaultSealInfo.sealWidth = 0.02;
+        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.summits);
+        double tileWidth = info.width;
+        double tileHeight = info.height;
 
         List<TileDto> tiles = new ArrayList<>();
 
-        double unitOfWidth = tileWidth + defaultSealInfo.sealWidth;
-        double unitOfHeight = tileHeight + defaultSealInfo.sealWidth;
+        double unitOfWidth = tileWidth + sealing.sealWidth;
+        double unitOfHeight = tileHeight + sealing.sealWidth;
 
         int amountOfLines = (int) Math.ceil(surfaceRectangle.height / unitOfHeight);
         int amountOfColumns = (int) Math.ceil(surfaceRectangle.width / unitOfWidth);
@@ -133,6 +157,7 @@ public class Controller {
                 double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
 
                 nextTile.summits = RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight);
+                nextTile.material = masterTile.material;
 
                 tiles.add(nextTile);
             }
@@ -140,6 +165,7 @@ public class Controller {
 
         surfaceToFillDto.tiles = tiles;
         surfaceToFillDto.isHole = HoleStatus.FILLED;
+        surfaceToFillDto.sealsInfoDto = sealing;
 
         return tiles;
     }

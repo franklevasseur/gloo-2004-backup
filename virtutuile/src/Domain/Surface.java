@@ -13,6 +13,8 @@ public class Surface {
     private SealsInfo sealsInfo;
     private boolean isRectangular = true;
 
+    private Tile masterTile;
+
     public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular){
         this.isHole = pIsHole;
         this.summits = pSummits;
@@ -65,11 +67,10 @@ public class Surface {
     //endregion
 
     public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType){
-        // TODO: Ajouter paramètre de la tuile type
-        //this.tiles = pTile;
         calculateFillSurface filler = new calculateFillSurface();
+        /*** variable pour test ***/
         Measure tempX = new Measure(1.4);
-        Measure tempY = new Measure(1.4);
+        Measure tempY = new Measure(0.4);
         //variable pour les dimension dune tuile normal
         Tile tileType = new Tile(tempX, tempY, masterTile.getMaterial());
         this.sealsInfo = pSealsInfo;
@@ -77,19 +78,18 @@ public class Surface {
         switch(pType) {
             case TYPE1:
 
-                tiles = filler.fillSurfaceWithType1(summits, masterTile, tileType, pSealsInfo, isRectangular);
+                tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
                 break;
             case TYPE2:
-                tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
+                tiles = filler.fillSurfaceWithType2(summits, masterTile, pSealsInfo, isRectangular);
                 break;
             case TYPE3:
-                tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
+                tiles = filler.fillSurfaceWithType4(summits, masterTile, pSealsInfo, isRectangular);
                 break;
             default:
                 // code block
         }
 
-        //return tiles;
     }
 
     public void setSummits(List<Point> summits) {
@@ -146,5 +146,13 @@ public class Surface {
 
     public boolean isFusionned() {
         return false;
+    }
+
+    public Tile getMasterTile() {
+        return masterTile;
+    }
+
+    public void setMasterTile(Tile masterTile) {
+        this.masterTile = masterTile;
     }
 }

@@ -312,7 +312,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
         hideTiles();
 
-        this.tiles = tilesRect.stream().map(t -> new TileUI(t, new Label(), this.zoomManager)).collect(Collectors.toList());
+        this.tiles = tilesRect.stream().map(t -> new TileUI(t, new Label(), this.zoomManager, tiles.get(0).material)).collect(Collectors.toList());
         this.fusionedSurfaceGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 

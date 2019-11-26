@@ -1,10 +1,7 @@
 package gui;
 
 import Domain.HoleStatus;
-import application.Controller;
-import application.SealsInfoDto;
-import application.SurfaceDto;
-import application.TileDto;
+import application.*;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -53,6 +50,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
 
+        this.masterTile = surfaceDto.masterTile;
+        this.sealsInfo = surfaceDto.sealsInfoDto;
         this.tileInfoTextField = tileInfoTextField;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
@@ -72,6 +71,9 @@ public class RectangleSurfaceUI implements SurfaceUI {
         this.isHole = surfaceDto.isHole;
         if (this.isHole == HoleStatus.HOLE) {
             rectangle.setFill(Color.TRANSPARENT);
+            rectangle.setStroke(Color.BLACK);
+        } else if (sealsInfo != null) {
+            rectangle.setFill(ColorHelper.utilsColorToMofackingJavafxColorTiChum(sealsInfo.color));
             rectangle.setStroke(Color.BLACK);
         } else {
             rectangle.setFill(Color.WHITE);
@@ -147,6 +149,8 @@ public class RectangleSurfaceUI implements SurfaceUI {
             return;
         }
 
+        MaterialDto materialDto = tiles.get(0).material;
+
         List<RectangleInfo> tilesRect = tiles.stream().map(t -> {
             List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
             return RectangleHelper.summitsToRectangleInfo(pixelPoints);
@@ -154,7 +158,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
 
         hideTiles();
 
-        this.tiles = tilesRect.stream().map(t -> new TileUI(t, this.tileInfoTextField, this.zoomManager)).collect(Collectors.toList());
+        this.tiles = tilesRect.stream().map(t -> new TileUI(t, this.tileInfoTextField, this.zoomManager, materialDto)).collect(Collectors.toList());
         this.rectangleGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 
@@ -215,6 +219,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
         dto.isRectangular = true;
         dto.id = this.id;
         dto.isHole = this.isHole;
+        dto.masterTile = this.masterTile;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());

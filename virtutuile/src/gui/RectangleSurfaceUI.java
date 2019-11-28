@@ -84,7 +84,7 @@ public class RectangleSurfaceUI implements SurfaceUI {
             rectangle.setStroke(Color.BLACK);
         }
         else if (sealsInfo != null) {
-            rectangle.setFill(ColorHelper.utilsColorToMofackingJavafxColorTiChum(sealsInfo.color));
+            rectangle.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
             rectangle.setStroke(Color.BLACK);
         } else {
             rectangle.setFill(Color.WHITE);

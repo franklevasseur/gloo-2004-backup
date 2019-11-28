@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 public class ColorHelper {
 
-    public static Color utilsColorToMofackingJavafxColorTiChum(utils.Color utilsColor) {
+    public static Color utilsColorToJavafx(utils.Color utilsColor) {
         if (utilsColor == utils.Color.BLACK) {
             return Color.BLACK;
         }else if(utilsColor == utils.Color.WHITE){
@@ -23,7 +23,7 @@ public class ColorHelper {
         return Color.RED;
     }
 
-    public static utils.Color mofackingJavafxColorTiChumToUtilsColor(Color javaFxColor) {
+    public static utils.Color javafxColorToUtils(Color javaFxColor) {
         if (javaFxColor == Color.BLACK) {
             return utils.Color.BLACK;
         }else if(javaFxColor == Color.WHITE) {
@@ -42,7 +42,7 @@ public class ColorHelper {
         return utils.Color.RED;
     }
 
-    public static String utilsColorToLaTiteString(utils.Color utilsColor) {
+    public static String utilsColorToString(utils.Color utilsColor) {
         if (utilsColor == utils.Color.BLACK) {
             return "BLACK";
         }else if(utilsColor == utils.Color.WHITE){
@@ -61,7 +61,7 @@ public class ColorHelper {
         return "RED";
     }
 
-    public static utils.Color laTiteStringToUtils(String stringColor) {
+    public static utils.Color stringToUtils(String stringColor) {
         if (stringColor == "BLACK") {
             return utils.Color.BLACK;
         }else if(stringColor == "WHITE"){

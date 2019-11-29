@@ -1,10 +1,8 @@
 package application;
 
 import Domain.*;
-import utils.Color;
+import utils.*;
 import utils.Point;
-import utils.RectangleHelper;
-import utils.RectangleInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +87,7 @@ public class Controller {
         TileDto actualUsedMasterTile;
         if (masterTileDto == null) {
             actualUsedMasterTile = new TileDto();
-            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(RectangleHelper.summitsToRectangleInfo(dto.summits).topLeftCorner, 0.2, 0.3);
+            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(ShapeHelper.getTopLeftCorner(new AbstractShape(dto.summits, false)), 0.2, 0.3);
             actualUsedMasterTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
         } else {
             actualUsedMasterTile = masterTileDto;
@@ -125,12 +123,10 @@ public class Controller {
 
     private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
 
-        if (!surfaceToFillDto.isRectangular) {
-            // TODO: find another logic
-            throw new RuntimeException("Ça va te prendre une logique par defaut pour remplir des surfaces irrégulières mon ti-chum");
-        }
-
-        RectangleInfo surfaceRectangle = RectangleHelper.summitsToRectangleInfo(surfaceToFillDto.summits);
+        AbstractShape surfaceShape = new AbstractShape(surfaceToFillDto.summits, false);
+        Point surfaceTopLeftCorner = ShapeHelper.getTopLeftCorner(surfaceShape);
+        double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
+        double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
 
         RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.summits);
         double tileWidth = info.width;
@@ -141,17 +137,18 @@ public class Controller {
         double unitOfWidth = tileWidth + sealing.sealWidth;
         double unitOfHeight = tileHeight + sealing.sealWidth;
 
-        int amountOfLines = (int) Math.ceil(surfaceRectangle.height / unitOfHeight);
-        int amountOfColumns = (int) Math.ceil(surfaceRectangle.width / unitOfWidth);
+        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight);
+        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth);
 
         for (int line = 0; line < amountOfLines; line++) {
             for (int column = 0; column < amountOfColumns; column++) {
                 TileDto nextTile = new TileDto();
 
-                Point topLeftCorner = Point.translate(surfaceRectangle.topLeftCorner, column * unitOfWidth, line * unitOfHeight);
 
-                double rightSurfaceBound = surfaceRectangle.topLeftCorner.x + surfaceRectangle.width;
-                double bottomSurfaceBound = surfaceRectangle.topLeftCorner.y + surfaceRectangle.height;
+                Point topLeftCorner = Point.translate(surfaceTopLeftCorner, column * unitOfWidth, line * unitOfHeight);
+
+                double rightSurfaceBound = surfaceTopLeftCorner.x + surfaceWidth;
+                double bottomSurfaceBound = surfaceTopLeftCorner.y + surfaceHeight;
 
                 boolean isTileOverflowX = topLeftCorner.x + tileWidth > rightSurfaceBound;
                 boolean isTileOverflowY = topLeftCorner.y + tileHeight > bottomSurfaceBound;

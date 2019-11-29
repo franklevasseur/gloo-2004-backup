@@ -18,6 +18,8 @@ public class Controller {
     }
     private UndoRedoManager undoRedoManager = new UndoRedoManager();
 
+    private InspectionService inspector = InspectionService.getInstance();
+
     private Project vraiProject;
 
     private Controller() {
@@ -187,8 +189,12 @@ public class Controller {
     }
 
     public void createMaterial(MaterialDto dto) {
-        Material material = MaterialAssembler.fromDto(dto); // Philippe, prend pour acquis que tous les assemblers sont èa changer tbnk
+        Material material = MaterialAssembler.fromDto(dto);
         vraiProject.getMaterials().add(material);
         // TODO: avertir undo/redo que ca vient de se passer (Philippe ne pas enlever ce todo, c'est pour Frank)
+    }
+
+    public String inspect() {
+        return inspector.inspect(this.vraiProject);
     }
 }

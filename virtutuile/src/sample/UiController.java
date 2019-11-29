@@ -86,6 +86,11 @@ public class UiController implements Initializable {
     private Point firstClickCoord;
     private Rectangle rectangleSurfaceCreationIndicator;
 
+    public TextField minInspectionLengthTextField;
+    public Button inspectButton;
+    public TextArea inspectionArea;
+    private Double minInspectionLength;
+
     private Controller domainController = Controller.getInstance();
 
     @Override
@@ -122,6 +127,26 @@ public class UiController implements Initializable {
             if (this.stateCurrentlyCreatingSurface) {
                 onPaneClicked(e);
                 e.consume();
+            }
+        });
+
+        inspectionArea.setDisable(true);
+        inspectionArea.setStyle("-fx-text-fill: #ff0000; -fx-opacity: 1.0;");
+        inspectButton.setDisable(true);
+
+        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+        minInspectionLengthTextField.textProperty().addListener((observableValue, oldString, newString) -> {
+
+            boolean parseSucess = true;
+            try {
+                CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
+                minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : format.parse(minInspectionLengthInput.toString()).doubleValue();
+            } catch (ParseException e) {
+                parseSucess = false;
+            }
+
+            if (parseSucess) {
+                inspectButton.setDisable(false);
             }
         });
 
@@ -639,5 +664,10 @@ public class UiController implements Initializable {
             domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
         }
         this.renderFromProject();
+    }
+
+    public void inspect() {
+        String inspectionResult = domainController.inspect();
+        inspectionArea.setText(String.format("Inspection result for min lenght = %.2f m : \n\n%s", minInspectionLength, inspectionResult));
     }
 }

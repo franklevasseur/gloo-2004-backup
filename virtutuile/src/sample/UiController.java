@@ -256,7 +256,7 @@ public class UiController implements Initializable {
     }
 
     public Void handleSelection(boolean isRectangle) {
-        afficherRectangleInfo();
+        displayRectangleInfo();
 
         if (selectionManager.getSelectedSurfaces().get(0).toDto().isHole == HoleStatus.FILLED) {
             stateCurrentlyFilling = false;
@@ -310,8 +310,11 @@ public class UiController implements Initializable {
 
                     masterTile = new TileDto();
                     masterTile.material = chosenMaterial;
-                    RectangleInfo chosenSurfaceRect = RectangleHelper.summitsToRectangleInfo(chosenSurface.toDto().summits);
-                    RectangleInfo masterTileRect = new RectangleInfo(chosenSurfaceRect.topLeftCorner, newTileWidth, newTileHeight);
+
+                    AbstractShape shape = new AbstractShape(chosenSurface.toDto().summits, false);
+                    Point topLeftCorner = ShapeHelper.getTopLeftCorner(shape);
+
+                    RectangleInfo masterTileRect = new RectangleInfo(topLeftCorner, newTileWidth, newTileHeight);
                     masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
                     chosenSurface.setMasterTile(masterTile);
                 }
@@ -338,13 +341,13 @@ public class UiController implements Initializable {
                 hideRectangleInfo();
             }
             catch (ParseException e) {
-                afficherRectangleInfo();
+                displayRectangleInfo();
             }
         }
 
     }
 
-    private void afficherRectangleInfo() {
+    private void displayRectangleInfo() {
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
         SurfaceUI firstOne = selectedSurfaces.get(0);
 

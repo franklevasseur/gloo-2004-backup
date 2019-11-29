@@ -74,6 +74,7 @@ public class SurfaceAssembler {
         SurfaceAssembler.fromDto(dto, surface);
         return surface;
     }
+
     public static TileDto toDto(Tile tile) {
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits().stream().map(p -> {

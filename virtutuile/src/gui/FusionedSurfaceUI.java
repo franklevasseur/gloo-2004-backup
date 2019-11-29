@@ -9,9 +9,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import utils.*;
 
@@ -45,7 +43,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     private List<SurfaceUI> allSurfacesToFusion;
 
     private void renderShapeFromChilds() {
-        allSurfacesToFusion = sortFuckingStupidFuckingListDeTabarnakQueJavaCestUnEstiDeLangageDeCulVaChier(allSurfacesToFusion);
+        allSurfacesToFusion = sortList(allSurfacesToFusion);
         SurfaceUI firstSurface = allSurfacesToFusion.get(0);
         this.shape = firstSurface.getMainShape();
 
@@ -62,7 +60,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
             this.shape = Shape.union(this.shape, s.getMainShape());
         }
 
-        this.setShapeAppearance();
+        this.setShapeColor();
         this.fusionedSurfaceGroup.getChildren().add(this.shape);
 
         List<AbstractShape> allSurfacesSummits = allSurfacesToFusion
@@ -98,8 +96,6 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.fusionedSurfaceGroup = new Group();
         this.renderShapeFromChilds();
 
-        this.setShapeAppearance();
-
         this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
 
@@ -109,12 +105,22 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.selectionManager = selectionManager;
         this.isHole = surfaceDto.isHole;
 
+        this.sealsInfo = surfaceDto.sealsInfoDto;
+        this.setShapeColor();
+
+        this.renderTiles(surfaceDto.tiles);
+
         initializeGroup();
     }
 
-    private void setShapeAppearance() {
-        this.shape.setFill(Color.WHITE);
-        this.shape.setStroke(Color.BLACK);
+    private void setShapeColor() {
+        if (sealsInfo != null) {
+            shape.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
+            shape.setStroke(Color.BLACK);
+            return;
+        }
+        shape.setFill(Color.WHITE);
+        shape.setStroke(Color.BLACK);
     }
 
     private void initializeGroup(){
@@ -131,7 +137,12 @@ public class FusionedSurfaceUI implements SurfaceUI {
            if(this.currentlyBeingDragged){
                this.currentlyBeingDragged = false;
                this.snapToGrid();
-               this.controller.updateSurface(this.toDto());
+
+               if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
+                   controller.updateSurface(this.toDto());
+                   return;
+               }
+               this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, null, this.sealsInfo));
            }
        });
 
@@ -180,9 +191,12 @@ public class FusionedSurfaceUI implements SurfaceUI {
         dto.isFusionned = true;
         dto.isRectangular = false;
         dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
-        dto.isHole = HoleStatus.NONE;
-//        dto.tiles = null;
+        dto.isHole = this.isHole;
         dto.id = this.id;
+
+        if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
+            dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());
+        }
 
         return dto;
     }
@@ -262,6 +276,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
     @Override
     public void fill() {
         this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, null, this.sealsInfo));
+        setShapeColor();
     }
 
     @Override
@@ -276,18 +291,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
 
         Point translation = Point.diff(position, this.position);
 
-//        System.out.println(String.format("(%.1f, %.1f)", translation.x, translation.y));
-//        System.out.println(String.format("(%.1f, %.1f)", position.x, position.y));
-//        System.out.println(String.format("(%.1f, %.1f)", this.position.x, this.position.y));
-
         allSurfacesToFusion.forEach(s -> s.translatePixelBy(translation));
-
-//        String debug = "";
-//        for (SurfaceUI s : allSurfacesToFusion) {
-//            Rectangle rect = (Rectangle)s.getMainShape();
-//            debug += String.format("(%.1f, %.1f) \n", rect.getX(), rect.getY());
-//        }
-//        System.out.println(debug);
 
         this.fusionedSurfaceGroup.getChildren().remove(this.shape);
         this.renderShapeFromChilds();
@@ -321,7 +325,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
         fill();
     }
 
-    private static List<SurfaceUI> sortFuckingStupidFuckingListDeTabarnakQueJavaCestUnEstiDeLangageDeCulVaChier(List<SurfaceUI> surfaces) {
+    private static List<SurfaceUI> sortList(List<SurfaceUI> surfaces) {
 
         List<SurfaceUI> laTabarnakDeCalisseDeListeQuonVaRetournerAFinDeLestiDeFonction = new ArrayList<>();
         List<SurfaceUI> lautreFuckingListeDeTrouEstiDeLaid = new ArrayList<>();

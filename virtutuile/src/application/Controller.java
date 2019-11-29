@@ -185,6 +185,15 @@ public class Controller {
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 
+    public void unFusionSurface(SurfaceDto surfaceDto) {
+        if (!surfaceDto.isFusionned) {
+            return;
+        }
+        FusionnedSurface currentSurface = (FusionnedSurface) this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceDto.id)).findFirst().get();
+        vraiProject.unfusionSurfaces(currentSurface);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+    }
+
     public void createMaterial(MaterialDto dto) {
         Material material = MaterialAssembler.fromDto(dto);
         vraiProject.getMaterials().add(material);

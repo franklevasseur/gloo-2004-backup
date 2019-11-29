@@ -60,7 +60,11 @@ public class UiController implements Initializable {
 
     public Button fillTilesButton;
     public boolean stateCurrentlyFilling = true;
+
     public TextField materialColorDisplay;
+
+    public Button fusionButton;
+    public boolean stateCurrentlyFusionning = true;
 
     public Label tileInfo;
 
@@ -105,10 +109,6 @@ public class UiController implements Initializable {
         materialColorChoiceBox.setItems(possibleColor);
         sealColorChoiceBox.setItems(possibleColor);
         sealPatternInputBox.setItems(tilePattern);
-
-
-      //  materialTableView = new TableView<>();
-
 
         materialNameColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI, String>("name"));
         materialNumberOfBoxInputColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("numberOfBoxes"));
@@ -245,11 +245,15 @@ public class UiController implements Initializable {
             pane.setCursor(Cursor.DEFAULT);
             this.renderFromProject();
             selectionManager.unselectAll();
-            stateCurrentlyFilling = true;
-            fillTilesButton.setText("Fill tiles");
             hideRectangleInfo();
             firstClickCoord = null;
         }
+
+        stateCurrentlyFilling = true;
+        fillTilesButton.setText("Fill tiles");
+
+        stateCurrentlyFusionning = true;
+        fusionButton.setText("Fusion surfaces");
 
         selectionManager.unselectAll();
         hideRectangleInfo();
@@ -258,12 +262,20 @@ public class UiController implements Initializable {
     public Void handleSelection(boolean isRectangle) {
         displayRectangleInfo();
 
-        if (selectionManager.getSelectedSurfaces().get(0).toDto().isHole == HoleStatus.FILLED) {
+        if (selectionManager.getSelectedSurfaces().stream().allMatch(s -> s.toDto().isHole  == HoleStatus.FILLED)) {
             stateCurrentlyFilling = false;
             fillTilesButton.setText("Unfill tiles");
         } else {
             stateCurrentlyFilling = true;
             fillTilesButton.setText("Fill tiles");
+        }
+
+        if (selectionManager.getSelectedSurfaces().stream().allMatch(s -> s.toDto().isFusionned)) {
+            stateCurrentlyFusionning = false;
+            fusionButton.setText("UnFusion surfaces");
+        } else {
+            stateCurrentlyFusionning = true;
+            fusionButton.setText("Fusion surfaces");
         }
 
         return null;
@@ -578,13 +590,31 @@ public class UiController implements Initializable {
         this.allSurfaces.add(surfaceUi);
     }
 
-    public void surfaceFusion() {
+    public void fusionToggle() {
+        if (stateCurrentlyFusionning) {
+            fusionSurfaces();
+            return;
+        }
+        unfusionSurfaces();
+    }
+
+    public void fusionSurfaces() {
         if (this.selectionManager.getSelectedSurfaces().size() <= 1) {
             return;
         }
 
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
         this.domainController.fusionSurfaces(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()));
+        this.renderFromProject();
+    }
+
+    public void unfusionSurfaces() {
+        if (this.selectionManager.getSelectedSurfaces().size() != 1) {
+            return;
+        }
+
+        SurfaceUI selectedSurfaces = this.selectionManager.getSelectedSurfaces().get(0);
+        this.domainController.unFusionSurface(selectedSurfaces.toDto());
         this.renderFromProject();
     }
 

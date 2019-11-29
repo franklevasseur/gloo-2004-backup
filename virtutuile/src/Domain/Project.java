@@ -38,4 +38,9 @@ public class Project {
         FusionnedSurface newFusionnedSurface = new FusionnedSurface(baseSurfaces);
         this.surfaces.add(newFusionnedSurface);
     }
+
+    public void unfusionSurfaces(FusionnedSurface fusionnedSurface) {
+        this.surfaces.removeIf(s -> s == fusionnedSurface);
+        this.surfaces.addAll(fusionnedSurface.getFusionnedSurfaces());
+    }
 }

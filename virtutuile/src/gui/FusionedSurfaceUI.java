@@ -106,6 +106,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
         this.isHole = surfaceDto.isHole;
 
         this.sealsInfo = surfaceDto.sealsInfoDto;
+        this.masterTile = surfaceDto.masterTile;
         this.setShapeColor();
 
         this.renderTiles(surfaceDto.tiles);
@@ -193,6 +194,7 @@ public class FusionedSurfaceUI implements SurfaceUI {
         dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
         dto.isHole = this.isHole;
         dto.id = this.id;
+        dto.masterTile = this.masterTile;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());

@@ -4,10 +4,10 @@ package Domain;
 import utils.Color;
 
 public class SealsInfo {
-    private Measure width;
+    private double width;
     private Color color;
 
-    public SealsInfo(Measure pWidth, Color color){
+    public SealsInfo(double pWidth, Color color){
         width = pWidth;
         this.color = color;
     }
@@ -16,7 +16,7 @@ public class SealsInfo {
         return color;
     }
 
-    public Measure getWidth() {
+    public double getWidth() {
         return width;
     }
 
@@ -24,7 +24,7 @@ public class SealsInfo {
         this.color = color;
     }
 
-    public void setWidth(Measure width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 }

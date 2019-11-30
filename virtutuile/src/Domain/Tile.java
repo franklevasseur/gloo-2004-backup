@@ -1,7 +1,11 @@
 package Domain;
 
+import utils.AbstractShape;
+import utils.ShapeHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Tile {
     private List<Point> summits = new ArrayList<>();
@@ -16,63 +20,16 @@ public class Tile {
         material = pMaterial;
     }
 
-    public Tile(Measure pHauteur, Measure pLargeur, Material pMaterial){
-        Measure tempX = new Measure();
-        Measure tempY = new Measure();
-        Point tempA = new Point(tempX, tempY);
-        Point tempB = new Point(pLargeur, tempY);
-        Point tempC = new Point(tempX, pHauteur);
-        Point tempD = new Point(pLargeur, pHauteur);
-        summits.add(tempA);
-        summits.add(tempB);
-        summits.add(tempC);
-        summits.add(tempD);
-        material = pMaterial;
+    public double getHeight() {
+        return ShapeHelper.getHeight(toAbstractShape());
     }
 
-    public Measure getHeight(){
-        Measure value = new Measure();
-        double minY;
-        double maxY;
-
-        minY = summits.get(0).getY().getValue();
-        maxY = summits.get(0).getY().getValue();
-        for (Point i:summits){
-            if (minY > i.getY().getValue()){
-                minY = i.getY().getValue();
-            }
-            if (maxY < i.getY().getValue()){
-                maxY = i.getY().getValue();
-            }
-        }
-        value.setValue(maxY - minY);
-
-        return value;
+    private AbstractShape toAbstractShape() {
+        return new AbstractShape(summits.stream().map(s -> s.toAbstract()).collect(Collectors.toList()));
     }
 
-    public Measure getWidth(){
-        Measure value = new Measure();
-        double minX;
-        double maxX;
-
-        minX = summits.get(0).getX().getValue();
-        maxX = summits.get(0).getX().getValue();
-        for (Point i:summits){
-            if (minX > i.getX().getValue()){
-                minX = i.getX().getValue();
-            }
-            if (maxX < i.getX().getValue()){
-                maxX = i.getX().getValue();
-            }
-        }
-        value.setValue(maxX - minX);
-
-        return value;
-    }
-
-    public Measure getOrientation(){
-        Measure value = new Measure();
-        return value;
+    public double getWidth() {
+        return ShapeHelper.getWidth(toAbstractShape());
     }
 
     public List<Point> getSummits() {

@@ -16,8 +16,8 @@ public class SurfaceAssembler {
 
         dto.isHole = surface.isHole();
         dto.summits = surface.getSummits().stream().map(s -> {
-            double x = s.getX().getValue();
-            double y = s.getY().getValue();
+            double x = s.getX();
+            double y = s.getY();
             return new Point(x, y);
         }).collect(Collectors.toList());
         dto.id = surface.getId();
@@ -42,9 +42,9 @@ public class SurfaceAssembler {
     public static void fromDto (SurfaceDto dto, Surface destinationSurface){
 
         List<Domain.Point> summits = dto.summits.stream().map(s -> {
-            Measure xMeasure = new Measure(s.x, UnitType.m);
-            Measure yMeasure = new Measure(s.y, UnitType.m);
-            return new Domain.Point(xMeasure, yMeasure);
+            double xdouble = s.x;
+            double ydouble = s.y;
+            return new Domain.Point(xdouble, ydouble);
         }).collect(Collectors.toList());
 
         if (dto.tiles != null) {
@@ -78,8 +78,8 @@ public class SurfaceAssembler {
     public static TileDto toDto(Tile tile) {
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits().stream().map(p -> {
-            double x = p.getX().getValue();
-            double y = p.getY().getValue();
+            double x = p.getX();
+            double y = p.getY();
             return new Point(x, y);
         }).collect(Collectors.toList());
         tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
@@ -88,9 +88,9 @@ public class SurfaceAssembler {
 
     public static Tile fromDto(TileDto tDto) {
         List<Domain.Point> points = tDto.summits.stream().map(p -> {
-            Measure xMeasure = new Measure(p.x, UnitType.m);
-            Measure yMeasure = new Measure(p.y, UnitType.m);
-            return new Domain.Point(xMeasure, yMeasure);
+            double xdouble = p.x;
+            double ydouble = p.y;
+            return new Domain.Point(xdouble, ydouble);
         }).collect(Collectors.toList());
 
         Material material = MaterialAssembler.fromDto(tDto.material);
@@ -99,13 +99,13 @@ public class SurfaceAssembler {
 
     public static SealsInfoDto toDto(SealsInfo sealsInfo) {
         SealsInfoDto dto = new SealsInfoDto();
-        dto.sealWidth = sealsInfo.getWidth().getValue();
+        dto.sealWidth = sealsInfo.getWidth();
         dto.color = sealsInfo.getColor();
         return dto;
     }
 
     public static SealsInfo fromDto(SealsInfoDto sDto) {
-        Measure width = new Measure(sDto.sealWidth);
+        double width = sDto.sealWidth;
         SealsInfo sealsInfo = new SealsInfo(width, sDto.color);
         return  sealsInfo;
     }

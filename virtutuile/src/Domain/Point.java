@@ -3,43 +3,43 @@ package Domain;
 import utils.CardinalPoint;
 
 public class Point {
-    private Measure x;
-    private Measure y;
+    private double x;
+    private double y;
     private CardinalPoint cardinality = null;
 
-    public Point(Measure pX, Measure pY){
+    public Point(double pX, double pY){
         this.x = pX;
         this.y = pY;
     }
 
     public Point(utils.Point point) {
-        this.x = new Measure(point.x, UnitType.m);
-        this.y = new Measure(point.y, UnitType.m);
+        this.x = point.x;
+        this.y = point.y;
     }
 
-    public Point(Measure  x, Measure y, CardinalPoint cardinality) {
+    public Point(double  x, double y, CardinalPoint cardinality) {
         this.x = x;
         this.y = y;
         this.cardinality = cardinality;
     }
 
     public utils.Point toAbstract() {
-        return new utils.Point(this.x.getValue(), this.y.getValue());
+        return new utils.Point(this.x, this.y);
     }
 
-    public Measure getX() {
+    public double getX() {
         return x;
     }
 
-    public Measure getY() {
+    public double getY() {
         return y;
     }
 
-    public void setX(Measure x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public void setY(Measure y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -53,8 +53,8 @@ public class Point {
 
     public static Point translate(Point oldPoint, double delatX, double deltaY) {
 
-        Measure tempX = new Measure(oldPoint.x.getValue() + delatX);
-        Measure tempY = new Measure(oldPoint.y.getValue() + deltaY);
+        double tempX = oldPoint.x + delatX;
+        double tempY = oldPoint.y + deltaY;
         return new Point(tempX, tempY);
     }
 }

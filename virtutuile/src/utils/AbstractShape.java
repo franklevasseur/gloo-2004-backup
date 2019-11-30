@@ -11,4 +11,9 @@ public class AbstractShape {
         this.summits = summits;
         this.toSubstract = toSubstract;
     }
+
+    public AbstractShape(List<Point> summits) {
+        this.summits = summits;
+        this.toSubstract = false;
+    }
 }

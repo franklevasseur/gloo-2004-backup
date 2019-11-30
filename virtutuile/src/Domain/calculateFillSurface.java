@@ -1,8 +1,14 @@
 package Domain;
 
 
+import utils.AbstractShape;
+import utils.RectangleHelper;
+import utils.ShapeHelper;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class calculateFillSurface {
 
@@ -19,15 +25,15 @@ public class calculateFillSurface {
         List<Tile> outTiles = new ArrayList<>();
         Tile startTileWtSeal = new Tile();
 
-        double unitOfWidthA = pMasterTile.getWidth().getValue();
-        double unitOfHeightA = pMasterTile.getHeight().getValue();
-        double unitOfWidth = pMasterTile.getWidth().getValue() + pSealsInfo.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue() + pSealsInfo.getWidth().getValue();
+        double unitOfWidthA = pMasterTile.getWidth();
+        double unitOfHeightA = pMasterTile.getHeight();
+        double unitOfWidth = pMasterTile.getWidth() + pSealsInfo.getWidth();
+        double unitOfHeight = pMasterTile.getHeight() + pSealsInfo.getWidth();
 
-        int amountOfLines = (int) Math.ceil(getHeight(pSurface).getValue() / unitOfHeight);
-        int amountOfColumns = (int) Math.ceil(getWidth(pSurface).getValue() / unitOfWidth);
+        int amountOfLines = (int) Math.ceil(getHeight(pSurface) / unitOfHeight);
+        int amountOfColumns = (int) Math.ceil(getWidth(pSurface) / unitOfWidth);
 
-        System.out.println("h " + getHeight(pSurface).getValue() + " - w " + getWidth(pSurface).getValue());
+        System.out.println("h " + getHeight(pSurface) + " - w " + getWidth(pSurface));
         System.out.println("l " + amountOfLines + " - C " + amountOfColumns);
 
         if (!pIsRectangle) {
@@ -43,13 +49,13 @@ public class calculateFillSurface {
                     Point topLeftCorner = Point.translate(pSurface.get(0), column * unitOfWidth, line * unitOfHeight);
                     //System.out.println("X " + column * unitOfWidth + " - Y " + line * unitOfHeight);
 
-                    double rightSurfaceBound = pSurface.get(0).getX().getValue() + getWidth(pSurface).getValue();
-                    double bottomSurfaceBound = pSurface.get(0).getY().getValue() + getHeight(pSurface).getValue();
+                    double rightSurfaceBound = pSurface.get(0).getX() + getWidth(pSurface);
+                    double bottomSurfaceBound = pSurface.get(0).getY() + getHeight(pSurface);
 
-                    boolean isTileOverflowX = topLeftCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound;
-                    boolean isTileOverflowY = topLeftCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound;
-                    double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.getX().getValue() : pMasterTile.getWidth().getValue();
-                    double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.getY().getValue() : pMasterTile.getHeight().getValue();
+                    boolean isTileOverflowX = topLeftCorner.getX() + pMasterTile.getWidth() > rightSurfaceBound;
+                    boolean isTileOverflowY = topLeftCorner.getY() + pMasterTile.getHeight() > bottomSurfaceBound;
+                    double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.getX() : pMasterTile.getWidth();
+                    double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.getY() : pMasterTile.getHeight();
 
                     nextTile.setSummits(rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight));
                     nextTile.setMaterial(pMasterTile.getMaterial());
@@ -83,8 +89,8 @@ public class calculateFillSurface {
         boolean notFilled = true;
 
         //prendre les vrais valeur de longueur et largeur de la tuile
-        double unitOfWidth = pMasterTile.getWidth().getValue() + pSealsInfo.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue() + pSealsInfo.getWidth().getValue();
+        double unitOfWidth = pMasterTile.getWidth() + pSealsInfo.getWidth();
+        double unitOfHeight = pMasterTile.getHeight() + pSealsInfo.getWidth();
 
         boolean checker = true;
 
@@ -156,8 +162,8 @@ public class calculateFillSurface {
         boolean notFilled = true;
 
         //prendre les vrais valeur de longueur et largeur de la tuile
-        double unitOfWidth = pMasterTile.getWidth().getValue() + pSealsInfo.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue() + pSealsInfo.getWidth().getValue();
+        double unitOfWidth = pMasterTile.getWidth() + pSealsInfo.getWidth();
+        double unitOfHeight = pMasterTile.getHeight() + pSealsInfo.getWidth();
 
         boolean checker = true;
         boolean inBound = true;
@@ -230,8 +236,8 @@ public class calculateFillSurface {
         Point newTopCorner = pSurface.get(0);
         Point firstSurfaceCorner = getTopCorner(pSurface);
 
-        double unitOfWidth = pMasterTile.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue();
+        double unitOfWidth = pMasterTile.getWidth();
+        double unitOfHeight = pMasterTile.getHeight();
         t.setSummits(rectangleInfoToSummits(newTopCorner, unitOfWidth, unitOfHeight));
         t.setMaterial(pMasterTile.getMaterial());
         return t;
@@ -245,28 +251,28 @@ public class calculateFillSurface {
     public Tile  trimTile(List<Point> pSurface, Tile pMasterTile, Point topLeftCorner) {
         List<Point> temp = new ArrayList<>();
 
-        Point A = new Point(new Measure(0), new Measure(0));
-        Point B = new Point(new Measure(0), new Measure(0));
-        Point C = new Point(new Measure(0), new Measure(0));
-        Point D = new Point(new Measure(0), new Measure(0));
+        Point A = new Point(0, 0);
+        Point B = new Point(0, 0);
+        Point C = new Point(0, 0);
+        Point D = new Point(0, 0);
 
         boolean isTileOverflowX = false;
         boolean isTileOverflowY = false;
         boolean isTileUnderflowX = false;
         boolean isTileUnderflowY = false;
 
-        double unitOfWidth = pMasterTile.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue();
+        double unitOfWidth = pMasterTile.getWidth();
+        double unitOfHeight = pMasterTile.getHeight();
 
         //prendre les limites supérieur de la surface
-        double rightSurfaceBound = pSurface.get(0).getX().getValue() + getWidth(pSurface).getValue();
-        double bottomSurfaceBound = pSurface.get(0).getY().getValue() + getHeight(pSurface).getValue();
+        double rightSurfaceBound = pSurface.get(0).getX() + getWidth(pSurface);
+        double bottomSurfaceBound = pSurface.get(0).getY() + getHeight(pSurface);
 
-        double offsetX = Math.abs(topLeftCorner.getX().getValue() - pSurface.get(0).getX().getValue());
-        double offsetY = Math.abs(topLeftCorner.getY().getValue() - pSurface.get(0).getY().getValue());
+        double offsetX = Math.abs(topLeftCorner.getX() - pSurface.get(0).getX());
+        double offsetY = Math.abs(topLeftCorner.getY() - pSurface.get(0).getY());
 
         //check si le coin est à lexterieur gauche de la surface
-        if (topLeftCorner.getX().getValue() < pSurface.get(0).getX().getValue()){
+        if (topLeftCorner.getX() < pSurface.get(0).getX()){
             A.setX(pSurface.get(0).getX());
             C.setX(pSurface.get(0).getX());
             isTileUnderflowX = true;
@@ -274,7 +280,7 @@ public class calculateFillSurface {
             A.setX(topLeftCorner.getX());
             C.setX(topLeftCorner.getX());
         }
-        if (topLeftCorner.getY().getValue() < pSurface.get(0).getY().getValue()){
+        if (topLeftCorner.getY() < pSurface.get(0).getY()){
             A.setY(pSurface.get(0).getY());
             B.setY(pSurface.get(0).getY());
             isTileUnderflowY = true;
@@ -283,25 +289,25 @@ public class calculateFillSurface {
             B.setY(topLeftCorner.getY());
         }
 
-        if(topLeftCorner.getX().getValue() + pMasterTile.getWidth().getValue() > rightSurfaceBound){
-            B.setX(new Measure( A.getX().getValue() + rightSurfaceBound - topLeftCorner.getX().getValue()));
-            D.setX(new Measure(C.getX().getValue() +rightSurfaceBound - topLeftCorner.getX().getValue()));
+        if(topLeftCorner.getX() + pMasterTile.getWidth() > rightSurfaceBound){
+            B.setX( A.getX() + rightSurfaceBound - topLeftCorner.getX());
+            D.setX(C.getX() +rightSurfaceBound - topLeftCorner.getX());
         }else if (!isTileUnderflowX){
-            B.setX(new Measure(A.getX().getValue() + pMasterTile.getWidth().getValue()));
-            D.setX(new Measure(C.getX().getValue() + pMasterTile.getWidth().getValue()));
+            B.setX(A.getX() + pMasterTile.getWidth());
+            D.setX(C.getX() + pMasterTile.getWidth());
         } else {
-            B.setX(new Measure(A.getX().getValue() + pMasterTile.getWidth().getValue() - offsetX));
-            D.setX(new Measure(C.getX().getValue() +pMasterTile.getWidth().getValue() - offsetX));
+            B.setX(A.getX() + pMasterTile.getWidth() - offsetX);
+            D.setX(C.getX() +pMasterTile.getWidth() - offsetX);
         }
-        if(topLeftCorner.getY().getValue() + pMasterTile.getHeight().getValue() > bottomSurfaceBound){
-            C.setY(new Measure(A.getY().getValue() + bottomSurfaceBound - topLeftCorner.getY().getValue() ));
-            D.setY(new Measure(B.getY().getValue() + bottomSurfaceBound - topLeftCorner.getY().getValue() ));
+        if(topLeftCorner.getY() + pMasterTile.getHeight() > bottomSurfaceBound){
+            C.setY(A.getY() + bottomSurfaceBound - topLeftCorner.getY() );
+            D.setY(B.getY() + bottomSurfaceBound - topLeftCorner.getY() );
         }else if (!isTileUnderflowY){
-            C.setY(new Measure(A.getY().getValue() + pMasterTile.getHeight().getValue()));
-            D.setY(new Measure(B.getY().getValue() + pMasterTile.getHeight().getValue()));
+            C.setY(A.getY() + pMasterTile.getHeight());
+            D.setY(B.getY() + pMasterTile.getHeight());
         } else {
-            C.setY(new Measure(A.getY().getValue() + pMasterTile.getHeight().getValue() - offsetY));
-            D.setY(new Measure(B.getY().getValue() + pMasterTile.getHeight().getValue() - offsetY));
+            C.setY(A.getY() + pMasterTile.getHeight() - offsetY);
+            D.setY(B.getY() + pMasterTile.getHeight() - offsetY);
         }
 
         temp.add(A);
@@ -315,8 +321,8 @@ public class calculateFillSurface {
     public boolean checkExisting(List<Point> pOld, Point pPoint){
         boolean checker = true;
         for (Point check : pOld){
-            if (pPoint.getX().getValue() == check.getX().getValue()
-                    && pPoint.getY().getValue() == check.getY().getValue()){
+            if (pPoint.getX() == check.getX()
+                    && pPoint.getY() == check.getY()){
                 checker = false;
                 break;
             }
@@ -326,64 +332,58 @@ public class calculateFillSurface {
 
     public boolean tileInBound(List<Point> pSurface, Tile pMasterTile, Point topLeftCorner){
         //prendre les limites supérieur de la surface
-        double rightSurfaceBound = pSurface.get(0).getX().getValue() + getWidth(pSurface).getValue();
-        double bottomSurfaceBound = pSurface.get(0).getY().getValue() + getHeight(pSurface).getValue();
+        double rightSurfaceBound = pSurface.get(0).getX() + getWidth(pSurface);
+        double bottomSurfaceBound = pSurface.get(0).getY() + getHeight(pSurface);
 
-        if (topLeftCorner.getX().getValue() + pMasterTile.getWidth().getValue() <= pSurface.get(0).getX().getValue()){
+        if (topLeftCorner.getX() + pMasterTile.getWidth() <= pSurface.get(0).getX()){
             return false;
         }
-        if(topLeftCorner.getY().getValue() + pMasterTile.getHeight().getValue() <= pSurface.get(0).getY().getValue()){
+        if(topLeftCorner.getY() + pMasterTile.getHeight() <= pSurface.get(0).getY()){
             return false;
         }
-        if(topLeftCorner.getX().getValue() >= rightSurfaceBound ){
+        if(topLeftCorner.getX() >= rightSurfaceBound ){
             return false;
         }
-        if (topLeftCorner.getY().getValue() >= bottomSurfaceBound){
+        if (topLeftCorner.getY() >= bottomSurfaceBound){
             return false;
         }
 
         return true;
     }
+
+    private double getHeight(List<Point> pSurface) {
+        return ShapeHelper.getHeight(toAbstract(pSurface));
+    }
+
+    private double getWidth(List<Point> pSurface) {
+        return ShapeHelper.getWidth(toAbstract(pSurface));
+    }
+
+    private AbstractShape toAbstract(List<Point> surfaceSummits) {
+        return new AbstractShape(surfaceSummits.stream().map(s -> s.toAbstract()).collect(Collectors.toList()));
+    }
+
     /***
      * Other usefull fonctions
      */
 
     public Tile addSeal(Tile pTile, SealsInfo pSealInfo){
-        double seal = pSealInfo.getWidth().getValue();
-        double largeur = pTile.getWidth().getValue();
-        double height = pTile.getHeight().getValue();
-        Measure tempX = new Measure(largeur + (seal));
-        Measure tempY = new Measure( height+ (seal));
-        Tile newTile = new Tile(tempX, tempY, pTile.getMaterial());
-        return newTile;
-    }
+        double seal = pSealInfo.getWidth();
+        double largeur = pTile.getWidth();
+        double height = pTile.getHeight();
+        double tempX = largeur + seal;
+        double tempY =  height + seal;
 
-    public Measure getHeight(List<Point> pSurface){
-        Measure value = new Measure();
-        double minY;
-        double maxY;
-
-        minY = pSurface.get(0).getY().getValue();
-        maxY = pSurface.get(0).getY().getValue();
-        for (Point i:pSurface){
-            if (minY > i.getY().getValue()){
-                minY = i.getY().getValue();
-            }
-            if (maxY < i.getY().getValue()){
-                maxY = i.getY().getValue();
-            }
-        }
-        value.setValue(maxY - minY);
-
-        return value;
+        List<utils.Point> abstractSummits = RectangleHelper.rectangleInfoToSummits(new utils.Point(0, 0), tempX, tempY);
+        return new Tile(abstractSummits.stream().map(s -> new Point(s.x, s.y)).collect(Collectors.toList()), pTile.getMaterial());
     }
 
     public static List<Point> rectangleInfoToSummits(Point topLeftCorner, double width, double height) {
-        double x = topLeftCorner.getX().getValue();
-        double y = topLeftCorner.getY().getValue();
+        double x = topLeftCorner.getX();
+        double y = topLeftCorner.getY();
         List<Point> temp = new ArrayList<>();
-        Measure tempX = new Measure(width + x);
-        Measure tempY = new Measure(height + y);
+        double tempX = width + x;
+        double tempY = height + y;
 
         Point tempA = new Point(topLeftCorner.getX(), topLeftCorner.getY());
         Point tempB = new Point(tempX, topLeftCorner.getY());
@@ -397,40 +397,20 @@ public class calculateFillSurface {
         return temp;
     }
 
-    public Measure getWidth(List<Point> pSurface){
-        Measure value = new Measure();
-        double minX;
-        double maxX;
-
-        minX = pSurface.get(0).getX().getValue();
-        maxX = pSurface.get(0).getX().getValue();
-        for (Point i:pSurface){
-            if (minX > i.getX().getValue()){
-                minX = i.getX().getValue();
-            }
-            if (maxX < i.getX().getValue()){
-                maxX = i.getX().getValue();
-            }
-        }
-        value.setValue(maxX - minX);
-
-        return value;
-    }
-
     public Tile getFirstTile(List<Point> pSurface, Tile pMasterTile, SealsInfo pSeal){
         Tile t = new Tile();
         Point newTopCorner = pMasterTile.getSummits().get(0);
         Point firstSurfaceCorner = getTopCorner(pSurface);
 
-        double unitOfWidth = pMasterTile.getWidth().getValue() + pSeal.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue() + pSeal.getWidth().getValue();
+        double unitOfWidth = pMasterTile.getWidth() + pSeal.getWidth();
+        double unitOfHeight = pMasterTile.getHeight() + pSeal.getWidth();
 
         boolean notFirst = true;
         while (notFirst){
             Point temp;
-            if (newTopCorner.getX().getValue() > firstSurfaceCorner.getX().getValue()){
+            if (newTopCorner.getX() > firstSurfaceCorner.getX()){
                 temp = Point.translate(newTopCorner, -unitOfWidth, 0);
-            }else if (newTopCorner.getY().getValue() > firstSurfaceCorner.getY().getValue()){
+            }else if (newTopCorner.getY() > firstSurfaceCorner.getY()){
                 temp = Point.translate(newTopCorner, 0, -unitOfHeight);
             }else {
                 temp = newTopCorner;
@@ -446,13 +426,13 @@ public class calculateFillSurface {
     public Point getTopCorner(List<Point> pSurface){
         Point smallestPts = pSurface.get(0);
         for (Point element : pSurface){
-            if(element.getX().getValue() < smallestPts.getX().getValue()){
+            if(element.getX() < smallestPts.getX()){
                 smallestPts = element;
             }
         }
         for (Point element : pSurface){
-            if(element.getX().getValue() == smallestPts.getX().getValue()){
-                if(element.getY().getValue() < smallestPts.getY().getValue()){
+            if(element.getX() == smallestPts.getX()){
+                if(element.getY() < smallestPts.getY()){
                     smallestPts = element;
                 }
             }
@@ -464,18 +444,18 @@ public class calculateFillSurface {
     public Tile rotate90(Tile pMasterTile){
         Tile t = new Tile();
         List<Point> temp = new ArrayList<>();
-        double unitOfWidth = pMasterTile.getWidth().getValue();
-        double unitOfHeight = pMasterTile.getHeight().getValue();
+        double unitOfWidth = pMasterTile.getWidth();
+        double unitOfHeight = pMasterTile.getHeight();
 
         Point A = pMasterTile.getSummits().get(0);
-        Point B = new Point(new Measure(pMasterTile.getSummits().get(0).getX().getValue() + unitOfHeight),
-                            new Measure(pMasterTile.getSummits().get(0).getY().getValue()));
+        Point B = new Point(pMasterTile.getSummits().get(0).getX() + unitOfHeight,
+                            pMasterTile.getSummits().get(0).getY());
 
-        Point C = new Point(new Measure(pMasterTile.getSummits().get(0).getX().getValue()),
-                            new Measure(pMasterTile.getSummits().get(0).getY().getValue() + unitOfWidth));
+        Point C = new Point(pMasterTile.getSummits().get(0).getX(),
+                            pMasterTile.getSummits().get(0).getY() + unitOfWidth);
 
-        Point D = new Point(new Measure(pMasterTile.getSummits().get(0).getX().getValue() + unitOfHeight),
-                            new Measure(pMasterTile.getSummits().get(0).getY().getValue() + unitOfWidth));
+        Point D = new Point(pMasterTile.getSummits().get(0).getX() + unitOfHeight,
+                            pMasterTile.getSummits().get(0).getY() + unitOfWidth);
 
         temp.add(A);
         temp.add(B);
@@ -491,10 +471,10 @@ public class calculateFillSurface {
 
         for (Tile element : pOutTiles) {
             for(Point p : pTile.getSummits())
-                if(p.getX().getValue() > element.getSummits().get(0).getX().getValue() &&
-                        p.getX().getValue() < element.getSummits().get(3).getX().getValue() &&
-                        p.getY().getValue() > element.getSummits().get(0).getY().getValue() &&
-                        p.getY().getValue() > element.getSummits().get(3).getY().getValue()){
+                if(p.getX() > element.getSummits().get(0).getX() &&
+                        p.getX() < element.getSummits().get(3).getX() &&
+                        p.getY() > element.getSummits().get(0).getY() &&
+                        p.getY() > element.getSummits().get(3).getY()){
                     return false;
                 }
         }

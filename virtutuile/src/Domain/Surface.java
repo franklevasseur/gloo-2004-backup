@@ -1,7 +1,9 @@
 package Domain;
 
+import utils.AbstractShape;
 import utils.Id;
 import utils.RectangleHelper;
+import utils.ShapeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,13 +70,9 @@ public class Surface {
 
     //endregion
 
-    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType){
+    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType) {
         calculateFillSurface filler = new calculateFillSurface();
-        /*** variable pour test ***/
-        Measure tempX = new Measure(1.4);
-        Measure tempY = new Measure(0.4);
-        //variable pour les dimension dune tuile normal
-        Tile tileType = new Tile(tempX, tempY, masterTile.getMaterial());
+
         this.sealsInfo = pSealsInfo;
 
         switch(pType) {
@@ -94,7 +92,7 @@ public class Surface {
 
         tiles.forEach(t -> {
             List<utils.Point> summits = t.getSummits().stream().map(s -> s.toAbstract()).collect(Collectors.toList());
-            t.setSummits(RectangleHelper.getClockWise(summits).stream().map(s -> new Point(new Measure(s.x), new Measure(s.y))).collect(Collectors.toList()));
+            t.setSummits(RectangleHelper.getClockWise(summits).stream().map(s -> new Point(s.x, s.y)).collect(Collectors.toList()));
         });
 
         isHole = HoleStatus.FILLED;
@@ -112,44 +110,16 @@ public class Surface {
         this.isRectangular = isRectangular;
     }
 
-    public Measure getHeight(){
-        Measure value = new Measure();
-        double minY;
-        double maxY;
-
-        minY = summits.get(0).getY().getValue();
-        maxY = summits.get(0).getY().getValue();
-        for (Point i:summits){
-            if (minY > i.getY().getValue()){
-                minY = i.getY().getValue();
-            }
-            if (maxY < i.getY().getValue()){
-                maxY = i.getY().getValue();
-            }
-        }
-        value.setValue(maxY - minY);
-
-        return value;
+    public double getHeight() {
+        return ShapeHelper.getHeight(this.toAbstractShape());
     }
 
-    public Measure getWidth(){
-        Measure value = new Measure();
-        double minX;
-        double maxX;
+    private AbstractShape toAbstractShape() {
+        return new AbstractShape(summits.stream().map(s -> s.toAbstract()).collect(Collectors.toList()), this.isHole == HoleStatus.HOLE);
+    }
 
-        minX = summits.get(0).getY().getValue();
-        maxX = summits.get(0).getY().getValue();
-        for (Point i:summits){
-            if (minX > i.getY().getValue()){
-                minX = i.getY().getValue();
-            }
-            if (maxX < i.getY().getValue()){
-                maxX = i.getY().getValue();
-            }
-        }
-        value.setValue(maxX - minX);
-
-        return value;
+    public double getWidth(){
+        return ShapeHelper.getWidth(this.toAbstractShape());
     }
 
     public boolean isFusionned() {

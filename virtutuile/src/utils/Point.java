@@ -10,7 +10,7 @@ public class Point {
     }
 
     public static Point diff(Point pt1, Point pt2) {
-        return new Point(pt1.x - pt2.x, pt1.y - pt2.y);
+        return pt1.diff(pt2);
     }
 
     public Point(double x, double y) {
@@ -26,5 +26,22 @@ public class Point {
 
     public boolean isSame(Point other) {
         return (this.x == other.x) && (this.y == other.y);
+    }
+
+    public boolean isInRange(Point other, double tolerance) {
+        Point absoluteDiff = this.diff(other).abs();
+        return absoluteDiff.x < tolerance && absoluteDiff.y < tolerance;
+    }
+
+    public Point diff(Point other) {
+        return new Point(this.x - other.x, this.y - other.y);
+    }
+
+    public Point abs() {
+        return new Point(Math.abs(x), Math.abs(y));
+    }
+
+    public Point deepCpy() {
+        return new Point(x, y);
     }
 }

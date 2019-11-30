@@ -17,48 +17,34 @@ public class AttachmentPointUI {
     private boolean currentlyBeingDragged = false;
 
     public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {
+        this(coord, cardinal, parentSurface, null);
+    }
+
+    public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface, Cursor cursor) {
         rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
 
-//                if (cardinal == CardinalPoint.NW) {
-//                    rectangle.setCursor(Cursor.NW_RESIZE);
-//                } else if (cardinal == CardinalPoint.NE) {
-//                    rectangle.setCursor(Cursor.NE_RESIZE);
-//                } else if (cardinal == CardinalPoint.SE) {
-//                    rectangle.setCursor(Cursor.SE_RESIZE);
-//                } else if (cardinal == CardinalPoint.SW) {
-//                    rectangle.setCursor(Cursor.SW_RESIZE);
-//                } else if (cardinal == CardinalPoint.W) {
-//                    rectangle.setCursor(Cursor.W_RESIZE);
-//                } else if (cardinal == CardinalPoint.N) {
-//                    rectangle.setCursor(Cursor.N_RESIZE);
-//                } else if (cardinal == CardinalPoint.E) {
-//                    rectangle.setCursor(Cursor.E_RESIZE);
-//                } else if (cardinal == CardinalPoint.S) {
-//                    rectangle.setCursor(Cursor.S_RESIZE);
-//                }
-            if (cardinal == CardinalPoint.SE) {
+            if (cursor != null) {
+                rectangle.setCursor(cursor);
+            }
+            else if (cardinal == CardinalPoint.SE) {
                 rectangle.setCursor(Cursor.SE_RESIZE);
             }
 
-        rectangle.setOnMouseDragged(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
-                if (cardinal != CardinalPoint.SE) {
-                    return;
-                }
-
-                currentlyBeingDragged = true;
-
-                double deltaX = t.getX() - (rectangle.getX() + pointWidth / 2);
-                double deltaY = t.getY() - (rectangle.getY() + pointWidth / 2);
-
-                rectangle.setX(t.getX() - (pointWidth / 2));
-                rectangle.setY(t.getY() - (pointWidth / 2));
-
-                parentSurface.increaseSizeBy(deltaX, deltaY);
-                t.consume();
+        rectangle.setOnMouseDragged(t -> {
+            if (cardinal != CardinalPoint.SE) {
+                return;
             }
+
+            currentlyBeingDragged = true;
+
+            double deltaX = t.getX() - (rectangle.getX() + pointWidth / 2);
+            double deltaY = t.getY() - (rectangle.getY() + pointWidth / 2);
+
+            rectangle.setX(t.getX() - (pointWidth / 2));
+            rectangle.setY(t.getY() - (pointWidth / 2));
+
+            parentSurface.increaseSizeBy(deltaX, deltaY);
+            t.consume();
         });
 
         rectangle.setOnMouseReleased(mouseEvent -> {
@@ -68,10 +54,8 @@ public class AttachmentPointUI {
             }
         });
 
-        rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
+        rectangle.setOnMouseClicked(t -> {
+            if (parentSurface != null) {
                 parentSurface.unselect();
                 parentSurface.select();
                 t.consume();
@@ -79,10 +63,6 @@ public class AttachmentPointUI {
         });
 
         rectangle.setFill(Color.GRAY);
-    }
-
-    public Node getNode() {
-        return rectangle;
     }
 
     public AttachmentPointUI(Point coord, FusionedSurfaceUI parentSurface) {
@@ -106,5 +86,13 @@ public class AttachmentPointUI {
         });
 
         rectangle.setFill(Color.GRAY);
+    }
+
+    public Node getNode() {
+        return rectangle;
+    }
+
+    public Point getPixelCoords() {
+        return new Point(this.rectangle.getX(), this.rectangle.getY());
     }
 }

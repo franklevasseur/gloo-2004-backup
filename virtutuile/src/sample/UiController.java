@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import utils.*;
@@ -83,12 +84,16 @@ public class UiController implements Initializable {
     public Button redoButton;
 
     // state variables to make coherent state machine
-    private boolean stateCurrentlyCreatingSurface = false;
+    private boolean stateCurrentlyCreatingRectangularSurface = false;
+    private boolean stateCurrentlyCreatingIrregularSurface = false;
     private boolean stateTopLeftCornerCreated = false;
     private boolean stateEnableZooming = false;
 
     private Point firstClickCoord;
     private Rectangle rectangleSurfaceCreationIndicator;
+
+    private List<AttachmentPointUI> irregularSurfaceSummits = new ArrayList<>();
+    private double samePositionTolerance = 10;
 
     public TextField minInspectionLengthTextField;
     public Button inspectButton;
@@ -124,7 +129,7 @@ public class UiController implements Initializable {
         this.redoButton.setDisable(!this.domainController.redoAvailable());
 
         this.pane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (this.stateCurrentlyCreatingSurface) {
+            if (this.stateCurrentlyCreatingRectangularSurface) {
                 onPaneClicked(e);
                 e.consume();
             }
@@ -226,34 +231,72 @@ public class UiController implements Initializable {
         Point clickCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
 
 //        System.out.println(String.format("click : (%f, %f)", zoomManager.pixelsToMeters(clickCoord.x), zoomManager.pixelsToMeters(clickCoord.y)));
-        if (stateCurrentlyCreatingSurface && !stateTopLeftCornerCreated) {
-
-            firstClickCoord = new Point(clickCoord.x, clickCoord.y);
-            stateTopLeftCornerCreated = true;
+        if (stateCurrentlyCreatingRectangularSurface) {
+            handleRectangularSurfaceCreation(clickCoord);
+        } else if (stateCurrentlyCreatingIrregularSurface) {
+            handleIrregularSurfaceCreation(clickCoord);
         }
-        else if (stateCurrentlyCreatingSurface && stateTopLeftCornerCreated)
-        {
-            Point secondClickCoord = clickCoord;
-            stateCurrentlyCreatingSurface = false;
-            stateTopLeftCornerCreated = false;
 
-            if (!secondClickCoord.isSame(firstClickCoord)) {
-                createSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(secondClickCoord.x, secondClickCoord.y) );
-            }
-
-            drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
-            pane.setCursor(Cursor.DEFAULT);
-            this.renderFromProject();
-            selectionManager.unselectAll();
-            hideRectangleInfo();
-            firstClickCoord = null;
-        }
 
         stateCurrentlyFilling = true;
         fillTilesButton.setText("Fill tiles");
 
         stateCurrentlyFusionning = true;
         fusionButton.setText("Fusion surfaces");
+
+        selectionManager.unselectAll();
+        hideRectangleInfo();
+    }
+
+    private void handleRectangularSurfaceCreation(Point clickCoord) {
+        if (!stateTopLeftCornerCreated) {
+            firstClickCoord = new Point(clickCoord.x, clickCoord.y);
+            stateTopLeftCornerCreated = true;
+            return;
+        }
+
+        stateCurrentlyCreatingRectangularSurface = false;
+        stateTopLeftCornerCreated = false;
+
+        if (!clickCoord.isSame(firstClickCoord)) {
+            createRectangularSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(clickCoord.x, clickCoord.y) );
+        }
+
+        drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
+        pane.setCursor(Cursor.DEFAULT);
+        this.renderFromProject();
+        selectionManager.unselectAll();
+        hideRectangleInfo();
+        firstClickCoord = null;
+    }
+
+    private void handleIrregularSurfaceCreation(Point clickCoord) {
+
+        Point pointToAdd = clickCoord;
+
+        boolean isFirstPoint = irregularSurfaceSummits.size() < 1;
+        Cursor cursor = isFirstPoint ? Cursor.HAND : null;
+
+        AttachmentPointUI point = new AttachmentPointUI(pointToAdd, null, null, cursor);
+        irregularSurfaceSummits.add(point);
+        this.drawingSection.getChildren().add(point.getNode());
+
+        if (isFirstPoint) {
+            return;
+        }
+
+        AttachmentPointUI firstPoint = irregularSurfaceSummits.get(0);
+        if (clickCoord.isInRange(firstPoint.getPixelCoords(), samePositionTolerance)) {
+            if (irregularSurfaceSummits.size() > 2) {
+                createIrregularSurfaceHere(irregularSurfaceSummits.stream().map(s -> s.getPixelCoords()).collect(Collectors.toList()));
+            }
+
+            stateCurrentlyCreatingIrregularSurface = false;
+            pane.setCursor(Cursor.DEFAULT);
+            this.drawingSection.getChildren().removeAll(irregularSurfaceSummits.stream().map(s -> s.getNode()).collect(Collectors.toList()));
+            irregularSurfaceSummits.clear();
+            this.renderFromProject();
+        }
 
         selectionManager.unselectAll();
         hideRectangleInfo();
@@ -427,9 +470,16 @@ public class UiController implements Initializable {
         return new Point(xFromOrigin, yFromOrigin);
     }
 
-    public void onCreateSurfaceSelected() {
-        if(!stateCurrentlyCreatingSurface) {
-            stateCurrentlyCreatingSurface = true;
+    public void onCreateRectangularSurfaceSelected() {
+        if(!stateCurrentlyCreatingRectangularSurface) {
+            stateCurrentlyCreatingRectangularSurface = true;
+            pane.setCursor(Cursor.CROSSHAIR);
+        }
+    }
+
+    public void onCreateIrregularSurfaceSelected() {
+        if(!stateCurrentlyCreatingIrregularSurface) {
+            stateCurrentlyCreatingIrregularSurface = true;
             pane.setCursor(Cursor.CROSSHAIR);
         }
     }
@@ -510,7 +560,7 @@ public class UiController implements Initializable {
         selectionManager.unselectAll();
     }
 
-    private void createSurfaceHere(Point location1, Point location2) {
+    private void createRectangularSurfaceHere(Point location1, Point location2) {
 
         Point topLeft = RectangleHelper.getTopLeft(location1, location2);
 
@@ -529,6 +579,20 @@ public class UiController implements Initializable {
         surface.isHole = HoleStatus.NONE;
         surface.isRectangular = true;
         surface.summits = RectangleHelper.rectangleInfoToSummits(new Point(x, y), width, height);
+
+        domainController.createSurface(surface);
+    }
+
+    private void createIrregularSurfaceHere(List<Point> pixelsSummits) {
+
+        List<Point> metersSummits = pixelsSummits.stream().map(px -> zoomManager.pixelsToMeters(px)).collect(Collectors.toList());
+
+        SurfaceDto surface = new SurfaceDto();
+        surface.id = new Id();
+        surface.isHole = HoleStatus.NONE;
+        surface.isRectangular = false;
+        surface.isFusionned = false;
+        surface.summits = metersSummits;
 
         domainController.createSurface(surface);
     }
@@ -581,13 +645,28 @@ public class UiController implements Initializable {
             this.allSurfaces.add(surfaceUi);
             return;
         }
-        RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto,
-                zoomManager,
-                selectionManager,
-                snapGridUI,
-                this.tileInfo);
-        this.drawingSection.getChildren().add(surfaceUi.getNode());
-        this.allSurfaces.add(surfaceUi);
+
+        if (surfaceDto.isRectangular) {
+            RectangleSurfaceUI surfaceUi = new RectangleSurfaceUI(surfaceDto,
+                    zoomManager,
+                    selectionManager,
+                    snapGridUI,
+                    this.tileInfo);
+            this.drawingSection.getChildren().add(surfaceUi.getNode());
+            this.allSurfaces.add(surfaceUi);
+            return;
+        }
+
+        List<Double> allNumbers = new ArrayList<>();
+        surfaceDto.summits.stream().map(s -> zoomManager.metersToPixels(s)).forEach(s -> {
+            allNumbers.add(s.x);
+            allNumbers.add(s.y);
+        });
+        Polygon fuck = new Polygon();
+        fuck.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        fuck.setStroke(javafx.scene.paint.Color.RED);
+        fuck.getPoints().addAll(allNumbers);
+        this.drawingSection.getChildren().add(fuck);
     }
 
     public void fusionToggle() {

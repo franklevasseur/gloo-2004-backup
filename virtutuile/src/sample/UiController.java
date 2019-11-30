@@ -291,15 +291,15 @@ public class UiController implements Initializable {
 
                 //new Tile Height
                 CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
-                Double newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
+                Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
 
                 //new Tile Width
                 CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
-                Double newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
+                Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
 
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
-                Double newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
+                Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
@@ -393,8 +393,8 @@ public class UiController implements Initializable {
             materialColor = ColorHelper.utilsColorToString(tilecolor);
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.toDto().tiles.get(0).summits);
 
-            tileHeightInputbox.setText(formatter.format(tileRect.height / 100));
-            tileWidthInputbox.setText(formatter.format(tileRect.width / 100));
+            tileHeightInputbox.setText(formatter.format(tileRect.height));
+            tileWidthInputbox.setText(formatter.format(tileRect.width));
             materialColorDisplay.setText(materialColor);
         } else {
             materialColorDisplay.setText("c'est un trou");

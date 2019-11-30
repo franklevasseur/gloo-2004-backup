@@ -4,6 +4,10 @@ import java.util.*;
 
 public class RectangleHelper {
 
+    public static List<Point> rectangleInfoToSummits(RectangleInfo rect) {
+        return rectangleInfoToSummits(rect.topLeftCorner, rect.width, rect.height);
+    }
+
     public static List<Point> rectangleInfoToSummits(double topLeftCornerX, double topLeftCornerY, double width, double height) {
         Point topLeftCorner = new Point(topLeftCornerX, topLeftCornerY);
         return rectangleInfoToSummits(topLeftCorner, width, height);
@@ -19,6 +23,10 @@ public class RectangleHelper {
         Point bottomLeftCorner = new Point(x, y + height, CardinalPoint.SW);
         Point bottomRightCorner = new Point(x + width, y + height, CardinalPoint.SE);
         return Arrays.asList(topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner);
+    }
+
+    public static List<Point> getClockWise(List<Point> summits) {
+        return rectangleInfoToSummits(summitsToRectangleInfo(summits));
     }
 
     public static RectangleInfo summitsToRectangleInfo(List<Point> summits) {

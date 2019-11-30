@@ -291,15 +291,15 @@ public class UiController implements Initializable {
 
                 //new Tile Height
                 CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
-                Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
+                Double newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
 
                 //new Tile Width
                 CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
-                Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
+                Double newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
 
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
-                Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
+                Double newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 

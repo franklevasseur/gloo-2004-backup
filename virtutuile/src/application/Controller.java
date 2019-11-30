@@ -102,23 +102,23 @@ public class Controller {
             actualSealInfo = sealingDto;
         }
 
-        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto, actualUsedMasterTile, patternDto, actualSealInfo);
-        this.internalUpdateSurface(dto);
-        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
-
-        return tiles;
-
-        // TODO: Arnaud essaye donc de décommenter ce qui est en bas pis de faire marcher ca plz
-//        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
-//
-//        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.TYPE1);
-//
-//        SurfaceDto tiles = SurfaceAssembler.toDto(desiredSurface);
-//
+//        List<TileDto> tiles = this.fillSurfaceWithDefaults(dto, actualUsedMasterTile, patternDto, actualSealInfo);
 //        this.internalUpdateSurface(dto);
 //        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 //
-//        return tiles.tiles;
+//        return tiles;
+
+        // TODO: Arnaud essaye donc de décommenter ce qui est en bas pis de faire marcher ca plz
+        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+
+        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.TYPE1);
+
+        SurfaceDto tiles = SurfaceAssembler.toDto(desiredSurface);
+
+        this.internalUpdateSurface(dto);
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+
+        return tiles.tiles;
     }
 
     private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {

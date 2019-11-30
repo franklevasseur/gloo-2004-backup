@@ -76,7 +76,8 @@ public class calculateFillSurface {
      * Type 3 pattern
      * Tuile normal aligné
      */
-    public List<Tile> fillSurfaceWithType3(List<Point> pSurface, Tile pMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
+    public List<Tile> fillSurfaceWithType3(List<Point> pSurface, Tile tMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
+        Tile pMasterTile = translateTile(pSurface, tMasterTile);
         List<Tile> outTiles = new ArrayList<>();
         List<Point> oldCorner = new ArrayList<>();
         boolean notFilled = true;
@@ -148,7 +149,8 @@ public class calculateFillSurface {
      * Type 4 pattern
      * Tuile normal désaligné
      */
-    public List<Tile> fillSurfaceWithType4(List<Point> pSurface, Tile pMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
+    public List<Tile> fillSurfaceWithType4(List<Point> pSurface, Tile tMasterTile, SealsInfo pSealsInfo, boolean pIsRectangle) {
+        Tile pMasterTile = translateTile(pSurface, tMasterTile);
         List<Tile> outTiles = new ArrayList<>();
         List<Point> oldCorner = new ArrayList<>();
         boolean notFilled = true;
@@ -218,6 +220,22 @@ public class calculateFillSurface {
             }*/
         }
         return outTiles;
+    }
+
+    /**
+     * déplace le premier tile au debut
+     */
+    public Tile translateTile(List<Point> pSurface, Tile pMasterTile){
+        Tile t = new Tile();
+        Point newTopCorner = pSurface.get(0);
+        Point firstSurfaceCorner = getTopCorner(pSurface);
+
+        double unitOfWidth = pMasterTile.getWidth().getValue();
+        double unitOfHeight = pMasterTile.getHeight().getValue();
+        t.setSummits(rectangleInfoToSummits(newTopCorner, unitOfWidth, unitOfHeight));
+        t.setMaterial(pMasterTile.getMaterial());
+        return t;
+
     }
 
     /**
@@ -467,6 +485,21 @@ public class calculateFillSurface {
         t.setMaterial(pMasterTile.getMaterial());
 
         return t;
+    }
+
+    public boolean isInsideTile(List<Tile> pOutTiles, Tile pTile){
+
+        for (Tile element : pOutTiles) {
+            for(Point p : pTile.getSummits())
+                if(p.getX().getValue() > element.getSummits().get(0).getX().getValue() &&
+                        p.getX().getValue() < element.getSummits().get(3).getX().getValue() &&
+                        p.getY().getValue() > element.getSummits().get(0).getY().getValue() &&
+                        p.getY().getValue() > element.getSummits().get(3).getY().getValue()){
+                    return false;
+                }
+        }
+
+        return true;
     }
 }
 

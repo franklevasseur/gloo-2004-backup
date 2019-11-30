@@ -76,4 +76,24 @@ class PointTest {
         // assert
         assertTrue(isInside);
     }
+
+    @Test
+    public void weirdCase() {
+        // arrange
+        List<Point> summits = new ArrayList<>();
+        summits.add(new Point(1.20, 1.04));
+        summits.add(new Point(1.20, 3.22));
+        summits.add(new Point(2.34, 3.22));
+        summits.add(new Point(2.34, 4.30));
+        summits.add(new Point(3.58, 4.30));
+        summits.add(new Point(3.58, 2.23));
+        summits.add(new Point(2.95, 2.23));
+        summits.add(new Point(2.95, 1.04));
+
+        // act
+        boolean isInside = new Point(1.4, 1.35).isInside(summits);
+
+        // assert
+        assertTrue(isInside);
+    }
 }

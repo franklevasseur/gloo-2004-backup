@@ -8,6 +8,7 @@ import utils.ShapeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class SurfaceFiller {
 
@@ -59,6 +60,10 @@ class SurfaceFiller {
     }
 
     private static List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
-        return tiles;
+        return tiles.stream().filter(t -> isAllInside(surface, t)).collect(Collectors.toList());
+    }
+
+    private static boolean isAllInside(Surface surface, Tile tile) {
+        return tile.getSummits().stream().allMatch(s -> s.isInside(surface.getSummits()));
     }
 }

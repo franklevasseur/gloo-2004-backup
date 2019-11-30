@@ -52,7 +52,7 @@ public class Point {
     }
 
     public boolean isInside(List<Point> outline) {
-        Segment currentPointExtendedToInfinity = new Segment(this, new Point(Double.MAX_VALUE, this.y));
+        Segment currentPointExtendedToInfinity = new Segment(this, new Point(Double.POSITIVE_INFINITY, this.y));
         List<Segment> outlineSegments = Segment.toSegments(outline);
 
         int interSectionCount = 0;

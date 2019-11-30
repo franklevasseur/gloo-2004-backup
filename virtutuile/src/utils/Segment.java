@@ -35,6 +35,20 @@ public class Segment {
             return null;
         }
 
+        if (this.getSlope() == Double.POSITIVE_INFINITY
+                || this.getSlope() == Double.NEGATIVE_INFINITY) {
+            double x = this.pt1.x;
+            double y = other.predictY(x);
+            return new Point(x, y);
+        }
+
+        if (other.getSlope() == Double.POSITIVE_INFINITY
+                || other.getSlope() == Double.NEGATIVE_INFINITY) {
+            double x = other.pt1.x;
+            double y = this.predictY(x);
+            return new Point(x, y);
+        }
+
         double x = (other.getIntercept() - this.getIntercept()) / (this.getSlope() - other.getSlope());
         double y = predictY(x);
         return new Point(x, y);
@@ -44,11 +58,19 @@ public class Segment {
         if (p == null) {
             return false;
         }
+
+        if (this.getSlope() == Double.POSITIVE_INFINITY
+                || this.getSlope() == Double.NEGATIVE_INFINITY) {
+            return p.x == pt1.x
+                    && p.y <= Math.max(pt1.y, pt2.y)
+                    && p.y >= Math.min(pt1.y, pt2.y);
+        }
+
         return isInLine(p)
-                && p.x <= Math.max(pt1.x, pt2.x)
-                && p.x >= Math.min(pt1.x, pt2.x)
-                && p.y <= Math.max(pt1.y, pt2.y)
-                && p.y >= Math.min(pt1.y, pt2.y);
+            && p.x <= Math.max(pt1.x, pt2.x)
+            && p.x >= Math.min(pt1.x, pt2.x)
+            && p.y <= Math.max(pt1.y, pt2.y)
+            && p.y >= Math.min(pt1.y, pt2.y);
     }
 
     private boolean isInLine(Point p) {

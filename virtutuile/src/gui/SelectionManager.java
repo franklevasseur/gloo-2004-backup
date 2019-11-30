@@ -1,9 +1,6 @@
 package gui;
 
-import javafx.event.EventHandler;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -11,9 +8,9 @@ public class SelectionManager {
 
     private List<SurfaceUI> selectedSurfaces = new ArrayList<>();
     private boolean multipleSelectionAllowed = false;
-    private Function<Boolean, Void> handler;
+    private Function<Void, Void> handler;
 
-    public SelectionManager(Function<Boolean, Void> handler){
+    public SelectionManager(Function<Void, Void> handler){
         this.handler = handler;
     }
 
@@ -30,7 +27,8 @@ public class SelectionManager {
             surface.select(false);
         }
         selectedSurfaces.add(surface);
-        handler.apply(surface.toDto().isRectangular); // TODO: toutes les surfaces ne sont pas des rectangles, à corriger...
+
+        handler.apply(null);
     }
 
     public void unselectSurface(SurfaceUI surface) {

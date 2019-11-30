@@ -16,11 +16,11 @@ public class AttachmentPointUI {
 
     private boolean currentlyBeingDragged = false;
 
-    public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface) {
+    public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface) {
         this(coord, cardinal, parentSurface, null);
     }
 
-    public AttachmentPointUI(Point coord, CardinalPoint cardinal, RectangleSurfaceUI parentSurface, Cursor cursor) {
+    public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface, Cursor cursor) {
         rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
 
             if (cursor != null) {
@@ -43,42 +43,23 @@ public class AttachmentPointUI {
             rectangle.setX(t.getX() - (pointWidth / 2));
             rectangle.setY(t.getY() - (pointWidth / 2));
 
-            parentSurface.increaseSizeBy(deltaX, deltaY);
+            if (parentSurface.toDto().isRectangular) {
+                ((RectangleSurfaceUI) parentSurface).increaseSizeBy(deltaX, deltaY);
+            }
             t.consume();
         });
 
         rectangle.setOnMouseReleased(mouseEvent -> {
             if (currentlyBeingDragged) {
                 currentlyBeingDragged = false;
-                parentSurface.commitIncreaseSize();
+                if (parentSurface.toDto().isRectangular) {
+                    ((RectangleSurfaceUI) parentSurface).commitIncreaseSize();
+                }
             }
         });
 
         rectangle.setOnMouseClicked(t -> {
             if (parentSurface != null) {
-                parentSurface.unselect();
-                parentSurface.select();
-                t.consume();
-            }
-        });
-
-        rectangle.setFill(Color.GRAY);
-    }
-
-    public AttachmentPointUI(Point coord, FusionedSurfaceUI parentSurface) {
-        rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
-
-        rectangle.setOnMouseReleased(mouseEvent -> {
-            if (currentlyBeingDragged) {
-                currentlyBeingDragged = false;
-                parentSurface.fill();
-            }
-        });
-
-        rectangle.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent t) {
                 parentSurface.unselect();
                 parentSurface.select(false);
                 t.consume();

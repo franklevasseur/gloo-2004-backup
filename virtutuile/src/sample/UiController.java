@@ -302,7 +302,7 @@ public class UiController implements Initializable {
         hideRectangleInfo();
     }
 
-    public Void handleSelection(boolean isRectangle) {
+    public Void handleSelection(Void nothing) {
         displayRectangleInfo();
 
         if (selectionManager.getSelectedSurfaces().stream().allMatch(s -> s.toDto().isHole  == HoleStatus.FILLED)) {
@@ -426,7 +426,7 @@ public class UiController implements Initializable {
         surfacePositionXInputBox.setText(formatter.format(topLeft.x));
         surfacePositionYInputBox.setText(formatter.format(topLeft.y));
 
-        if(firstOne.toDto().isHole == HoleStatus.FILLED){
+        if(firstOne.toDto().isHole == HoleStatus.FILLED) {
             String tileMaterial = firstOne.toDto().tiles.get(0).material.name;
             utils.Color tilecolor = firstOne.toDto().tiles.get(0).material.color;
             String materialColor;
@@ -640,7 +640,7 @@ public class UiController implements Initializable {
 
     private void displaySurface(SurfaceDto surfaceDto) {
         if (surfaceDto.isFusionned) {
-            FusionedSurfaceUI surfaceUi = new FusionedSurfaceUI(zoomManager, selectionManager, snapGridUI, surfaceDto);
+            FusionedSurfaceUI surfaceUi = new FusionedSurfaceUI(surfaceDto, zoomManager, selectionManager, snapGridUI, tileInfo);
             this.drawingSection.getChildren().add(surfaceUi.getNode());
             this.allSurfaces.add(surfaceUi);
             return;

@@ -1,6 +1,7 @@
 package Domain;
 
 import utils.AbstractShape;
+import utils.Point;
 import utils.ShapeHelper;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class Tile {
     }
 
     private AbstractShape toAbstractShape() {
-        return new AbstractShape(summits.stream().map(s -> s.toAbstract()).collect(Collectors.toList()));
+        return new AbstractShape(summits);
     }
 
     public double getWidth() {

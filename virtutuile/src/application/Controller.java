@@ -103,7 +103,7 @@ public class Controller {
 
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
 
-        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.TYPE1);
+        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.DEFAULT);
 
         SurfaceDto newDto = SurfaceAssembler.toDto(desiredSurface);
 
@@ -111,54 +111,6 @@ public class Controller {
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 
         return newDto.tiles;
-    }
-
-    private List<TileDto> fillSurfaceWithDefaults(SurfaceDto surfaceToFillDto, TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing) {
-
-        AbstractShape surfaceShape = new AbstractShape(surfaceToFillDto.summits, false);
-        Point surfaceTopLeftCorner = ShapeHelper.getTopLeftCorner(surfaceShape);
-        double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
-        double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
-
-        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.summits);
-        double tileWidth = info.width;
-        double tileHeight = info.height;
-
-        List<TileDto> tiles = new ArrayList<>();
-
-        double unitOfWidth = tileWidth + sealing.sealWidth;
-        double unitOfHeight = tileHeight + sealing.sealWidth;
-
-        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight);
-        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth);
-
-        for (int line = 0; line < amountOfLines; line++) {
-            for (int column = 0; column < amountOfColumns; column++) {
-                TileDto nextTile = new TileDto();
-
-
-                Point topLeftCorner = Point.translate(surfaceTopLeftCorner, column * unitOfWidth, line * unitOfHeight);
-
-                double rightSurfaceBound = surfaceTopLeftCorner.x + surfaceWidth;
-                double bottomSurfaceBound = surfaceTopLeftCorner.y + surfaceHeight;
-
-                boolean isTileOverflowX = topLeftCorner.x + tileWidth > rightSurfaceBound;
-                boolean isTileOverflowY = topLeftCorner.y + tileHeight > bottomSurfaceBound;
-                double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.x : tileWidth;
-                double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
-
-                nextTile.summits = RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight);
-                nextTile.material = masterTile.material;
-
-                tiles.add(nextTile);
-            }
-        }
-
-        surfaceToFillDto.tiles = tiles;
-        surfaceToFillDto.isHole = HoleStatus.FILLED;
-        surfaceToFillDto.sealsInfoDto = sealing;
-
-        return tiles;
     }
 
     public void loadProject(String projectPath) {

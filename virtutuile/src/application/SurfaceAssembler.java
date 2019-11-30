@@ -1,7 +1,6 @@
 package application;
 
 import Domain.*;
-import utils.Color;
 import utils.Point;
 
 import java.util.ArrayList;
@@ -15,11 +14,7 @@ public class SurfaceAssembler {
         SurfaceDto dto = new SurfaceDto();
 
         dto.isHole = surface.isHole();
-        dto.summits = surface.getSummits().stream().map(s -> {
-            double x = s.getX();
-            double y = s.getY();
-            return new Point(x, y);
-        }).collect(Collectors.toList());
+        dto.summits = surface.getSummits();
         dto.id = surface.getId();
         dto.isRectangular = surface.getIsRectangular();
         dto.isFusionned = surface.isFusionned();
@@ -41,11 +36,7 @@ public class SurfaceAssembler {
 
     public static void fromDto (SurfaceDto dto, Surface destinationSurface){
 
-        List<Domain.Point> summits = dto.summits.stream().map(s -> {
-            double xdouble = s.x;
-            double ydouble = s.y;
-            return new Domain.Point(xdouble, ydouble);
-        }).collect(Collectors.toList());
+        List<Point> summits = dto.summits;
 
         if (dto.tiles != null) {
             List<Tile> tiles = dto.tiles.stream().map(tDto -> fromDto(tDto)).collect(Collectors.toList());
@@ -70,27 +61,23 @@ public class SurfaceAssembler {
     }
 
     public static Surface fromDto (SurfaceDto dto) {
-        Surface surface = new Surface(dto.isHole, new ArrayList<Domain.Point>(), dto.isRectangular);
+        Surface surface = new Surface(dto.isHole, new ArrayList<Point>(), dto.isRectangular);
         SurfaceAssembler.fromDto(dto, surface);
         return surface;
     }
 
     public static TileDto toDto(Tile tile) {
         TileDto tileDto = new TileDto();
-        tileDto.summits = tile.getSummits().stream().map(p -> {
-            double x = p.getX();
-            double y = p.getY();
-            return new Point(x, y);
-        }).collect(Collectors.toList());
+        tileDto.summits = tile.getSummits();
         tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
         return tileDto;
     }
 
     public static Tile fromDto(TileDto tDto) {
-        List<Domain.Point> points = tDto.summits.stream().map(p -> {
+        List<Point> points = tDto.summits.stream().map(p -> {
             double xdouble = p.x;
             double ydouble = p.y;
-            return new Domain.Point(xdouble, ydouble);
+            return new Point(xdouble, ydouble);
         }).collect(Collectors.toList());
 
         Material material = MaterialAssembler.fromDto(tDto.material);

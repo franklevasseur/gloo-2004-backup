@@ -2,6 +2,7 @@ package Domain;
 
 import utils.AbstractShape;
 import utils.FusionHelper;
+import utils.Point;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,13 +30,12 @@ public class FusionnedSurface extends Surface {
     }
 
     private static List<Point> extractResultantSummits(List<Surface> fusionnedSurfaces) {
-        return FusionHelper.getFusionResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)).summits.stream().map(p -> new Point(p)).collect(Collectors.toList());
+        return FusionHelper.getFusionResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)).summits;
     }
 
     private static List<AbstractShape> extractAllInnerSurfacesPoints(List<Surface> fusionnedSurfaces) {
         return fusionnedSurfaces
-                .stream().map(s -> new AbstractShape(s.getSummits()
-                        .stream().map(su -> su.toAbstract()).collect(Collectors.toList()), s.isHole() == HoleStatus.HOLE))
+                .stream().map(s -> new AbstractShape(s.getSummits(), s.isHole() == HoleStatus.HOLE))
                 .collect(Collectors.toList());
     }
 }

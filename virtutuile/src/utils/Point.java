@@ -1,5 +1,6 @@
 package utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Point {
@@ -13,6 +14,19 @@ public class Point {
 
     public static Point diff(Point pt1, Point pt2) {
         return pt1.diff(pt2);
+    }
+
+    public static List<Point> fromSegments(List<Segment> segments) {
+        List<Point> summits = new ArrayList<>();
+        for (Segment seg : segments) {
+            if (summits.stream().allMatch(s -> !s.isSame(seg.pt1))) {
+                summits.add(seg.pt1);
+            }
+            if (summits.stream().allMatch(s -> !s.isSame(seg.pt2))) {
+                summits.add(seg.pt2);
+            }
+        }
+        return summits;
     }
 
     public Point(double x, double y) {

@@ -8,4 +8,5 @@ public class TileDto {
 
     public List<Point> summits; // summits in meters
     public MaterialDto material;
+    public boolean isCut;
 }

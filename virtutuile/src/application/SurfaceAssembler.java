@@ -2,6 +2,7 @@ package application;
 
 import Domain.*;
 import utils.Point;
+import utils.RectangleHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,18 +71,15 @@ public class SurfaceAssembler {
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits();
         tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
+        tileDto.isCut = tile.isCut();
         return tileDto;
     }
 
     public static Tile fromDto(TileDto tDto) {
-        List<Point> points = tDto.summits.stream().map(p -> {
-            double xdouble = p.x;
-            double ydouble = p.y;
-            return new Point(xdouble, ydouble);
-        }).collect(Collectors.toList());
+        List<Point> points = tDto.summits;
 
         Material material = MaterialAssembler.fromDto(tDto.material);
-        return new Tile(points, material);
+        return new Tile(points, material, tDto.isCut);
     }
 
     public static SealsInfoDto toDto(SealsInfo sealsInfo) {

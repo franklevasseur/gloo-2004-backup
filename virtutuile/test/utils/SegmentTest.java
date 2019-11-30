@@ -75,7 +75,7 @@ class SegmentTest {
     }
 
     @Test
-    public void intersect_withFistSummit_shoulReturnTrue() {
+    public void intersect_withFirstSummit_shoulReturnTrue() {
         // arrange
         Segment seg1 = new Segment(new Point(0, 0), new Point(-10, -10));
         Segment seg2 = new Segment(new Point(0, 0), new Point(10, 5));
@@ -85,5 +85,26 @@ class SegmentTest {
 
         // assert
         assertTrue(intersect.isSame(new Point(0, 0)));
+    }
+
+    @Test
+    public void countIntersectionsWithTile() {
+        // arrange
+        List<Point> tileSummits = new ArrayList<>();
+        tileSummits.add(new Point(0, 0));
+        tileSummits.add(new Point(0, 10));
+        tileSummits.add(new Point(10, 10));
+        tileSummits.add(new Point(10, 0));
+        List<Segment> tileSegments = Segment.toSegments(tileSummits);
+
+        Segment cuttingSegment = new Segment(new Point(-5, 5), new Point(15, 5));
+
+        // act
+        List<Point> intersections = Segment.findIntersection(cuttingSegment, tileSegments);
+
+        // assert
+        assertEquals(intersections.size(), 2);
+        assertTrue(intersections.get(0).isSame(new Point(0, 5)));
+        assertTrue(intersections.get(1).isSame(new Point(10, 5)));
     }
 }

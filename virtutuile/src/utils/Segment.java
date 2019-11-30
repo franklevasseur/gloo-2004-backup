@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Segment {
 
-    Point pt1;
-    Point pt2;
+    public Point pt1;
+    public Point pt2;
 
     public Segment(Point pt1, Point pt2) {
         this.pt1 = pt1;
@@ -103,5 +103,16 @@ public class Segment {
         }
 
         return segments;
+    }
+
+    public static List<Point> findIntersection(Segment segment, List<Segment> tileSegments) {
+        List<Point> currentIntersections = new ArrayList<>();
+        for (Segment seg: tileSegments) {
+            Point intersection = seg.intersect(segment);
+            if (intersection != null && currentIntersections.stream().noneMatch(i -> i.isSame(intersection))) {
+                currentIntersections.add(intersection);
+            }
+        }
+        return currentIntersections;
     }
 }

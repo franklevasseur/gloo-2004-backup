@@ -3,6 +3,7 @@ package Domain;
 import utils.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,6 @@ class SurfaceFiller {
 
         for (int line = 0; line < amountOfLines; line++) {
             for (int column = 0; column < amountOfColumns; column++) {
-                Tile nextTile = new Tile();
-
                 utils.Point topLeftCorner = Point.translate(surfaceTopLeftCorner, column * unitOfWidth, line * unitOfHeight);
 
                 double rightSurfaceBound = surfaceTopLeftCorner.x + surfaceWidth;
@@ -45,8 +44,7 @@ class SurfaceFiller {
                 double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.x : tileWidth;
                 double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
 
-                nextTile.setSummits(RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight));
-                nextTile.setMaterial(masterTile.getMaterial());
+                Tile nextTile = new Tile(RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight), masterTile.getMaterial());
 
                 tiles.add(nextTile);
             }
@@ -59,11 +57,18 @@ class SurfaceFiller {
         List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
 
         List<Tile> tilesToCut = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
+        insideTiles.removeIf(tilesToCut::contains);
 
         Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
         tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
 
-        return  insideTiles;
+        tilesToCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
+
+        List<Tile> secondFiltering = tilesToCut.stream().filter(t -> isAllInside(surface, t)).collect(Collectors.toList());
+
+        insideTiles.addAll(secondFiltering);
+
+        return insideTiles;
     }
 
     private static boolean isAllInside(Surface surface, Tile tile) {
@@ -72,5 +77,25 @@ class SurfaceFiller {
 
     private static boolean isAllOutside(Surface surface, Tile tile) {
         return tile.getSummits().stream().allMatch(s -> !s.isInside(surface.getSummits()));
+    }
+
+    private static List<Tile> cutTilesThatNeedToBeCut(Surface surface, List<Tile> tiles) {
+        List<Segment> surfaceSegments = Segment.toSegments(surface.getSummits());
+        return tiles.stream().flatMap(t -> cutOneTile(surfaceSegments, t).stream()).collect(Collectors.toList());
+    }
+
+    private static List<Tile> cutOneTile(List<Segment> surfaceSegments, Tile tileToCut) {
+        List<Segment> tileSegments = Segment.toSegments(tileToCut.getSummits());
+
+        for (Segment seg: surfaceSegments) {
+            int nInterSections = Segment.findIntersection(seg, tileSegments).size();
+            if (nInterSections == 2) {
+                return tileToCut.cutSideToSide(seg);
+            } else if (nInterSections == 1) {
+                return Arrays.asList(tileToCut);
+            }
+        }
+
+        return Arrays.asList(tileToCut);
     }
 }

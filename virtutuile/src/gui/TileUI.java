@@ -20,11 +20,12 @@ public class TileUI {
     private ZoomManager zoomManager;
     private MaterialDto material;
 
-    public TileUI(RectangleInfo rectInfo, Label tileInfoTextField, ZoomManager zoomManager, MaterialDto material) {
+    public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager) {
         this.tileInfoTextField = tileInfoTextField;
         this.zoomManager = zoomManager;
-        this.material = material;
+        this.material = dto.material;
 
+        RectangleInfo rectInfo = RectangleHelper.summitsToRectangleInfo(dto.summits.stream().map(s -> zoomManager.metersToPixels(s)).collect(Collectors.toList()));
         rectangle = new Rectangle(rectInfo.topLeftCorner.x, rectInfo.topLeftCorner.y, rectInfo.width, rectInfo.height);
 
         if (material.color == utils.Color.BLACK) {

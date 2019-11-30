@@ -143,14 +143,9 @@ public abstract class SurfaceUI {
             return;
         }
 
-        List<RectangleInfo> tilesRect = tiles.stream().map(t -> {
-            List<Point> pixelPoints = t.summits.stream().map(zoomManager::metersToPixels).collect(Collectors.toList());
-            return RectangleHelper.summitsToRectangleInfo(pixelPoints);
-        }).collect(Collectors.toList());
-
         hideTiles();
 
-        this.tiles = tilesRect.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager, tiles.get(0).material)).collect(Collectors.toList());
+        this.tiles = tiles.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager)).collect(Collectors.toList());
         this.surfaceGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 }

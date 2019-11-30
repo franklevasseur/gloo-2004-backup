@@ -1,10 +1,6 @@
 package Domain;
 
-import utils.AbstractShape;
-import utils.Point;
-import utils.RectangleHelper;
-import utils.RectangleInfo;
-import utils.ShapeHelper;
+import utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,10 +56,21 @@ class SurfaceFiller {
     }
 
     private static List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
-        return tiles.stream().filter(t -> isAllInside(surface, t)).collect(Collectors.toList());
+        List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
+
+        List<Tile> tilesToCut = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
+
+        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
+        tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
+
+        return  insideTiles;
     }
 
     private static boolean isAllInside(Surface surface, Tile tile) {
         return tile.getSummits().stream().allMatch(s -> s.isInside(surface.getSummits()));
+    }
+
+    private static boolean isAllOutside(Surface surface, Tile tile) {
+        return tile.getSummits().stream().allMatch(s -> !s.isInside(surface.getSummits()));
     }
 }

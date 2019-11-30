@@ -52,6 +52,8 @@ public abstract class SurfaceUI {
         this.selectionManager = selectionManager;
         this.snapGrid = snapGrid;
         this.tileInfoTextField = tileInfoLabel;
+
+        this.surfaceGroup = new Group();
     }
 
     abstract public Shape getMainShape(); // gives the rectangle without the tiles and anchor points

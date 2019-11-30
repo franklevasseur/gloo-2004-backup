@@ -657,16 +657,13 @@ public class UiController implements Initializable {
             return;
         }
 
-        List<Double> allNumbers = new ArrayList<>();
-        surfaceDto.summits.stream().map(s -> zoomManager.metersToPixels(s)).forEach(s -> {
-            allNumbers.add(s.x);
-            allNumbers.add(s.y);
-        });
-        Polygon fuck = new Polygon();
-        fuck.setFill(javafx.scene.paint.Color.TRANSPARENT);
-        fuck.setStroke(javafx.scene.paint.Color.RED);
-        fuck.getPoints().addAll(allNumbers);
-        this.drawingSection.getChildren().add(fuck);
+        IrregularSurfaceUI irregularSurfaceUI = new IrregularSurfaceUI(surfaceDto,
+                zoomManager,
+                selectionManager,
+                snapGridUI,
+                this.tileInfo);
+        this.drawingSection.getChildren().add(irregularSurfaceUI.getNode());
+        this.allSurfaces.add(irregularSurfaceUI);
     }
 
     public void fusionToggle() {

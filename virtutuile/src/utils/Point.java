@@ -6,7 +6,7 @@ public class Point {
     public CardinalPoint cardinality;
 
     public static Point translate(Point oldPoint, double delatX, double deltaY) {
-        return new Point(oldPoint.x + delatX, oldPoint.y + deltaY);
+        return oldPoint.translate(new Point(delatX, deltaY));
     }
 
     public static Point diff(Point pt1, Point pt2) {
@@ -35,6 +35,10 @@ public class Point {
 
     public Point diff(Point other) {
         return new Point(this.x - other.x, this.y - other.y);
+    }
+
+    public Point translate(Point other) {
+        return new Point(x + other.x, y + other.y);
     }
 
     public Point abs() {

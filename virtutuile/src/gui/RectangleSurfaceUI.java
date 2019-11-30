@@ -48,7 +48,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
         summits = this.getSummits();
 
-        super.surfaceGroup = new Group(rectangle);
+        super.surfaceGroup.getChildren().add(rectangle);
         surfaceGroup.setCursor(Cursor.HAND);
 
         this.zoomManager = zoomManager;

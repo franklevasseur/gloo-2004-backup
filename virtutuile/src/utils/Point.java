@@ -1,5 +1,7 @@
 package utils;
 
+import java.util.List;
+
 public class Point {
     public double x;
     public double y;
@@ -47,5 +49,23 @@ public class Point {
 
     public Point deepCpy() {
         return new Point(x, y);
+    }
+
+    public boolean isInside(List<Point> outline) {
+        Segment currentPointExtendedToInfinity = new Segment(this, new Point(Double.MAX_VALUE, this.y));
+        List<Segment> outlineSegments = Segment.toSegments(outline);
+
+        int interSectionCount = 0;
+        for (Segment segment: outlineSegments) {
+            if (segment.isElementOf(this)) {
+                return true; // point is exactly on edge
+            }
+
+            if (segment.doesIntersect(currentPointExtendedToInfinity)) {
+                interSectionCount++;
+            }
+        }
+
+        return (interSectionCount % 2 == 1);
     }
 }

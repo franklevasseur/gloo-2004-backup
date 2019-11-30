@@ -55,6 +55,10 @@ class SurfaceFiller {
             }
         }
 
+        return cutTilesThatExceed(surface, tiles);
+    }
+
+    private static List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
         return tiles;
     }
 }

@@ -436,8 +436,8 @@ public class UiController implements Initializable {
             materialColor = ColorHelper.utilsColorToString(tilecolor);
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.toDto().tiles.get(0).summits);
 
-            tileHeightInputbox.setText(formatter.format(tileRect.height / 100));
-            tileWidthInputbox.setText(formatter.format(tileRect.width / 100));
+            tileHeightInputbox.setText(formatter.format(tileRect.height));
+            tileWidthInputbox.setText(formatter.format(tileRect.width));
             materialColorDisplay.setText(materialColor);
         } else {
             materialColorDisplay.setText("c'est un trou");

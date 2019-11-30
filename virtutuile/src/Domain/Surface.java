@@ -1,9 +1,11 @@
 package Domain;
 
 import utils.Id;
+import utils.RectangleHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Surface {
     private Id id;
@@ -90,6 +92,12 @@ public class Surface {
                 // code block
         }
 
+        tiles.forEach(t -> {
+            List<utils.Point> summits = t.getSummits().stream().map(s -> s.toAbstract()).collect(Collectors.toList());
+            t.setSummits(RectangleHelper.getClockWise(summits).stream().map(s -> new Point(new Measure(s.x), new Measure(s.y))).collect(Collectors.toList()));
+        });
+
+        isHole = HoleStatus.FILLED;
     }
 
     public void setSummits(List<Point> summits) {

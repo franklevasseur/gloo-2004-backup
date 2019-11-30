@@ -6,8 +6,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import utils.Point;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TileUI {
 
@@ -49,7 +53,8 @@ public class TileUI {
 
     public TileDto toDto() {
         TileDto tile = new TileDto();
-        tile.summits = RectangleHelper.rectangleInfoToSummits(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+        List<Point> pixelSummits = RectangleHelper.rectangleInfoToSummits(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+        tile.summits = pixelSummits.stream().map(s -> zoomManager.pixelsToMeters(s)).collect(Collectors.toList());
         tile.material = this.material;
         return tile;
     }

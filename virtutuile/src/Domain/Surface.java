@@ -59,11 +59,9 @@ public class Surface {
     }
 
     public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType) {
-        calculateFillSurface filler = new calculateFillSurface();
-
         this.sealsInfo = pSealsInfo;
 
-        tiles = filler.fillSurfaceWithType3(summits, masterTile, pSealsInfo, isRectangular);
+        tiles = SurfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType);
 
         // très important !!
         isHole = HoleStatus.FILLED;

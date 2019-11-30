@@ -18,6 +18,13 @@ public class ShapeHelper {
         return shape.summits.stream().filter(p -> p.x == minX).min(Comparator.comparing(s -> s.y)).get();
     }
 
+    // gives a point that might not be a summit of the shape, but only the boxing top left summit
+    public static Point getTheoricalTopLeftCorner(AbstractShape shape) {
+        double minX = getMinX(shape).x;
+        double minY = getMinY(shape).y;
+        return new Point(minX, minY);
+    }
+
     private static Point getMinX(AbstractShape shape) {
         return Collections.min(shape.summits, Comparator.comparing(p -> p.x));
     }

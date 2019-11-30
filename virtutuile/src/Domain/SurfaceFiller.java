@@ -18,7 +18,7 @@ class SurfaceFiller {
     private static List<Tile> fillSurfaceWithDefaults(Surface surface, Tile masterTile, SealsInfo sealing) {
 
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
-        utils.Point surfaceTopLeftCorner = ShapeHelper.getTopLeftCorner(surfaceShape);
+        utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
         double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
         double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
 

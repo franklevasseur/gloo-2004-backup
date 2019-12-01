@@ -45,7 +45,16 @@ class SurfaceFiller {
         int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight);
         int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth);
 
-        Point firstCorner = Point.translate(surfaceTopLeftCorner, info.topLeftCorner.x, info.topLeftCorner.y);
+        Point masterTileRelativeCorner = info.topLeftCorner;
+        Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
+
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+
+        double xTranslation = -(masterTileColumnIndex * tileWidth);
+        double yTranslation = -(masterTileLineIndex * tileHeight);
+
+        Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
 
         for (int line = 0; line < amountOfLines; line++) {
             for (int column = 0; column < amountOfColumns; column++) {

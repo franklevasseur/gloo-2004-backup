@@ -3,7 +3,9 @@ package Domain;
 
 import utils.Color;
 
-public class SealsInfo {
+import java.io.Serializable;
+
+public class SealsInfo implements Serializable {
     private double width;
     private Color color;
 

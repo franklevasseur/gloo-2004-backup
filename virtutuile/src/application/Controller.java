@@ -4,6 +4,7 @@ import Domain.*;
 import utils.*;
 import utils.Point;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -114,11 +115,31 @@ public class Controller {
     }
 
     public void loadProject(String projectPath) {
-        // ...
+        try(FileInputStream fi = new FileInputStream("TestSave.bin")){
+            ObjectInputStream os = new ObjectInputStream(fi);
+            this.vraiProject = (Project) os.readObject();
+
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveProject(String projectPath) {
-        // ...
+        try(FileOutputStream fs = new FileOutputStream("TestSave.bin")){
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+
+            os.writeObject(this.vraiProject);
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {

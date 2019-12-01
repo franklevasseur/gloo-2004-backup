@@ -5,11 +5,12 @@ import utils.Id;
 import utils.Point;
 import utils.ShapeHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Surface {
+public class Surface implements Serializable {
     private Id id;
     private HoleStatus isHole;
     private List<Tile> tiles = new ArrayList<>();

@@ -1,9 +1,11 @@
 package Domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Project {
+public class Project implements Serializable {
+    private static final long serialVersionUID = 420L;
     private List<Surface> surfaces = new ArrayList<>();
     private List<Material> materials = new ArrayList<>();
 

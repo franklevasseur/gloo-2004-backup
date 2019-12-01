@@ -83,7 +83,12 @@ public class Point {
             }
 
             Point intersection = segment.intersect(currentPointExtendedToInfinity, DOUBLE_TOLERANCE);
-            if (intersection != null && intersections.stream().noneMatch(i -> i.isSame(intersection))) {
+            boolean intersectionIsNew = intersection != null && intersections.stream().noneMatch(i -> i.isSame(intersection));
+            boolean intersectionIsNotAnEdge = intersection != null
+                    && !(segment.pt1.isInRange(intersection, DOUBLE_TOLERANCE)
+                    || segment.pt2.isInRange(intersection, DOUBLE_TOLERANCE));
+
+            if (intersectionIsNew && intersectionIsNotAnEdge) {
                 intersections.add(intersection);
             }
         }

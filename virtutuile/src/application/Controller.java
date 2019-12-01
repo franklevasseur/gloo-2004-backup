@@ -165,6 +165,15 @@ public class Controller {
         // TODO: avertir undo/redo que ca vient de se passer (Philippe ne pas enlever ce todo, c'est pour Frank)
     }
 
+    public void getAccounting(){
+        List<accounting> account = new ArrayList<>();
+        for (Material i: this.vraiProject.getMaterials()) {
+            accounting temp = new accounting(this.vraiProject.getSurfaces(), i);
+            account.add(temp);
+
+        }
+    }
+
     public String inspect() {
         return inspector.inspect(this.vraiProject);
     }

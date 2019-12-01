@@ -29,9 +29,9 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Save" onAction="#SaveProject"/>
-                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Load" onAction="#LoadProject" />
-                <Button layoutX="177.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="New" />
+                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Save" onAction="#SaveProject"/>
+                <Button layoutX="177.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Load" onAction="#LoadProject" />
+                <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="New" onAction="#newProject"/>
                 <Button fx:id="redoButton" layoutX="261.0" layoutY="13.0" mnemonicParsing="false" onAction="#redo" prefHeight="47.0" prefWidth="65.0" text="Redo" />
                 <Button fx:id="undoButton" layoutX="344.0" layoutY="13.0" mnemonicParsing="false" onAction="#undo" prefHeight="47.0" prefWidth="65.0" text="Undo" />
               </children>

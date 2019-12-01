@@ -5,12 +5,13 @@ import utils.FusionHelper;
 import utils.Segment;
 import utils.ShapeHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TileCutter {
+public class TileCutter implements Serializable {
 
     public List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
         List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());

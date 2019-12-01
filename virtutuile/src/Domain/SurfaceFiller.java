@@ -2,10 +2,11 @@ package Domain;
 
 import utils.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-class SurfaceFiller {
+class SurfaceFiller implements Serializable {
 
     private TileCutter tileCutter = new TileCutter();
 

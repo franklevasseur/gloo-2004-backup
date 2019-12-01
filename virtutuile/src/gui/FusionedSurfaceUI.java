@@ -17,8 +17,6 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
     private Shape shape;
 
-    private Controller controller = Controller.getInstance();
-
     private Point lastPointOfContact = new Point(0,0);
     private Point position;
     private boolean currentlyBeingDragged = false;
@@ -46,17 +44,10 @@ public class FusionedSurfaceUI extends SurfaceUI {
         super.surfaceGroup = new Group();
         this.renderShapeFromChilds();
 
-        this.id = surfaceDto.id;
         this.snapGrid = snapGrid;
 
         surfaceGroup.setCursor(Cursor.HAND);
 
-        this.zoomManager = zoomManager;
-        this.selectionManager = selectionManager;
-        this.isHole = surfaceDto.isHole;
-
-        this.sealsInfo = surfaceDto.sealsInfoDto;
-        this.masterTile = surfaceDto.masterTile;
         this.setShapeColor();
 
         this.renderTiles(surfaceDto.tiles);

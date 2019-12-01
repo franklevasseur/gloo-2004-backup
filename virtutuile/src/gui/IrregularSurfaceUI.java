@@ -23,8 +23,6 @@ public class IrregularSurfaceUI extends SurfaceUI {
     private Point lastPointOfContact = new Point(0, 0);
     private boolean currentlyBeingDragged = false;
 
-    private Controller controller = Controller.getInstance();
-
     public IrregularSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
@@ -33,9 +31,11 @@ public class IrregularSurfaceUI extends SurfaceUI {
         super(surfaceDto, zoomManager, selectionManager, snapGrid, tileInfoTextField);
 
         renderRectangleFromSummits(surfaceDto.summits.stream().map(s -> zoomManager.metersToPixels(s)).collect(Collectors.toList()));
-        setRectangleColor();
+        setPolygonColor();
 
         summits = this.getSummits();
+
+        this.renderTiles(surfaceDto.tiles);
 
         initializeGroup();
     }
@@ -59,7 +59,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
         super.surfaceGroup.getChildren().add(polygon);
     }
 
-    private void setRectangleColor() {
+    private void setPolygonColor() {
         if (this.isHole == HoleStatus.HOLE) {
             polygon.setFill(Color.TRANSPARENT);
             polygon.setStroke(Color.BLACK);
@@ -97,6 +97,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
                     return;
                 }
                 this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, null, super.sealsInfo));
+                setPolygonColor();
             }
         });
 
@@ -109,11 +110,10 @@ public class IrregularSurfaceUI extends SurfaceUI {
             double newX = t.getX() - this.lastPointOfContact.x;
             double newY = t.getY() - this.lastPointOfContact.y;
 
-            System.out.println(String.format("(%f, %f)", getPosition().x, getPosition().y));
+//            System.out.println(String.format("(%f, %f)", getPosition().x, getPosition().y));
 
             Point translation = Point.diff(new Point(newX, newY), getPosition());
-            this.renderRectangleFromSummits(this.summits.stream().map(s -> s.translate(translation)).collect(Collectors.toList()));
-            summits = this.getSummits();
+            this.translatePixelBy(translation);
 
             t.consume();
         });
@@ -178,21 +178,26 @@ public class IrregularSurfaceUI extends SurfaceUI {
 
     @Override
     public void fill() {
-
+        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, null, super.sealsInfo));
+        setPolygonColor();
     }
 
     @Override
     public void setSize(double width, double height) {
-
+        // nothing...
     }
 
     @Override
     public void setPosition(Point position) {
+        Point pixelPosition = zoomManager.metersToPixels(position);
 
+        Point translation = Point.diff(pixelPosition, getPosition());
+        translatePixelBy(translation);
     }
 
     @Override
     public void translatePixelBy(Point translation) {
-
+        this.renderRectangleFromSummits(this.summits.stream().map(s -> s.translate(translation)).collect(Collectors.toList()));
+        summits = this.getSummits();
     }
 }

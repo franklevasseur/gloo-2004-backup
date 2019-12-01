@@ -39,12 +39,12 @@ class SurfaceFiller {
                 double rightSurfaceBound = surfaceTopLeftCorner.x + surfaceWidth;
                 double bottomSurfaceBound = surfaceTopLeftCorner.y + surfaceHeight;
 
-                boolean isTileOverflowX = topLeftCorner.x + tileWidth > rightSurfaceBound;
-                boolean isTileOverflowY = topLeftCorner.y + tileHeight > bottomSurfaceBound;
-                double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.x : tileWidth;
-                double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
+//                boolean isTileOverflowX = topLeftCorner.x + tileWidth > rightSurfaceBound;
+//                boolean isTileOverflowY = topLeftCorner.y + tileHeight > bottomSurfaceBound;
+//                double actualWidth = isTileOverflowX ? rightSurfaceBound - topLeftCorner.x : tileWidth;
+//                double actualHeight = isTileOverflowY ? bottomSurfaceBound - topLeftCorner.y : tileHeight;
 
-                Tile nextTile = new Tile(RectangleHelper.rectangleInfoToSummits(topLeftCorner, actualWidth, actualHeight), masterTile.getMaterial());
+                Tile nextTile = new Tile(RectangleHelper.rectangleInfoToSummits(topLeftCorner, tileWidth, tileHeight), masterTile.getMaterial());
 
                 tiles.add(nextTile);
             }

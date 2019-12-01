@@ -24,7 +24,7 @@ public class TileUI {
 
     private List<Point> pixelSummits;
 
-    public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager) {
+    public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface) {
         this.tileInfoTextField = tileInfoTextField;
         this.zoomManager = zoomManager;
         this.material = dto.material;
@@ -57,8 +57,17 @@ public class TileUI {
             shape.setFill(Color.VIOLET);
         }
 
+        shape.setStroke(Color.BLACK);
+
         shape.setOnMouseEntered(event -> select());
         shape.setOnMouseExited(event -> unselect());
+
+        shape.setOnMouseClicked(e -> {
+            AbstractShape thisFuckingTile = new AbstractShape(this.toDto().summits);
+            AbstractShape thisFuckingParentSurface = new AbstractShape(parentSurface.toDto().summits);
+            boolean isAllOut = ShapeHelper.isAllOutside(thisFuckingTile, thisFuckingParentSurface);
+            System.out.println(String.format("tile is all outside : %b", isAllOut));
+        });
     }
 
     public Node getNode() {

@@ -3,7 +3,6 @@ package gui;
 import Domain.HoleStatus;
 import application.*;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -14,14 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RectangleSurfaceUI extends SurfaceUI {
-
-    private Id id;
     
     private Rectangle rectangle;
-
-    private Controller controller = Controller.getInstance();
-    private ZoomManager zoomManager;
-    private SelectionManager selectionManager;
 
     private Point lastPointOfContact = new Point(0, 0);
     private boolean currentlyBeingDragged = false;
@@ -34,10 +27,6 @@ public class RectangleSurfaceUI extends SurfaceUI {
                               ) {
 
         super(surfaceDto, zoomManager, selectionManager, snapGrid, tileInfoTextField);
-        this.id = surfaceDto.id;
-
-        super.masterTile = surfaceDto.masterTile;
-        super.sealsInfo = surfaceDto.sealsInfoDto;
 
         RectangleInfo rectangleInfo = RectangleHelper.summitsToRectangleInfo(surfaceDto.summits);
 
@@ -51,10 +40,6 @@ public class RectangleSurfaceUI extends SurfaceUI {
         super.surfaceGroup.getChildren().add(rectangle);
         surfaceGroup.setCursor(Cursor.HAND);
 
-        this.zoomManager = zoomManager;
-        this.selectionManager = selectionManager;
-
-        this.isHole = surfaceDto.isHole;
         this.setRectangleColor();
 
         this.renderTiles(surfaceDto.tiles);

@@ -40,7 +40,7 @@ public abstract class SurfaceUI {
 
     private List<AttachmentPointUI> attachmentPoints = new ArrayList<>();
 
-    private Controller controller = Controller.getInstance();
+    protected Controller controller = Controller.getInstance();
 
     public SurfaceUI(SurfaceDto surfaceDto,
                      ZoomManager zoomManager,
@@ -54,6 +54,10 @@ public abstract class SurfaceUI {
         this.tileInfoTextField = tileInfoLabel;
 
         this.surfaceGroup = new Group();
+        this.id = surfaceDto.id;
+        this.isHole = surfaceDto.isHole;
+        this.sealsInfo = surfaceDto.sealsInfoDto;
+        this.masterTile = surfaceDto.masterTile;
     }
 
     abstract public Shape getMainShape(); // gives the rectangle without the tiles and anchor points
@@ -145,7 +149,7 @@ public abstract class SurfaceUI {
 
         hideTiles();
 
-        this.tiles = tiles.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager)).collect(Collectors.toList());
+        this.tiles = tiles.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager, this)).collect(Collectors.toList());
         this.surfaceGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 }

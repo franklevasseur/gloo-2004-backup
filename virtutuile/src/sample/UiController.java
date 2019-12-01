@@ -288,6 +288,9 @@ public class UiController implements Initializable {
         AttachmentPointUI firstPoint = irregularSurfaceSummits.get(0);
         if (clickCoord.isInRange(firstPoint.getPixelCoords(), samePositionTolerance)) {
             if (irregularSurfaceSummits.size() > 2) {
+                // remove last point added
+                irregularSurfaceSummits.remove(irregularSurfaceSummits.size() - 1);
+                this.drawingSection.getChildren().remove(this.drawingSection.getChildren().size() - 1);
                 createIrregularSurfaceHere(irregularSurfaceSummits.stream().map(s -> s.getPixelCoords()).collect(Collectors.toList()));
             }
 

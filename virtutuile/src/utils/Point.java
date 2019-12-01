@@ -8,6 +8,8 @@ public class Point {
     public double y;
     public CardinalPoint cardinality;
 
+    public static double DOUBLE_TOLERANCE = 0.001;
+
     public static Point translate(Point oldPoint, double delatX, double deltaY) {
         return oldPoint.translate(new Point(delatX, deltaY));
     }
@@ -78,8 +80,18 @@ public class Point {
                 return includeBorder; // point is exactly on edge
             }
 
-            if (segment.doesIntersect(currentPointExtendedToInfinity)) {
+//            if ((this.y == segment.pt1.y || this.y == segment.pt2.y) && (this.x < segment.pt1.x || this.x < segment.pt2.x)) {
+//                interSectionCount++;
+//                continue;
+//            }
+
+            if (segment.doesIntersect(currentPointExtendedToInfinity, DOUBLE_TOLERANCE)) {
                 interSectionCount++;
+            } else {
+                Point theoricalIntersection = segment.getTheoricalIntersection(currentPointExtendedToInfinity);
+                boolean ok1 = segment.contains(theoricalIntersection, DOUBLE_TOLERANCE);
+                boolean ok2 = currentPointExtendedToInfinity.contains(theoricalIntersection, DOUBLE_TOLERANCE);
+                System.out.println(String.format("ok1 = %b, ok2 = %b", ok1, ok2));
             }
         }
 

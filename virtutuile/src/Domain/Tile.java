@@ -82,20 +82,22 @@ public class Tile {
         List<Segment> firstHalfSegments = new ArrayList<>();
         List<Segment> secondHalfSegments = new ArrayList<>();
 
-        List<Segment> fullTileSegments = Segment.toSegments(this.simplifySummits());
+        List<Segment> fullTileSegments = Segment.toSegments(this.summits);
 
         List<Point> intersections = extendCuttingEdge ? Segment.findTheoricalIntersection(cuttingSegment, fullTileSegments)
                 : Segment.findIntersection(cuttingSegment, fullTileSegments);
 
         if (intersections.size() != 2) {
-            throw new RuntimeException(String.format("Icitte on coupe bord en bord, call une autre méthode si t'es pas content... La t'as %d intersections", intersections.size()));
+            System.out.println(String.format("Icitte on coupe bord en bord, call une autre méthode si t'es pas content... La t'as %d intersections", intersections.size()));
+            return Arrays.asList(this);
+//            throw new RuntimeException(String.format("Icitte on coupe bord en bord, call une autre méthode si t'es pas content... La t'as %d intersections", intersections.size()));
         }
 
         List<Segment> currentHalf = firstHalfSegments;
         List<Segment> otherHalf = secondHalfSegments;
 
         for (Segment s : fullTileSegments) {
-            Point intersection = cuttingSegment.getTheoricalIntersection(s);
+            Point intersection = extendCuttingEdge ? cuttingSegment.getTheoricalIntersection(s) : cuttingSegment.intersect(s, Point.DOUBLE_TOLERANCE);
             if (intersection == null) {
                 currentHalf.add(s);
                 continue;
@@ -118,8 +120,10 @@ public class Tile {
         List<Point> firstHalfSummits = Point.fromSegments(firstHalfSegments);
         List<Point> secondHalfSummits = Point.fromSegments(secondHalfSegments);
 
-        if (firstHalfSegments.size() < 3 || secondHalfSegments.size() < 3) {
-            throw new RuntimeException("WHAT THE FUCKKKKKKKKKKKK, tu dois absolument avertir Frank Levasseur");
+        if (firstHalfSummits.size() < 3 || secondHalfSummits.size() < 3) {
+            System.out.println(String.format("WHAT THE FUCKKKKKKKKKKKK, firstHalf = %d, secondHalf = %d", firstHalfSummits.size(), secondHalfSummits.size()));
+            return Arrays.asList(this);
+//            throw new RuntimeException(String.format("WHAT THE FUCKKKKKKKKKKKK, firstHalf = %d, secondHalf = %d", firstHalfSummits.size(), secondHalfSummits.size()));
         }
 
         return Arrays.asList(new Tile(firstHalfSummits, this.material, true), new Tile(secondHalfSummits, this.material, true));

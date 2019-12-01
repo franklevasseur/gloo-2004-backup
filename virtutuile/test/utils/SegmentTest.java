@@ -47,9 +47,9 @@ class SegmentTest {
         Segment seg3 = new Segment(new Point(-10, 0), new Point(0, 10));
 
         // act
-        Point intersection1 = seg1.intersect(seg2); // 5, 5
-        Point intersection2 = seg1.intersect(seg3); // null
-        Point intersection3 = seg2.intersect(seg3); // 0, 10
+        Point intersection1 = seg1.intersect(seg2, 0); // 5, 5
+        Point intersection2 = seg1.intersect(seg3, 0); // null
+        Point intersection3 = seg2.intersect(seg3, 0); // 0, 10
 
         // assert
         assertTrue(intersection1.isSame(new Point(5, 5)));
@@ -66,8 +66,8 @@ class SegmentTest {
         Segment seg2 = new Segment(new Point(10, -5), new Point(0,0));
 
         // act
-        boolean doesIntersect1 = seg1.doesIntersect(infiniteSegment);
-        boolean doesIntersect2 = seg2.doesIntersect(infiniteSegment);
+        boolean doesIntersect1 = seg1.doesIntersect(infiniteSegment, 0);
+        boolean doesIntersect2 = seg2.doesIntersect(infiniteSegment, 0);
 
         // assert
         assertTrue(doesIntersect2);
@@ -81,7 +81,7 @@ class SegmentTest {
         Segment seg2 = new Segment(new Point(0, 0), new Point(10, 5));
 
         // act
-        Point intersect = seg1.intersect(seg2);
+        Point intersect = seg1.intersect(seg2, 0);
 
         // assert
         assertTrue(intersect.isSame(new Point(0, 0)));

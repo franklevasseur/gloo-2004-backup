@@ -21,13 +21,13 @@ public class Segment {
         return isSame(other) || isSame(new Segment(other.pt2, other.pt1));
     }
 
-    public boolean doesIntersect(Segment other) {
-        return intersect(other) != null;
+    public boolean doesIntersect(Segment other, double tolerance) {
+        return intersect(other, tolerance) != null;
     }
 
-    public Point intersect(Segment other) {
+    public Point intersect(Segment other, double tolerance) {
         Point theoricalIntersection = this.getTheoricalIntersection(other);
-        return (contains(theoricalIntersection) && other.contains(theoricalIntersection)) ? theoricalIntersection : null;
+        return (contains(theoricalIntersection, tolerance) && other.contains(theoricalIntersection, tolerance)) ? theoricalIntersection : null;
     }
 
     public Point getTheoricalIntersection(Segment other) {
@@ -49,7 +49,7 @@ public class Segment {
             return new Point(x, y);
         }
 
-        double x = (other.getIntercept() - this.getIntercept()) / (this.getSlope() - other.getSlope());
+        double x = (other.getYAxisIntercept() - this.getYAxisIntercept()) / (this.getSlope() - other.getSlope());
         double y = predictY(x);
         return new Point(x, y);
     }
@@ -63,6 +63,10 @@ public class Segment {
     }
 
     public boolean contains(Point p) {
+        return this.contains(p,0);
+    }
+
+    public boolean contains(Point p, double tolerance) {
         if (p == null) {
             return false;
         }
@@ -74,26 +78,36 @@ public class Segment {
                     && p.y >= Math.min(pt1.y, pt2.y);
         }
 
-        return isInLine(p)
+        // really fucking important condition !!
+        if (this.getSlope() == 0) {
+            return Math.abs(p.y - pt1.y) < tolerance
+                    && p.x <= Math.max(pt1.x, pt2.x)
+                    && p.x >= Math.min(pt1.x, pt2.x);
+        }
+
+        return isInLine(p, tolerance)
             && p.x <= Math.max(pt1.x, pt2.x)
             && p.x >= Math.min(pt1.x, pt2.x)
             && p.y <= Math.max(pt1.y, pt2.y)
             && p.y >= Math.min(pt1.y, pt2.y);
     }
 
-    private boolean isInLine(Point p) {
-        return p.y == predictY(p.x); // TODO: might break because of rounding errors
+    private boolean isInLine(Point p, double tolerance) {
+        return Math.abs(p.y - predictY(p.x)) <= tolerance;
     }
 
-    private double predictY(double x) {
-        return (getSlope() * x) + getIntercept();
+    public double predictY(double x) {
+        if (getSlope() == 0) {
+            return pt1.y;
+        }
+        return (getSlope() * x) + getYAxisIntercept();
     }
 
-    private double getSlope() {
+    public double getSlope() {
         return (pt2.y - pt1.y) / (pt2.x - pt1.x);
     }
 
-    private double getIntercept() {
+    public double getYAxisIntercept() {
         return pt1.y - (getSlope() * pt1.x);
     }
 
@@ -124,7 +138,7 @@ public class Segment {
     private static List<Point> findIntersection(Segment segment, List<Segment> tileSegments, boolean extendSegment) {
         List<Point> currentIntersections = new ArrayList<>();
         for (Segment seg: tileSegments) {
-            Point intersection = extendSegment ? seg.getTheoricalIntersection(segment) : seg.intersect(segment);
+            Point intersection = extendSegment ? seg.getTheoricalIntersection(segment) : seg.intersect(segment, Point.DOUBLE_TOLERANCE);
             if (intersection != null && currentIntersections.stream().noneMatch(i -> i.isSame(intersection))) {
                 currentIntersections.add(intersection);
             }

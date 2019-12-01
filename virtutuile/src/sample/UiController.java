@@ -149,6 +149,8 @@ public class UiController implements Initializable {
             try {
                 CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
                 minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : format.parse(minInspectionLengthInput.toString()).doubleValue();
+                //minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : Double.valueOf(minInspectionLengthInput.toString()).doubleValue();
+
             } catch (ParseException e) {
                 parseSucess = false;
             }
@@ -1042,7 +1044,8 @@ public class UiController implements Initializable {
     }
 
     public void inspect() {
-        String inspectionResult = domainController.inspect();
+
+        String inspectionResult = domainController.inspectProject(minInspectionLength, minInspectionLength);
         inspectionArea.setText(String.format("Inspection result for min lenght = %.2f m : \n\n%s", minInspectionLength, inspectionResult));
     }
 

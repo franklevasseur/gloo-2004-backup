@@ -182,7 +182,12 @@ public class Controller {
 
     }
 
-    public String inspect() {
-        return inspector.inspect(this.vraiProject);
+    public String inspectProject(double pWidth, double pHeight) {
+        return inspector.inspect(this.vraiProject, pWidth, pHeight);
+    }
+
+    public String inspectSurface(SurfaceDto dto, double pWidth, double pHeight) {
+        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+        return inspector.inspect(desiredSurface, pWidth, pHeight);
     }
 }

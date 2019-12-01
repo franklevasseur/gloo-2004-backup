@@ -1006,23 +1006,26 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
         SurfaceUI mainSurface = selectedSurfaces.get(0);
 
-        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
-        double firstX = firstRect.topLeftCorner.x;
-        double width = firstRect.width;
+        AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
+        Point firstTopLeft = ShapeHelper.getTopLeftCorner(firstSurface);
+        double firstX = firstTopLeft.x;
+        double firstY = firstTopLeft.y;
+        double firstWidth = ShapeHelper.getWidth(firstSurface);
 
         for(SurfaceUI s: selectedSurfaces){
             if(s == mainSurface){
                 continue;
             }
-            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
-            double rectX = rect.topLeftCorner.x;
-            double rectY = rect.topLeftCorner.y;
-            double rectWidth = rect.width;
-            if(rectX > firstX){
-                s.setPosition(new Point(firstX + width, rectY));
+            AbstractShape surface = new AbstractShape(s.toDto().summits);
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceX = surfaceTopLeft.x;
+            double surfaceY = surfaceTopLeft.y;
+            double surfaceWidth = ShapeHelper.getWidth(surface);
+            if(surfaceX > firstX){
+                s.setPosition(new Point(firstX + firstWidth, surfaceY));
             }
             else{
-                s.setPosition(new Point(firstX - rectWidth, rectY));
+                s.setPosition(new Point(firstX - surfaceWidth, surfaceY));
             }
 
             if (s.toDto().isHole == HoleStatus.FILLED) {

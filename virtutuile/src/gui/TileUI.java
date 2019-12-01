@@ -60,12 +60,12 @@ public class TileUI {
         shape.setOnMouseEntered(event -> select());
         shape.setOnMouseExited(event -> unselect());
 
-        shape.setOnMouseClicked(e -> {
-            AbstractShape thisFuckingTile = new AbstractShape(this.toDto().summits);
-            AbstractShape thisFuckingParentSurface = new AbstractShape(parentSurface.toDto().summits);
-            boolean isAllOut = ShapeHelper.isAllOutside(thisFuckingTile, thisFuckingParentSurface);
-            System.out.println(String.format("tile is all outside : %b", isAllOut));
-        });
+//        shape.setOnMouseClicked(e -> {
+//            AbstractShape thisFuckingTile = new AbstractShape(this.toDto().summits);
+//            AbstractShape thisFuckingParentSurface = new AbstractShape(parentSurface.toDto().summits);
+//            boolean isAllOut = ShapeHelper.isAllOutside(thisFuckingTile, thisFuckingParentSurface);
+//            System.out.println(String.format("tile is all outside : %b", isAllOut));
+//        });
     }
 
     public Node getNode() {

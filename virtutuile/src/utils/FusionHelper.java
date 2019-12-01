@@ -3,29 +3,31 @@ package utils;
 import javafx.scene.shape.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FusionHelper {
 
-    public static AbstractShape getFusionResultSummits(List<AbstractShape> allAbstractShapes) {
+    public static List<AbstractShape> getFusionResultSummits(List<AbstractShape> allAbstractShapes) {
 
-        List<AbstractShape> sortedAbstractShape = sortFuckingStupidFuckingListDeTabarnakQueJavaCestUnEstiDeLangageDeCulVaChier(allAbstractShapes);
+        List<AbstractShape> sortedAbstractShape = sortList(allAbstractShapes);
         AbstractShape first = sortedAbstractShape.get(0);
 
-        AbstractShape resultantShape = first;
+        List<AbstractShape> resultantShapes = Arrays.asList(first);
         for (AbstractShape fs : sortedAbstractShape) {
             if (fs == first) {
                 continue;
             }
 
-            resultantShape = getFusionResultSummits(resultantShape, fs);
+            resultantShapes = getFusionResultSummits(resultantShapes, fs);
         }
-        return resultantShape;
+        return resultantShapes;
     }
 
-    public static AbstractShape getFusionResultSummits(AbstractShape shape1, AbstractShape shape2) {
+    public static List<AbstractShape> getFusionResultSummits(List<AbstractShape> accumulator, AbstractShape shape2) {
 
-        if (shape1.toSubstract) {
+        if (accumulator.size() < 2 && accumulator.get(0).toSubstract) {
             throw new RuntimeException("Mon gars, j'px pas soustraire quelquechose à un trou esti");
         }
 
@@ -33,7 +35,7 @@ public class FusionHelper {
         Polygon polygon2 = new Polygon();
         List<Point> combinedPoly= new ArrayList<>();
 
-        for(Point p : shape1.summits) {
+        for(Point p : ShapeHelper.getFlattedSummits(accumulator)) {
             polygon1.getPoints().addAll(p.x, p.y);
         }
 
@@ -43,8 +45,16 @@ public class FusionHelper {
 
         Path p3 = shape2.toSubstract ? (Path) Polygon.subtract(polygon1, polygon2) : (Path) Polygon.union(polygon1, polygon2);
 
-        for(PathElement el : p3.getElements()){
+        List<AbstractShape> shapes = new ArrayList<>();
+
+        for(PathElement el : p3.getElements()) {
             if(el instanceof MoveTo) {
+
+                if (combinedPoly.size() > 3) {
+                    shapes.add(new AbstractShape(combinedPoly));
+                    combinedPoly = new ArrayList<>();
+                }
+
                 MoveTo mt = (MoveTo) el;
 
                 Point abstractPoint = new Point(mt.getX(), mt.getY());
@@ -57,10 +67,14 @@ public class FusionHelper {
             }
         }
 
-        return new AbstractShape(combinedPoly, false);
+        if (combinedPoly.size() > 3) {
+            shapes.add(new AbstractShape(combinedPoly));
+        }
+
+        return shapes;
     }
 
-    private static List<AbstractShape> sortFuckingStupidFuckingListDeTabarnakQueJavaCestUnEstiDeLangageDeCulVaChier(List<AbstractShape> surfaces) {
+    private static List<AbstractShape> sortList(List<AbstractShape> surfaces) {
 
         List<AbstractShape> laTabarnakDeCalisseDeListeQuonVaRetournerAFinDeLestiDeFonction = new ArrayList<>();
         List<AbstractShape> lautreFuckingListeDeTrouEstiDeLaid = new ArrayList<>();

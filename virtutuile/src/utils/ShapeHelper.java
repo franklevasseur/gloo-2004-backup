@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShapeHelper {
 
@@ -67,6 +68,10 @@ public class ShapeHelper {
         }
 
         return true;
+    }
+
+    public static List<Point> getFlattedSummits(List<AbstractShape> shapes) {
+        return shapes.stream().flatMap(s -> s.summits.stream()).collect(Collectors.toList());
     }
 
     private static Point getMinX(AbstractShape shape) {

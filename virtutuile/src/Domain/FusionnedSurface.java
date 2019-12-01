@@ -1,8 +1,10 @@
 package Domain;
 
+import com.sun.pisces.AbstractSurface;
 import utils.AbstractShape;
 import utils.FusionHelper;
 import utils.Point;
+import utils.ShapeHelper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +32,7 @@ public class FusionnedSurface extends Surface {
     }
 
     private static List<Point> extractResultantSummits(List<Surface> fusionnedSurfaces) {
-        return FusionHelper.getFusionResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)).summits;
+        return ShapeHelper.getFlattedSummits(FusionHelper.getFusionResultSummits(extractAllInnerSurfacesPoints(fusionnedSurfaces)));
     }
 
     private static List<AbstractShape> extractAllInnerSurfacesPoints(List<Surface> fusionnedSurfaces) {

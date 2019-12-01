@@ -3,11 +3,11 @@ package Domain;
 import utils.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 class SurfaceFiller {
+
+    private TileCutter tileCutter = new TileCutter();
 
     public List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealsInfo, PatternType type) {
 
@@ -16,17 +16,33 @@ class SurfaceFiller {
         }
 
         if (type == PatternType.HORIZONTAL_SHIFT) {
-            throw new RuntimeException("Pas encore implementé...");
+            return fillSurfaceWithHorizontalShift(surface, masterTile, sealsInfo);
         }
 
         if (type == PatternType.VERTICAL_SHIFT) {
-            throw new RuntimeException("Pas encore implementé...");
+            return fillSurfaceWithVertcialShift(surface, masterTile, sealsInfo);
         }
 
         return fillSurfaceWithDefaults(surface, masterTile, sealsInfo);
     }
 
     private List<Tile> fillSurfaceWithDefaults(Surface surface, Tile masterTile, SealsInfo sealing) {
+        return fillSurface(surface, masterTile, sealing, 0, 0);
+    }
+
+    private List<Tile> fillSurfaceWithHorizontalShift(Surface surface, Tile masterTile, SealsInfo sealing) {
+        double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
+        return fillSurface(surface, masterTile, sealing, shift, 0);
+    }
+
+    private List<Tile> fillSurfaceWithVertcialShift(Surface surface, Tile masterTile, SealsInfo sealing) {
+        double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
+        return fillSurface(surface, masterTile, sealing, 0, shift);
+    }
+
+
+    private List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealing, double horizontalShift, double verticalShift) {
+
 
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
         utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
@@ -37,13 +53,19 @@ class SurfaceFiller {
         double tileWidth = info.width;
         double tileHeight = info.height;
 
+        double horizontalBaseShift = horizontalShift % tileWidth;
+        double actualHorizontalShift = horizontalBaseShift == 0 ? 0 : horizontalBaseShift - tileWidth;
+
+        double verticalBaseShift = verticalShift % tileHeight;
+        double actualVerticalShift = verticalBaseShift == 0 ? 0 : verticalBaseShift - tileHeight;
+
         List<Tile> tiles = new ArrayList<>();
 
         double unitOfWidth = tileWidth + sealing.getWidth();
         double unitOfHeight = tileHeight + sealing.getWidth();
 
-        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight);
-        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth);
+        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight) + 2; // 2 is for security...
+        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth) + 2;
 
         Point masterTileRelativeCorner = info.topLeftCorner;
         Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
@@ -60,65 +82,19 @@ class SurfaceFiller {
             for (int column = 0; column < amountOfColumns; column++) {
                 Point topLeftCorner = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
 
+                if (line % 2 == 1) {
+                    topLeftCorner = topLeftCorner.translate(new Point(actualHorizontalShift, 0));
+                }
+                if (column % 2 == 1) {
+                    topLeftCorner = topLeftCorner.translate(new Point(0, actualVerticalShift));
+                }
+
                 Tile nextTile = new Tile(RectangleHelper.rectangleInfoToSummits(topLeftCorner, tileWidth, tileHeight), masterTile.getMaterial());
 
                 tiles.add(nextTile);
             }
         }
 
-        return cutTilesThatExceed(surface, tiles);
-    }
-
-    private List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
-        List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
-        List<Tile> tilesToCut = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
-        insideTiles.removeIf(tilesToCut::contains);
-
-//        uncomment to display in red desired tiles...
-//        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
-//        tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
-
-        List<Tile> tileResultantOfCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
-        List<Tile> newKeepers = tileResultantOfCut.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
-
-        insideTiles.addAll(newKeepers);
-        return insideTiles;
-    }
-
-    private boolean isAllInside(Surface surface, Tile tile) {
-        AbstractShape surfaceShape = new AbstractShape(surface.getSummits());
-        AbstractShape tileShape = new AbstractShape(tile.getSummits());
-        return ShapeHelper.isAllInside(tileShape, surfaceShape);
-    }
-
-    private boolean isAllOutside(Surface surface, Tile tile) {
-        AbstractShape surfaceShape = new AbstractShape(surface.getSummits());
-        AbstractShape tileShape = new AbstractShape(tile.getSummits());
-        return ShapeHelper.isAllOutside(tileShape, surfaceShape);
-    }
-
-    private List<Tile> cutTilesThatNeedToBeCut(Surface surface, List<Tile> tiles) {
-        List<Segment> surfaceSegments = Segment.toSegments(surface.getSummits());
-        return tiles.stream().flatMap(t -> cutOneTile(surfaceSegments, t).stream()).collect(Collectors.toList());
-    }
-
-    private List<Tile> cutOneTile(List<Segment> surfaceSegments, Tile tileToCut) {
-        List<Segment> tileSegments = Segment.toSegments(tileToCut.getSummits());
-
-        List<Segment> segmentsThatPartiallyCutTheTile = new ArrayList<>();
-        for (Segment seg: surfaceSegments) {
-            int nInterSections = Segment.findIntersection(seg, tileSegments).size();
-            if (nInterSections == 2) {
-                return tileToCut.cutSideToSide(seg);
-            } else if (nInterSections == 1 || seg.isInside(tileSegments, false)) {
-                segmentsThatPartiallyCutTheTile.add(seg);
-            }
-        }
-
-        // TODO: attention il y a peut-être deux différents boutes de segments qui rentrent dans la tuile... ici on suppose qu'il n'y a qu'un pick
-        if (segmentsThatPartiallyCutTheTile.size() >= 2) {
-            return tileToCut.cut(segmentsThatPartiallyCutTheTile);
-        }
-        return Arrays.asList(tileToCut);
+        return tileCutter.cutTilesThatExceed(surface, tiles);
     }
 }

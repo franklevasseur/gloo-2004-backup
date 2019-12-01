@@ -33,7 +33,7 @@ public class UiController implements Initializable {
     public Pane drawingSection;
 
     //Material propreties
-    private ObservableList<String> possibleColor = FXCollections.observableArrayList("BLACK","WHITE","YELLOW","GREEN","BLUE","RED","VIOLET");
+    private ObservableList<String> possibleColor = FXCollections.observableArrayList("", "BLACK","WHITE","YELLOW","GREEN","BLUE","RED","VIOLET");
 
     public TextField materialNameInputBox;
     public TextField tilePerBoxInputBox;
@@ -399,7 +399,10 @@ public class UiController implements Initializable {
                     sealsInfoDto.sealWidth = newSealWidth;
                     sealsInfoDto.color = ColorHelper.stringToUtils(sealColorChoiceBox.getValue());
                     chosenSurface.setSealsInfo(sealsInfoDto);
-                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternHelperUI.stringToPattern(patternInput.toString()), sealsInfoDto);
+
+                    PatternType pattern = PatternHelperUI.stringToPattern(patternInput.toString());
+                    chosenSurface.setPattern(pattern);
+                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, pattern, sealsInfoDto);
                 }
 
                 this.renderFromProject();
@@ -436,6 +439,10 @@ public class UiController implements Initializable {
         if(firstOne.getPattern() != null) {
             PatternType pattern = firstOne.getPattern();
             tilePatternInputBox.setValue(PatternHelperUI.patternToDisplayString(pattern));
+        } else if (firstOne.toDto().isHole == HoleStatus.FILLED) {
+            tilePatternInputBox.setValue(PatternHelperUI.getPlaceHolder());
+        } else {
+            tilePatternInputBox.setValue("");
         }
 
         surfacePositionXInputBox.setText(formatter.format(topLeft.x));
@@ -446,7 +453,6 @@ public class UiController implements Initializable {
             utils.Color tilecolor = firstOne.toDto().tiles.get(0).material.color;
             String materialColor;
             tileMaterialChoiceBox.setValue(tileMaterial);
-            tilePatternInputBox.setValue("Default");
 
             materialColor = ColorHelper.utilsColorToString(tilecolor);
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
@@ -456,8 +462,10 @@ public class UiController implements Initializable {
             masterTileX.setText(formatter.format(tileRect.topLeftCorner.x));
             masterTileY.setText(formatter.format(tileRect.topLeftCorner.y));
             materialColorDisplay.setText(materialColor);
+        } else if (firstOne.toDto().isHole == HoleStatus.HOLE) {
+            materialColorDisplay.setText("hole");
         } else {
-            materialColorDisplay.setText("c'est un trou");
+            materialColorDisplay.setText("");
         }
 
     }
@@ -472,6 +480,11 @@ public class UiController implements Initializable {
         materialColorDisplay.clear();
         sealWidthInputBox.clear();
 
+        masterTileX.clear();
+        masterTileY.clear();
+
+        tilePatternInputBox.setValue("");
+        sealColorChoiceBox.setValue("");
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {

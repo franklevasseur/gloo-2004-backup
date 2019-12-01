@@ -88,6 +88,10 @@ public abstract class SurfaceUI {
         return this.pattern;
     }
 
+    public void setPattern(PatternType pattern) {
+        this.pattern = pattern;
+    }
+
     public Node getNode() {
         return surfaceGroup;
     }

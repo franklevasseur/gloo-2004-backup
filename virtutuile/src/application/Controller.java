@@ -143,6 +143,7 @@ public class Controller {
     public void newProject(){
         this.vraiProject = new Project();
         this.undoRedoManager = new UndoRedoManager();
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {

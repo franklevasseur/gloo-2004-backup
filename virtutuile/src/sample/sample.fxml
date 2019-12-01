@@ -83,21 +83,21 @@
                         <Label text="Tile properties" />
                         <Label contentDisplay="CENTER" text="Tile height" GridPane.rowIndex="1" />
                         <Label text="Tile width" GridPane.rowIndex="2" />
-                        <Label text="Tile material" GridPane.rowIndex="4" />
-                        <Label text="Surface position" GridPane.rowIndex="8" />
-                        <Label text="Tile pattern" GridPane.rowIndex="5" />
-                        <Label text="Seal width" GridPane.rowIndex="11" />
-                        <Label text="Seal color" GridPane.rowIndex="12" />
+                        <Label text="Tile material" GridPane.rowIndex="6" />
+                        <Label text="Surface position" GridPane.rowIndex="10" />
+                        <Label text="Tile pattern" GridPane.rowIndex="7" />
+                        <Label text="Seal width" GridPane.rowIndex="13" />
+                        <Label text="Seal color" GridPane.rowIndex="14" />
                         <TextField fx:id="tileHeightInputbox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="tileWidthInputbox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ChoiceBox fx:id="tileMaterialChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <ChoiceBox fx:id="sealPatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <TextField fx:id="sealWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                        <ChoiceBox fx:id="sealColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                        <Label text="Surface propreties" GridPane.rowIndex="3" />
-                        <Label text="Seal propreties" GridPane.rowIndex="10" />
-                        <Label text="Material Color" GridPane.rowIndex="9" />
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                        <ChoiceBox fx:id="tileMaterialChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <ChoiceBox fx:id="sealPatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <TextField fx:id="sealWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                        <ChoiceBox fx:id="sealColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                        <Label text="Surface propreties" GridPane.rowIndex="5" />
+                        <Label text="Seal propreties" GridPane.rowIndex="12" />
+                        <Label text="Material Color" GridPane.rowIndex="11" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
                           <children>
                             <TextField fx:id="surfacePositionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
                             <TextField fx:id="surfacePositionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
@@ -105,12 +105,21 @@
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>
                         </AnchorPane>
-                        <Button fx:id="applyButton" mnemonicParsing="false" onAction="#editSurface" prefHeight="25.0" prefWidth="100.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-                        <TextField fx:id="surfaceHeightInputBox" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <TextField fx:id="surfaceWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <Label text="Surface height" GridPane.rowIndex="6" />
-                        <Label text="Surface width" GridPane.rowIndex="7" />
-                        <TextField fx:id="materialColorDisplay" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Button fx:id="applyButton" mnemonicParsing="false" onAction="#editSurface" prefHeight="25.0" prefWidth="100.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                        <TextField fx:id="surfaceHeightInputBox" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <TextField fx:id="surfaceWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label text="Surface height" GridPane.rowIndex="8" />
+                        <Label text="Surface width" GridPane.rowIndex="9" />
+                        <TextField fx:id="materialColorDisplay" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label prefWidth="118.0" text="first Tile position" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                          <children>
+                            <TextField fx:id="masterTileX" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <TextField fx:id="masterTileY" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
+                            <Label layoutX="46.0" layoutY="6.0" text="x" />
+                            <Label layoutX="111.0" layoutY="6.0" text="y" />
+                          </children>
+                        </AnchorPane>
                       </children>
                       <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -119,6 +128,8 @@
                       <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
@@ -139,9 +150,9 @@
                   <content>
                     <AnchorPane prefHeight="200.0" prefWidth="200.0">
                       <children>
-                        <Button fx:id="inspectButton" onAction="#inspect" layoutX="287.0" layoutY="70.0" mnemonicParsing="false" text="Inspect" />
+                        <Button fx:id="inspectButton" layoutX="287.0" layoutY="70.0" mnemonicParsing="false" onAction="#inspect" text="Inspect" />
                         <TextArea fx:id="inspectionArea" layoutX="14.0" layoutY="99.0" prefHeight="580.0" prefWidth="343.0" wrapText="true" />
-                        <TextField fx:id="minInspectionLengthTextField"  layoutX="287.0" layoutY="28.0" prefWidth="70.0" />
+                        <TextField fx:id="minInspectionLengthTextField" layoutX="287.0" layoutY="28.0" prefWidth="70.0" />
                         <Label layoutX="158.0" layoutY="31.0" text="minium cut lenght" />
                       </children>
                     </AnchorPane>
@@ -149,7 +160,7 @@
                 </Tab>
                 <Tab text="Accounting">
                   <content>
-                    <SplitPane dividerPositions="0.49929078014184397" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                    <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                       <items>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                           <children>

@@ -42,7 +42,7 @@ public class Controller {
     }
 
     // atomic move and fill or resize and fill
-    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternDto patternDto, SealsInfoDto sealing)  {
+    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing)  {
         internalUpdateSurface(dto);
         List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
@@ -82,35 +82,31 @@ public class Controller {
         return undoRedoManager.undoAvailable();
     }
 
-    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternDto patternDto, SealsInfoDto sealingDto) {
-        TileDto actualUsedMasterTile;
-        if (masterTileDto == null) {
-            actualUsedMasterTile = new TileDto();
-            actualUsedMasterTile.summits = RectangleHelper.rectangleInfoToSummits(ShapeHelper.getTopLeftCorner(new AbstractShape(dto.summits, false)), 0.2, 0.3);
-            actualUsedMasterTile.material = MaterialAssembler.toDto(vraiProject.getMaterials().get(0));
-        } else {
-            actualUsedMasterTile = masterTileDto;
-        }
-
-        SealsInfoDto actualSealInfo;
-        if (sealingDto == null) {
-            actualSealInfo = new SealsInfoDto();
-            actualSealInfo.color = Color.BLUE;
-            actualSealInfo.sealWidth = 0.02;
-        } else {
-            actualSealInfo = sealingDto;
-        }
+    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto) {
 
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+        Tile masterTile = masterTileDto != null ? SurfaceAssembler.fromDto(masterTileDto) : getDefaultTileForSurface(desiredSurface);
+        SealsInfo sealing = sealingDto != null ? SurfaceAssembler.fromDto(sealingDto) : getDefaultSealing();
+        PatternType pattern = patternType != null ? patternType : PatternType.DEFAULT;
 
-        desiredSurface.fillSurface(SurfaceAssembler.fromDto(actualUsedMasterTile), SurfaceAssembler.fromDto(actualSealInfo), PatternType.DEFAULT);
+        desiredSurface.fillSurface(masterTile, sealing, pattern);
 
         SurfaceDto newDto = SurfaceAssembler.toDto(desiredSurface);
 
-        this.internalUpdateSurface(newDto); // important car la surface est devenue FILLED
+        this.internalUpdateSurface(newDto); // important
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
 
         return newDto.tiles;
+    }
+
+    private Tile getDefaultTileForSurface(Surface surface) {
+        List<Point> tileSummits = RectangleHelper.rectangleInfoToSummits(new Point(0, 0), 0.2, 0.3);
+        Material material = vraiProject.getMaterials().get(0);
+        return new Tile(tileSummits, material);
+    }
+
+    private SealsInfo getDefaultSealing() {
+        return new SealsInfo(0.02, Color.BLUE);
     }
 
     public void loadProject(String projectPath) {

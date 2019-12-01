@@ -7,7 +7,6 @@ import utils.ShapeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Surface {
     private Id id;
@@ -17,9 +16,11 @@ public class Surface {
     private SealsInfo sealsInfo;
     private boolean isRectangular;
 
+    private SurfaceFiller surfaceFiller = new SurfaceFiller();
+
     private Tile masterTile;
 
-    public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular){
+    public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular) {
         this.isHole = pIsHole;
         this.summits = pSummits;
         this.id = new Id();
@@ -61,10 +62,11 @@ public class Surface {
     public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType) {
         this.sealsInfo = pSealsInfo;
 
-        tiles = SurfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType);
+        tiles = surfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType);
 
         // très important !!
         isHole = HoleStatus.FILLED;
+        this.masterTile = masterTile;
     }
 
     public void setSummits(List<Point> summits) {

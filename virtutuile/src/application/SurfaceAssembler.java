@@ -10,7 +10,10 @@ import java.util.stream.Collectors;
 
 public class SurfaceAssembler {
 
-    public static SurfaceDto toDto (Surface surface){
+    public static SurfaceDto toDto (Surface surface) {
+        if (surface == null) {
+            return null;
+        }
 
         SurfaceDto dto = new SurfaceDto();
 
@@ -35,7 +38,7 @@ public class SurfaceAssembler {
         return dto;
     }
 
-    public static void fromDto (SurfaceDto dto, Surface destinationSurface){
+    public static void fromDto (SurfaceDto dto, Surface destinationSurface) {
 
         List<Point> summits = dto.summits;
 
@@ -62,12 +65,19 @@ public class SurfaceAssembler {
     }
 
     public static Surface fromDto (SurfaceDto dto) {
+        if (dto == null) {
+            return null;
+        }
         Surface surface = new Surface(dto.isHole, new ArrayList<Point>(), dto.isRectangular);
         SurfaceAssembler.fromDto(dto, surface);
         return surface;
     }
 
     public static TileDto toDto(Tile tile) {
+        if (tile == null) {
+            return null;
+        }
+
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits();
         tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
@@ -76,6 +86,10 @@ public class SurfaceAssembler {
     }
 
     public static Tile fromDto(TileDto tDto) {
+        if (tDto == null) {
+            return null;
+        }
+
         List<Point> points = tDto.summits;
 
         Material material = MaterialAssembler.fromDto(tDto.material);
@@ -83,6 +97,10 @@ public class SurfaceAssembler {
     }
 
     public static SealsInfoDto toDto(SealsInfo sealsInfo) {
+        if (sealsInfo == null) {
+            return null;
+        }
+
         SealsInfoDto dto = new SealsInfoDto();
         dto.sealWidth = sealsInfo.getWidth();
         dto.color = sealsInfo.getColor();
@@ -90,6 +108,10 @@ public class SurfaceAssembler {
     }
 
     public static SealsInfo fromDto(SealsInfoDto sDto) {
+        if (sDto == null) {
+            return null;
+        }
+
         double width = sDto.sealWidth;
         SealsInfo sealsInfo = new SealsInfo(width, sDto.color);
         return  sealsInfo;

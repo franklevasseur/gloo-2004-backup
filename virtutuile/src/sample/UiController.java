@@ -2,6 +2,7 @@ package sample;
 
 import Domain.HoleStatus;
 import Domain.MaterialType;
+import Domain.PatternType;
 import application.*;
 import gui.*;
 
@@ -56,6 +57,8 @@ public class UiController implements Initializable {
     public TextField sealWidthInputBox;
     public TextField surfaceHeightInputBox;
     public TextField surfaceWidthInputBox;
+    public TextField masterTileX;
+    public TextField masterTileY;
     public TextField surfacePositionXInputBox;
     public TextField surfacePositionYInputBox;
 
@@ -343,6 +346,13 @@ public class UiController implements Initializable {
                 CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
                 Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
 
+                //new master Tile position
+                CharSequence masterTileXInput = this.masterTileX.getCharacters();
+                Double newMasterTileX = masterTileXInput.toString().equals("") ? null : format.parse(masterTileXInput.toString()).doubleValue();
+
+                CharSequence masterTileYInput = this.masterTileY.getCharacters();
+                Double newMasterTileY = masterTileYInput.toString().equals("") ? null : format.parse(masterTileYInput.toString()).doubleValue();
+
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
@@ -358,7 +368,7 @@ public class UiController implements Initializable {
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
 
                 TileDto masterTile = null;
-                if (newTileWidth != null && newTileHeight != null) {
+                if (newTileWidth != null && newTileHeight != null && newMasterTileX != null && newMasterTileY != null) {
                     MaterialDto chosenMaterial = domainController
                             .getProject()
                             .materials
@@ -369,10 +379,7 @@ public class UiController implements Initializable {
                     masterTile = new TileDto();
                     masterTile.material = chosenMaterial;
 
-                    AbstractShape shape = new AbstractShape(chosenSurface.toDto().summits, false);
-                    Point topLeftCorner = ShapeHelper.getTopLeftCorner(shape);
-
-                    RectangleInfo masterTileRect = new RectangleInfo(topLeftCorner, newTileWidth, newTileHeight);
+                    RectangleInfo masterTileRect = new RectangleInfo(new Point(newMasterTileX, newMasterTileY), newTileWidth, newTileHeight);
                     masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
                     chosenSurface.setMasterTile(masterTile);
                 }
@@ -392,7 +399,7 @@ public class UiController implements Initializable {
                     sealsInfoDto.sealWidth = newSealWidth;
                     sealsInfoDto.color = ColorHelper.stringToUtils(sealColorChoiceBox.getValue());
                     chosenSurface.setSealsInfo(sealsInfoDto);
-                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternDto.DEFAULT, sealsInfoDto);
+                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternType.DEFAULT, sealsInfoDto);
                 }
 
                 this.renderFromProject();
@@ -437,10 +444,12 @@ public class UiController implements Initializable {
             sealPatternInputBox.setValue("Default");
 
             materialColor = ColorHelper.utilsColorToString(tilecolor);
-            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.toDto().tiles.get(0).summits);
+            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
 
             tileHeightInputbox.setText(formatter.format(tileRect.height));
             tileWidthInputbox.setText(formatter.format(tileRect.width));
+            masterTileX.setText(formatter.format(tileRect.topLeftCorner.x));
+            masterTileY.setText(formatter.format(tileRect.topLeftCorner.y));
             materialColorDisplay.setText(materialColor);
         } else {
             materialColorDisplay.setText("c'est un trou");
@@ -751,7 +760,7 @@ public class UiController implements Initializable {
             double halfWidth = rect.width / 2;
             double rectY = rect.topLeftCorner.y;
             s.setPosition(new Point((firstX + centerX) - halfWidth, rectY));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternType.DEFAULT, s.getSealsInfo());
         }
         this.renderFromProject();
     }
@@ -776,7 +785,7 @@ public class UiController implements Initializable {
             double halfHeight = rect.height/2;
             double rectX = rect.topLeftCorner.x;
             s.setPosition(new Point(rectX, (firstY + centerY) - halfHeight));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternType.DEFAULT, s.getSealsInfo());
         }
         this.renderFromProject();
     }

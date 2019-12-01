@@ -8,6 +8,7 @@ import utils.ShapeHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Tile {
     private List<Point> summits = new ArrayList<>();
@@ -46,6 +47,12 @@ public class Tile {
         return this.summits;
     }
 
+    public List<Point> simplifySummits() {
+        AbstractShape shape = new AbstractShape(summits);
+        this.summits = ShapeHelper.simplifySummits(shape);
+        return summits;
+    }
+
     public void setSummits(ArrayList<Point> summits) {
         this.summits = summits;
     }
@@ -67,22 +74,28 @@ public class Tile {
     }
 
     public List<Tile> cutSideToSide(Segment cuttingSegment) {
+        return this.cutSideToSide(cuttingSegment, false);
+    }
+
+    public List<Tile> cutSideToSide(Segment cuttingSegment, boolean extendCuttingEdge) {
 
         List<Segment> firstHalfSegments = new ArrayList<>();
         List<Segment> secondHalfSegments = new ArrayList<>();
 
-        List<Segment> fullTileSegments = Segment.toSegments(this.getSummits());
+        List<Segment> fullTileSegments = Segment.toSegments(this.simplifySummits());
 
-        List<Point> intersections = Segment.findIntersection(cuttingSegment, fullTileSegments);
+        List<Point> intersections = extendCuttingEdge ? Segment.findTheoricalIntersection(cuttingSegment, fullTileSegments)
+                : Segment.findIntersection(cuttingSegment, fullTileSegments);
+
         if (intersections.size() != 2) {
-            throw new RuntimeException("Icitte on coupe bord en bord, call une autre méthode si t'es pas content");
+            throw new RuntimeException(String.format("Icitte on coupe bord en bord, call une autre méthode si t'es pas content... La t'as %d intersections", intersections.size()));
         }
 
         List<Segment> currentHalf = firstHalfSegments;
         List<Segment> otherHalf = secondHalfSegments;
 
         for (Segment s : fullTileSegments) {
-            Point intersection = cuttingSegment.intersect(s);
+            Point intersection = cuttingSegment.getTheoricalIntersection(s);
             if (intersection == null) {
                 currentHalf.add(s);
                 continue;
@@ -106,5 +119,13 @@ public class Tile {
         List<Point> secondHalfSummits = Point.fromSegments(secondHalfSegments);
 
         return Arrays.asList(new Tile(firstHalfSummits, this.material, true), new Tile(secondHalfSummits, this.material, true));
+    }
+
+    public List<Tile> cut(List<Segment> cuttingSegments) {
+        List<Tile> returned = Arrays.asList(this);
+        for (Segment cuttingSegment: cuttingSegments) {
+            returned = returned.stream().flatMap(c -> c.cutSideToSide(cuttingSegment, true).stream()).collect(Collectors.toList());
+        }
+        return returned;
     }
 }

@@ -64,6 +64,7 @@ class SurfaceFiller {
 
         tilesToCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
 
+        // TODO: might need N filtering
         List<Tile> secondFiltering = tilesToCut.stream().filter(t -> isAllInside(surface, t)).collect(Collectors.toList());
 
         insideTiles.addAll(secondFiltering);
@@ -87,15 +88,20 @@ class SurfaceFiller {
     private static List<Tile> cutOneTile(List<Segment> surfaceSegments, Tile tileToCut) {
         List<Segment> tileSegments = Segment.toSegments(tileToCut.getSummits());
 
+        List<Segment> segmentsThatPartiallyCutTheTile = new ArrayList<>();
         for (Segment seg: surfaceSegments) {
             int nInterSections = Segment.findIntersection(seg, tileSegments).size();
             if (nInterSections == 2) {
                 return tileToCut.cutSideToSide(seg);
-            } else if (nInterSections == 1) {
-                return Arrays.asList(tileToCut);
+            } else if (nInterSections == 1 || seg.isInside(tileSegments)) {
+                segmentsThatPartiallyCutTheTile.add(seg);
             }
         }
 
+        // TODO: attention il y a peut-être deux différents boutes de segments qui rentrent dans la tuile... ici on suppose qu'il n'y a qu'un pick
+        if (segmentsThatPartiallyCutTheTile.size() >= 2) {
+            return tileToCut.cut(segmentsThatPartiallyCutTheTile);
+        }
         return Arrays.asList(tileToCut);
     }
 }

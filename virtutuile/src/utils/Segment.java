@@ -27,11 +27,11 @@ public class Segment {
 
     public Point intersect(Segment other) {
         Point theoricalIntersection = this.getTheoricalIntersection(other);
-        return (isElementOf(theoricalIntersection) && other.isElementOf(theoricalIntersection)) ? theoricalIntersection : null;
+        return (contains(theoricalIntersection) && other.contains(theoricalIntersection)) ? theoricalIntersection : null;
     }
 
-    private Point getTheoricalIntersection(Segment other) {
-        if (getSlope() == other.getSlope()) { // TODO: might break because of rounding errors
+    public Point getTheoricalIntersection(Segment other) {
+        if (sameSlope(other)) {
             return null;
         }
 
@@ -54,7 +54,15 @@ public class Segment {
         return new Point(x, y);
     }
 
-    public boolean isElementOf(Point p) {
+    public boolean sameSlope(Segment other) {
+        double thisSlope = getSlope();
+        double otherSlope = other.getSlope();
+        return thisSlope == otherSlope // TODO: might break because of rounding errors
+                || ((thisSlope == Double.NEGATIVE_INFINITY || thisSlope == Double.POSITIVE_INFINITY)
+                && (otherSlope == Double.NEGATIVE_INFINITY || otherSlope == Double.POSITIVE_INFINITY));
+    }
+
+    public boolean contains(Point p) {
         if (p == null) {
             return false;
         }
@@ -106,13 +114,25 @@ public class Segment {
     }
 
     public static List<Point> findIntersection(Segment segment, List<Segment> tileSegments) {
+        return findIntersection(segment, tileSegments, false);
+    }
+
+    public static List<Point> findTheoricalIntersection(Segment segment, List<Segment> tileSegments) {
+        return findIntersection(segment, tileSegments, true);
+    }
+
+    private static List<Point> findIntersection(Segment segment, List<Segment> tileSegments, boolean extendSegment) {
         List<Point> currentIntersections = new ArrayList<>();
         for (Segment seg: tileSegments) {
-            Point intersection = seg.intersect(segment);
+            Point intersection = extendSegment ? seg.getTheoricalIntersection(segment) : seg.intersect(segment);
             if (intersection != null && currentIntersections.stream().noneMatch(i -> i.isSame(intersection))) {
                 currentIntersections.add(intersection);
             }
         }
         return currentIntersections;
+    }
+
+    public boolean isInside(List<Segment> outline) {
+        return pt1.isInsideSegments(outline) && pt2.isInsideSegments(outline);
     }
 }

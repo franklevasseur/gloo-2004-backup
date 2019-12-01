@@ -72,7 +72,7 @@ public class TileCutter {
 
     private List<Tile> cutTilesThatNeedToBeCut(Surface surface, List<Tile> tiles) {
         if (!isOnlyOnePolygon(surface)) {
-            System.out.println("Detected a Surface that is more than one Polygon or contains an inner hole. These surfaces are hard to handle...");
+            System.out.println("Detected a Surface that is more than one Polygon or contains an inner hole. These surfaces are hard to handle mon p'tit chummé :P...");
             FusionnedSurface fs = (FusionnedSurface) surface;
             List<Surface> noHoles = fs.getFusionnedSurfaces().stream().filter(s -> s.isHole() != HoleStatus.HOLE).collect(Collectors.toList());
             List<Surface> holes = fs.getFusionnedSurfaces().stream().filter(s -> s.isHole() == HoleStatus.HOLE).collect(Collectors.toList());

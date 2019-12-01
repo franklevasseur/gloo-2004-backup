@@ -781,6 +781,22 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
+    public void alignLeftSurfaces(){
+
+    }
+
+    public void alignRightSurfaces(){
+
+    }
+
+    public void alignTopSurfaces(){
+
+    }
+
+    public void alignBottomSurfaces(){
+
+    }
+
     public void stickSurfacesVertically(){
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;

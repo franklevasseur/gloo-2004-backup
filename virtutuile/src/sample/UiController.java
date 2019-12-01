@@ -836,7 +836,7 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
-    public void alignLeftSurfaces(){
+    public void alignLeftSurfaces() {
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }
@@ -853,8 +853,13 @@ public class UiController implements Initializable {
             }
             RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
             double rectWidth = rect.width;
-            s.setPosition(new Point(firstX -rectWidth - 0.25, firstY));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+            s.setPosition(new Point(firstX - rectWidth - 0.25, firstY));
+
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }
@@ -877,7 +882,12 @@ public class UiController implements Initializable {
             }
             RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
             s.setPosition(new Point(firstX + firstWidth + 0.25, firstY));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }
@@ -900,7 +910,12 @@ public class UiController implements Initializable {
             RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
             double rectHeight = rect.height;
             s.setPosition(new Point(firstX, firstY - rectHeight - 0.25));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }
@@ -923,12 +938,17 @@ public class UiController implements Initializable {
             }
             RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
             s.setPosition(new Point(firstX, firstY + firstHeight + 0.25));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }
 
-    public void stickSurfacesVertically(){
+    public void stickSurfacesVertically() {
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }
@@ -954,7 +974,12 @@ public class UiController implements Initializable {
             else{
                 s.setPosition(new Point(rectX, firstY - rectHeight));
             }
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }
@@ -984,7 +1009,12 @@ public class UiController implements Initializable {
             else{
                 s.setPosition(new Point(firstX - rectWidth, rectY));
             }
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }

@@ -1,6 +1,7 @@
 package gui;
 
 import Domain.HoleStatus;
+import Domain.PatternType;
 import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
@@ -11,8 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Shape;
 import utils.Id;
 import utils.Point;
-import utils.RectangleHelper;
-import utils.RectangleInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 public abstract class SurfaceUI {
 
     protected TileDto masterTile;
+    protected PatternType pattern;
     protected SealsInfoDto sealsInfo;
     protected HoleStatus isHole;
 
@@ -58,6 +58,7 @@ public abstract class SurfaceUI {
         this.isHole = surfaceDto.isHole;
         this.sealsInfo = surfaceDto.sealsInfoDto;
         this.masterTile = surfaceDto.masterTile;
+        this.pattern = surfaceDto.pattern;
     }
 
     abstract public Shape getMainShape(); // gives the rectangle without the tiles and anchor points
@@ -81,6 +82,10 @@ public abstract class SurfaceUI {
 
     public SealsInfoDto getSealsInfo() {
         return this.sealsInfo;
+    }
+
+    public PatternType getPattern() {
+        return this.pattern;
     }
 
     public Node getNode() {

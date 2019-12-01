@@ -171,7 +171,9 @@ public class FusionedSurfaceUI extends SurfaceUI {
         dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
         dto.isHole = this.isHole;
         dto.id = this.id;
+
         dto.masterTile = this.masterTile;
+        dto.pattern = super.pattern;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());

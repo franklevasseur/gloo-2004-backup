@@ -168,6 +168,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
         dto.id = this.id;
         dto.isHole = this.isHole;
         dto.masterTile = super.masterTile;
+        dto.pattern = super.pattern;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());

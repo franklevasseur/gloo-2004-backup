@@ -23,6 +23,7 @@ public class SurfaceAssembler {
         dto.isRectangular = surface.getIsRectangular();
         dto.isFusionned = surface.isFusionned();
         dto.tiles = surface.getTiles().stream().map(t -> toDto(t)).collect(Collectors.toList());
+        dto.pattern = surface.getPattern();
 
         if (surface.getMasterTile() != null) {
             dto.masterTile = toDto(surface.getMasterTile());
@@ -55,6 +56,9 @@ public class SurfaceAssembler {
         }
         if (dto.sealsInfoDto != null) {
             destinationSurface.setSealsInfo(fromDto(dto.sealsInfoDto));
+        }
+        if (dto.pattern != null) {
+            destinationSurface.setPattern(dto.pattern);
         }
 
         if (dto.isFusionned) {

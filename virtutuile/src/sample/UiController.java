@@ -16,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import utils.*;
@@ -35,7 +34,6 @@ public class UiController implements Initializable {
 
     //Material propreties
     private ObservableList<String> possibleColor = FXCollections.observableArrayList("BLACK","WHITE","YELLOW","GREEN","BLUE","RED","VIOLET");
-    private ObservableList<String> tilePattern = FXCollections.observableArrayList("Default","Shift","Diagonal","Spinning","X");
 
     public TextField materialNameInputBox;
     public TextField tilePerBoxInputBox;
@@ -73,7 +71,7 @@ public class UiController implements Initializable {
     public Label tileInfo;
 
     public ChoiceBox<String> sealColorChoiceBox;
-    public ChoiceBox<String> sealPatternInputBox;
+    public ChoiceBox<String> tilePatternInputBox;
     public ChoiceBox<String> tileMaterialChoiceBox;
 
     public CheckBox snapGridCheckBox;
@@ -116,7 +114,7 @@ public class UiController implements Initializable {
         drawingSection.setPrefWidth(1);
         materialColorChoiceBox.setItems(possibleColor);
         sealColorChoiceBox.setItems(possibleColor);
-        sealPatternInputBox.setItems(tilePattern);
+        tilePatternInputBox.setItems(PatternHelperUI.getPossibleTilePatterns());
 
         materialNameColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI, String>("name"));
         materialNumberOfBoxInputColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("numberOfBoxes"));
@@ -359,6 +357,8 @@ public class UiController implements Initializable {
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
+                CharSequence patternInput = this.tilePatternInputBox.getValue();
+
                 //new surface height
                 CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
                 double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
@@ -392,14 +392,14 @@ public class UiController implements Initializable {
                 chosenSurface.setPosition(position);
 
                 chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
-                if (masterTile == null || newSealWidth == null || sealColorInput == null) {
+                if (masterTile == null || newSealWidth == null || sealColorInput == null || patternInput == null) {
                     this.domainController.updateSurface(chosenSurface.toDto());
                 } else {
                     SealsInfoDto sealsInfoDto = new SealsInfoDto();
                     sealsInfoDto.sealWidth = newSealWidth;
                     sealsInfoDto.color = ColorHelper.stringToUtils(sealColorChoiceBox.getValue());
                     chosenSurface.setSealsInfo(sealsInfoDto);
-                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternType.DEFAULT, sealsInfoDto);
+                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, PatternHelperUI.stringToPattern(patternInput.toString()), sealsInfoDto);
                 }
 
                 this.renderFromProject();
@@ -433,6 +433,11 @@ public class UiController implements Initializable {
             sealColorChoiceBox.setValue(ColorHelper.utilsColorToString(firstOne.getSealsInfo().color));
         }
 
+        if(firstOne.getPattern() != null) {
+            PatternType pattern = firstOne.getPattern();
+            tilePatternInputBox.setValue(PatternHelperUI.patternToDisplayString(pattern));
+        }
+
         surfacePositionXInputBox.setText(formatter.format(topLeft.x));
         surfacePositionYInputBox.setText(formatter.format(topLeft.y));
 
@@ -441,7 +446,7 @@ public class UiController implements Initializable {
             utils.Color tilecolor = firstOne.toDto().tiles.get(0).material.color;
             String materialColor;
             tileMaterialChoiceBox.setValue(tileMaterial);
-            sealPatternInputBox.setValue("Default");
+            tilePatternInputBox.setValue("Default");
 
             materialColor = ColorHelper.utilsColorToString(tilecolor);
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);

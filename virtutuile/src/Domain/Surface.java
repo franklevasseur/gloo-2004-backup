@@ -19,6 +19,7 @@ public class Surface {
     private SurfaceFiller surfaceFiller = new SurfaceFiller();
 
     private Tile masterTile;
+    private PatternType pattern;
 
     public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular) {
         this.isHole = pIsHole;
@@ -67,6 +68,7 @@ public class Surface {
         // très important !!
         isHole = HoleStatus.FILLED;
         this.masterTile = masterTile;
+        this.pattern = pattern;
     }
 
     public void setSummits(List<Point> summits) {
@@ -103,5 +105,13 @@ public class Surface {
 
     public void setMasterTile(Tile masterTile) {
         this.masterTile = masterTile;
+    }
+
+    public PatternType getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(PatternType pattern) {
+        this.pattern = pattern;
     }
 }

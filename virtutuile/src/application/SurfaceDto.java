@@ -1,6 +1,7 @@
 package application;
 
 import Domain.HoleStatus;
+import Domain.PatternType;
 import utils.Color;
 import utils.Id;
 import utils.Point;
@@ -15,6 +16,7 @@ public class SurfaceDto {
     public boolean isFusionned;
     public TileDto masterTile;
     public SealsInfoDto sealsInfoDto;
+    public PatternType pattern;
 
     public List<Point> summits; // summits in meters
     public List<TileDto> tiles;

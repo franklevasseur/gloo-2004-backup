@@ -91,7 +91,7 @@
                         <TextField fx:id="tileHeightInputbox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="tileWidthInputbox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <ChoiceBox fx:id="tileMaterialChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <ChoiceBox fx:id="sealPatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <ChoiceBox fx:id="tilePatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                         <TextField fx:id="sealWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                         <ChoiceBox fx:id="sealColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                         <Label text="Surface propreties" GridPane.rowIndex="5" />

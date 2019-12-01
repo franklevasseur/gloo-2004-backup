@@ -794,18 +794,20 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
         SurfaceUI mainSurface = selectedSurfaces.get(0);
 
-        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
-        double firstX = firstRect.topLeftCorner.x;
-        double centerX = firstRect.width / 2;
+        AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
+        Point firstTopLeft = ShapeHelper.getTopLeftCorner(firstSurface);
+        double firstX = firstTopLeft.x;
+        double centerX = ShapeHelper.getWidth(firstSurface)/2;
 
         for (SurfaceUI s : selectedSurfaces) {
             if (s == mainSurface) {
                 continue;
             }
-            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
-            double halfWidth = rect.width / 2;
-            double rectY = rect.topLeftCorner.y;
-            s.setPosition(new Point((firstX + centerX) - halfWidth, rectY));
+            AbstractShape surface = new AbstractShape(s.toDto().summits);
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceHalfWidth = ShapeHelper.getWidth(surface)/2;
+            double surfaceY = surfaceTopLeft.y;
+            s.setPosition(new Point((firstX + centerX) - surfaceHalfWidth, surfaceY));
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
             } else {
@@ -1009,7 +1011,6 @@ public class UiController implements Initializable {
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point firstTopLeft = ShapeHelper.getTopLeftCorner(firstSurface);
         double firstX = firstTopLeft.x;
-        double firstY = firstTopLeft.y;
         double firstWidth = ShapeHelper.getWidth(firstSurface);
 
         for(SurfaceUI s: selectedSurfaces){

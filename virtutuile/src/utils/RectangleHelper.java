@@ -53,6 +53,24 @@ public class RectangleHelper {
         return new RectangleInfo(new Point(leftX, topY), width, height);
     }
 
+    public static RectangleOrientation getOrientation(RectangleInfo rectangleInfo) {
+        return rectangleInfo.width > rectangleInfo.height ? RectangleOrientation.HORIZONTAL
+                : (rectangleInfo.height > rectangleInfo.width ? RectangleOrientation.VERTICAL
+                : RectangleOrientation.NONE);
+    }
+
+    public static RectangleOrientation getOrientation(List<Point> summits) {
+        return getOrientation(summitsToRectangleInfo(summits));
+    }
+
+    public static List<Point> flip(List<Point> summits) {
+        RectangleInfo rectangleInfo = summitsToRectangleInfo(summits);
+        double tmp = rectangleInfo.width;
+        rectangleInfo.width = rectangleInfo.height;
+        rectangleInfo.height = tmp;
+        return rectangleInfoToSummits(rectangleInfo);
+    }
+
     public static boolean isARectangle(List<Point> summits) {
         if (summits.size() != 4) {
             return false;

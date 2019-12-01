@@ -23,26 +23,92 @@ class SurfaceFiller {
             return fillSurfaceWithVertcialShift(surface, masterTile, sealsInfo);
         }
 
+        if (type == PatternType.MIX) {
+            return fillSurfaceWithMix(surface, masterTile, sealsInfo);
+        }
+
+        if (type == PatternType.GROUP_MIX) {
+            throw new RuntimeException("Pas encore implémenté le gros...");
+        }
+
+        if (type == PatternType.X) {
+            throw new RuntimeException("Pas encore implémenté le gros...");
+        }
+
         return fillSurfaceWithDefaults(surface, masterTile, sealsInfo);
     }
 
     private List<Tile> fillSurfaceWithDefaults(Surface surface, Tile masterTile, SealsInfo sealing) {
-        return fillSurface(surface, masterTile, sealing, 0, 0);
+        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, 0);
     }
 
     private List<Tile> fillSurfaceWithHorizontalShift(Surface surface, Tile masterTile, SealsInfo sealing) {
         double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
-        return fillSurface(surface, masterTile, sealing, shift, 0);
+        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, shift, 0);
     }
 
     private List<Tile> fillSurfaceWithVertcialShift(Surface surface, Tile masterTile, SealsInfo sealing) {
         double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
-        return fillSurface(surface, masterTile, sealing, 0, shift);
+        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, shift);
+    }
+
+    private  List<Tile> fillSurfaceWithMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {
+        AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
+        utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
+        double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
+        double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
+
+        Tile masterTile = pMasterTile.deepCopy();
+        if (RectangleHelper.getOrientation(masterTile.getSummits()) == RectangleOrientation.HORIZONTAL) {
+            masterTile.setSummits(RectangleHelper.flip(masterTile.getSummits()));
+        }
+
+        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.getSummits());
+        double tileWidth = info.width;
+        double tileHeight = info.height;
+
+        List<Tile> tiles = new ArrayList<>();
+
+        double unitOfWidth = (2 * tileWidth) + tileHeight + (4 * sealing.getWidth());
+        double unitOfHeight = tileWidth + sealing.getWidth();
+
+        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight) + 2; // 2 is for security...
+        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth) + 2;
+
+        Point masterTileRelativeCorner = info.topLeftCorner;
+        Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
+
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+
+        double xTranslation = -(masterTileColumnIndex * tileWidth);
+        double yTranslation = -(masterTileLineIndex * tileHeight);
+
+        Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
+
+        for (int line = -1; line < amountOfLines; line++) {
+            for (int column = 0; column < amountOfColumns; column++) {
+                Point verticalTileTopLeft = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
+                Point horizontalTileTopLeft = verticalTileTopLeft.translate(new Point(tileWidth + sealing.getWidth(), (tileHeight - tileWidth + sealing.getWidth())));
+
+                double horizontalShift = tileWidth + sealing.getWidth();
+                int nShift = line % 4;
+                verticalTileTopLeft = verticalTileTopLeft.translate(new Point(-nShift * horizontalShift, 0));
+                horizontalTileTopLeft = horizontalTileTopLeft.translate(new Point(-nShift * horizontalShift, 0));
+
+                Tile horizontalTile = new Tile(RectangleHelper.rectangleInfoToSummits(verticalTileTopLeft, tileWidth, tileHeight), masterTile.getMaterial());
+                Tile verticalTile = new Tile(RectangleHelper.rectangleInfoToSummits(horizontalTileTopLeft, (tileHeight + sealing.getWidth()), (tileWidth - sealing.getWidth())), masterTile.getMaterial());
+
+                tiles.add(horizontalTile);
+                tiles.add(verticalTile);
+            }
+        }
+
+        return tileCutter.cutTilesThatExceed(surface, tiles);
     }
 
 
-    private List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealing, double horizontalShift, double verticalShift) {
-
+    private List<Tile> fillSurfaceWithOneOrientation(Surface surface, Tile masterTile, SealsInfo sealing, double horizontalShift, double verticalShift) {
 
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
         utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);

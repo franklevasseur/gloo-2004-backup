@@ -14,8 +14,8 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
-import javafx.scene.layout.Pane;
 
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import utils.*;
@@ -103,6 +103,8 @@ public class UiController implements Initializable {
 
     private Controller domainController = Controller.getInstance();
 
+    Alert patternPreconditionAlert = new Alert(Alert.AlertType.INFORMATION);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         System.out.println("Initialization...");
@@ -155,6 +157,8 @@ public class UiController implements Initializable {
                 inspectButton.setDisable(false);
             }
         });
+
+        patternPreconditionAlert.setTitle("WARNING");
 
         defaultMaterial();
         renderFromProject();
@@ -401,6 +405,9 @@ public class UiController implements Initializable {
                     chosenSurface.setSealsInfo(sealsInfoDto);
 
                     PatternType pattern = PatternHelperUI.stringToPattern(patternInput.toString());
+
+                    PatternType fallBackPattern = chosenSurface.getPattern() == null ? PatternType.DEFAULT : chosenSurface.getPattern();
+                    pattern = checkPattern(pattern, fallBackPattern, masterTile);
                     chosenSurface.setPattern(pattern);
                     this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, pattern, sealsInfoDto);
                 }
@@ -416,6 +423,22 @@ public class UiController implements Initializable {
             }
         }
 
+    }
+
+    private PatternType checkPattern(PatternType newPattern, PatternType previous, TileDto masterTIile) {
+        if (newPattern == PatternType.MIX || newPattern == PatternType.GROUP_MIX) {
+            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(masterTIile.summits);
+            boolean isAllowed = tileRect.height == 2 * tileRect.width;
+
+            if (!isAllowed) {
+                patternPreconditionAlert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",
+                        PatternHelperUI.patternToDisplayString(newPattern)));
+                patternPreconditionAlert.setContentText(String.format("Falling back on pattern '%s'", PatternHelperUI.patternToDisplayString(previous)));
+                patternPreconditionAlert.showAndWait();
+                return previous;
+            }
+        }
+        return newPattern;
     }
 
     private void displayRectangleInfo() {

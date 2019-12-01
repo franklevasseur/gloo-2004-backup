@@ -113,6 +113,6 @@ public class TileUI {
         Point topLeft = ShapeHelper.getTopLeftCorner(shape);
         double x = this.zoomManager.pixelsToMeters(topLeft.x);
         double y = this.zoomManager.pixelsToMeters(topLeft.y);
-        return String.format("width: %.1f, height: %.1f, x: %.1f, y: %.1f", width, height, x, y);
+        return String.format("width: %.1f, height: %.1f, x: %.3f, y: %.3f", width, height, x, y);
     }
 }

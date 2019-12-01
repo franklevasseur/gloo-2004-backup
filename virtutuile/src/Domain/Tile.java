@@ -77,6 +77,14 @@ public class Tile {
         return this.cutSideToSide(cuttingSegment, false);
     }
 
+    public Tile deepCopy() {
+        List<Point> summitsCpy = new ArrayList<>(summits.size());
+        for (Point summit: summits) {
+            summitsCpy.add(summit.deepCpy());
+        }
+        return new Tile(summitsCpy, this.material, this.isCut);
+    }
+
     public List<Tile> cutSideToSide(Segment cuttingSegment, boolean extendCuttingEdge) {
 
         List<Segment> firstHalfSegments = new ArrayList<>();

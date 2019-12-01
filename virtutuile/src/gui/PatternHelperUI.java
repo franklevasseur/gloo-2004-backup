@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 
 public class PatternHelperUI {
 
-    private static ObservableList<String> possibleTilePatterns = FXCollections.observableArrayList("", "Default","Horizontal shift","Vertical shift");
+    private static ObservableList<String> possibleTilePatterns = FXCollections.observableArrayList("", "Default","Horizontal shift","Vertical shift", "Mix", "Group mix", "X");
 
     public static String patternToDisplayString(PatternType pattern) {
         String tilePatternString;
@@ -16,6 +16,12 @@ public class PatternHelperUI {
             tilePatternString = "Horizontal shift";
         } else if (pattern == PatternType.VERTICAL_SHIFT) {
             tilePatternString = "Vertical shift";
+        } else if (pattern == PatternType.MIX) {
+            tilePatternString = "Mix";
+        } else if (pattern == PatternType.GROUP_MIX) {
+            tilePatternString = "Group mix";
+        } else if (pattern == PatternType.X) {
+            tilePatternString = "X";
         } else {
             tilePatternString = "";
         }
@@ -30,6 +36,12 @@ public class PatternHelperUI {
             pattern = PatternType.HORIZONTAL_SHIFT;
         } else if (tilePatternString == "Vertical shift") {
             pattern = PatternType.VERTICAL_SHIFT;
+        } else if (tilePatternString == "Mix") {
+            pattern = PatternType.MIX;
+        } else if (tilePatternString == "Group mix") {
+            pattern = PatternType.GROUP_MIX;
+        } else if (tilePatternString == "X") {
+            pattern = PatternType.X;
         } else {
             pattern = PatternType.DEFAULT;
         }

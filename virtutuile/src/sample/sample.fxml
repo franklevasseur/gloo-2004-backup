@@ -55,7 +55,7 @@
                 <Button fx:id="fusionButton" layoutX="306.0" layoutY="14.0" mnemonicParsing="false" onAction="#fusionToggle" prefHeight="25.0" prefWidth="118.0" text="Fusion surfaces" />
                 <Button layoutX="700.0" layoutY="14.0" mnemonicParsing="false" onAction="#centerSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Center horizontally" />
                 <Button layoutX="700.0" layoutY="37.0" mnemonicParsing="false" onAction="#centerSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Center vertically" />
-                <Button layoutX="870.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Stick Vertically" />
+                <Button layoutX="870.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Stick vertically" />
                 <Button layoutX="870.0" layoutY="37" mnemonicParsing="false" onAction="#stickSurfacesHorizontally" prefHeight="25" prefWidth="154.0" text="Sitck horizontally" />
                 <CheckBox layoutX="1050.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
                 <Button layoutX="306.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Inspection" />

@@ -5,12 +5,13 @@ import utils.Point;
 import utils.Segment;
 import utils.ShapeHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Tile {
+public class Tile implements Serializable {
     private List<Point> summits = new ArrayList<>();
     private Material material;
 

@@ -338,24 +338,29 @@ public class UiController implements Initializable {
                 //new Tile Height
                 CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
                 Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
+                //Double newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
 
                 //new Tile Width
                 CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
                 Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
+                //Double newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
 
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
+                //Double newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
                 //new surface height
                 CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
                 double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
+                //double newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
 
                 //new surface width
                 CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
+                //double newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
 
                 TileDto masterTile = null;
                 if (newTileWidth != null && newTileHeight != null) {
@@ -784,5 +789,16 @@ public class UiController implements Initializable {
     public void inspect() {
         String inspectionResult = domainController.inspect();
         inspectionArea.setText(String.format("Inspection result for min lenght = %.2f m : \n\n%s", minInspectionLength, inspectionResult));
+    }
+
+    public void SaveProject(){
+        // TODO: Linker le path au fichier a save
+        domainController.saveProject("sauce");
+    }
+
+    public void LoadProject(){
+        // TODO: Linker le path au fichier a load
+        domainController.loadProject("sauce");
+        this.renderFromProject();
     }
 }

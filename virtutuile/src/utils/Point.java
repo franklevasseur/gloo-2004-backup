@@ -1,9 +1,10 @@
 package utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Point {
+public class Point implements Serializable {
     public double x;
     public double y;
     public CardinalPoint cardinality;

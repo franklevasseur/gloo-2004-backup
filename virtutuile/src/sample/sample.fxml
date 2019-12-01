@@ -52,6 +52,7 @@
                 <Button fx:id="fusionButton" layoutX="446.0" layoutY="14.0" mnemonicParsing="false" onAction="#fusionToggle" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
                 <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" onAction="#alignSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Horizontally center" />
                 <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" onAction="#alignSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
+                <Button layoutX="650.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Stick Vertically" />
                 <CheckBox layoutX="776.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
                 <Button layoutX="306.0" layoutY="37.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Inspection" />
               </children>

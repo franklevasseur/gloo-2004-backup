@@ -781,6 +781,30 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
+    public void stickSurfacesVertically(){
+        if(this.selectionManager.getSelectedSurfaces().size() < 1){
+            return;
+        }
+
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+        SurfaceUI mainSurface = selectedSurfaces.get(0);
+
+        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
+        double firstY = firstRect.topLeftCorner.y;
+        double height = firstRect.height;
+
+        for(SurfaceUI s : selectedSurfaces){
+            if(s == mainSurface){
+                continue;
+            }
+            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
+            double rectX = rect.topLeftCorner.x;
+            s.setPosition(new Point(rectX, firstY + height));
+            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+        }
+        this.renderFromProject();
+    }
+
     public void inspect() {
         String inspectionResult = domainController.inspect();
         inspectionArea.setText(String.format("Inspection result for min lenght = %.2f m : \n\n%s", minInspectionLength, inspectionResult));

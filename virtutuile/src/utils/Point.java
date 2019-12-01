@@ -74,27 +74,20 @@ public class Point {
     public boolean isInsideSegments(List<Segment> outlineSegments, boolean includeBorder) {
         Segment currentPointExtendedToInfinity = new Segment(this, new Point(Double.POSITIVE_INFINITY, this.y));
 
-        int interSectionCount = 0;
+        List<Point> intersections = new ArrayList<>();
         for (Segment segment: outlineSegments) {
-            if (segment.contains(this)) {
+            if (segment.contains(this, DOUBLE_TOLERANCE)
+                    || segment.pt1.isInRange(this, DOUBLE_TOLERANCE)
+                    || segment.pt2.isInRange(this, DOUBLE_TOLERANCE)) {
                 return includeBorder; // point is exactly on edge
             }
 
-//            if ((this.y == segment.pt1.y || this.y == segment.pt2.y) && (this.x < segment.pt1.x || this.x < segment.pt2.x)) {
-//                interSectionCount++;
-//                continue;
-//            }
-
-            if (segment.doesIntersect(currentPointExtendedToInfinity, DOUBLE_TOLERANCE)) {
-                interSectionCount++;
-            } else {
-                Point theoricalIntersection = segment.getTheoricalIntersection(currentPointExtendedToInfinity);
-                boolean ok1 = segment.contains(theoricalIntersection, DOUBLE_TOLERANCE);
-                boolean ok2 = currentPointExtendedToInfinity.contains(theoricalIntersection, DOUBLE_TOLERANCE);
-                System.out.println(String.format("ok1 = %b, ok2 = %b", ok1, ok2));
+            Point intersection = segment.intersect(currentPointExtendedToInfinity, DOUBLE_TOLERANCE);
+            if (intersection != null && intersections.stream().noneMatch(i -> i.isSame(intersection))) {
+                intersections.add(intersection);
             }
         }
 
-        return (interSectionCount % 2 == 1);
+        return (intersections.size() % 2 == 1);
     }
 }

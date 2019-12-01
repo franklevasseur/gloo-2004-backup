@@ -57,8 +57,6 @@ public class TileUI {
             shape.setFill(Color.VIOLET);
         }
 
-        shape.setStroke(Color.BLACK);
-
         shape.setOnMouseEntered(event -> select());
         shape.setOnMouseExited(event -> unselect());
 

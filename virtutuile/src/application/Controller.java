@@ -140,6 +140,11 @@ public class Controller {
         }
     }
 
+    public void newProject(){
+        this.vraiProject = new Project();
+        this.undoRedoManager = new UndoRedoManager();
+    }
+
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {
         List<Surface> surfaces = surfacesDto.stream().map(dto -> {
             return this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();

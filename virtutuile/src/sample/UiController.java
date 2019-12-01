@@ -1056,4 +1056,9 @@ public class UiController implements Initializable {
         domainController.loadProject("sauce");
         this.renderFromProject();
     }
+
+    public void newProject(){
+        domainController.newProject();
+        renderFromProject();
+    }
 }

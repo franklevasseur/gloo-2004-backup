@@ -816,6 +816,30 @@ public class UiController implements Initializable {
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }
+        List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
+        SurfaceUI mainSurface = selectedSurfaces.get(0);
+
+        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
+        double firstX = firstRect.topLeftCorner.x;
+        double width = firstRect.width;
+
+        for(SurfaceUI s: selectedSurfaces){
+            if(s == mainSurface){
+                continue;
+            }
+            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
+            double rectX = rect.topLeftCorner.x;
+            double rectY = rect.topLeftCorner.y;
+            double rectWidth = rect.width;
+            if(rectX > firstX){
+                s.setPosition(new Point(firstX + width, rectY));
+            }
+            else{
+                s.setPosition(new Point(firstX - rectWidth, rectY));
+            }
+            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
+        }
+        this.renderFromProject();
     }
 
     public void inspect() {

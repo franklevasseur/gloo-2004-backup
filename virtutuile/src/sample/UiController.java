@@ -825,18 +825,21 @@ public class UiController implements Initializable {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
         SurfaceUI mainSurface = selectedSurfaces.get(0);
 
-        RectangleInfo firstRect = RectangleHelper.summitsToRectangleInfo(mainSurface.toDto().summits);
-        double firstY = firstRect.topLeftCorner.y;
-        double centerY = firstRect.height/2;
+        AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
+        Point firstTopLeft = ShapeHelper.getTopLeftCorner(firstSurface);
+        double firstY = firstTopLeft.y;
+        double centerY = ShapeHelper.getHeight(firstSurface)/2;
 
         for(SurfaceUI s: selectedSurfaces){
             if(s == mainSurface){
                 continue;
             }
-            RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
-            double halfHeight = rect.height/2;
-            double rectX = rect.topLeftCorner.x;
-            s.setPosition(new Point(rectX, (firstY + centerY) - halfHeight));
+
+            AbstractShape surface = new AbstractShape(s.toDto().summits);
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceX = surfaceTopLeft.x;
+            double halfHeight = ShapeHelper.getHeight(surface)/2;
+            s.setPosition(new Point(surfaceX, (firstY + centerY) - halfHeight));
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
             } else {

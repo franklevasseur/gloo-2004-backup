@@ -50,8 +50,8 @@
                 <CheckBox fx:id="snapGridCheckBox" layoutX="980.0" layoutY="28.0" mnemonicParsing="false" onAction="#snapGridToggle" text="Snap grid" />
                 <Button layoutX="306.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" text="Align surfaces" />
                 <Button fx:id="fusionButton" layoutX="446.0" layoutY="14.0" mnemonicParsing="false" onAction="#fusionToggle" prefHeight="25.0" prefWidth="107.0" text="Fusion surfaces" />
-                <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" onAction="#alignSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Horizontally center" />
-                <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" onAction="#alignSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
+                <Button layoutX="582.0" layoutY="14.0" mnemonicParsing="false" onAction="#centerSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Horizontally center" />
+                <Button layoutX="582.0" layoutY="37.0" mnemonicParsing="false" onAction="#centerSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Vertically center" />
                 <Button layoutX="740.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Stick Vertically" />
                 <Button layoutX="740.0" layoutY="37" mnemonicParsing="false" onAction="#stickSurfacesHorizontally" prefHeight="25" prefWidth="154" text="Sitck horizontally" />
                 <CheckBox layoutX="910.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />

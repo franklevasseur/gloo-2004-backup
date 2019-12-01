@@ -731,7 +731,7 @@ public class UiController implements Initializable {
         domainController.createMaterial(dto);
     }
 
-    public void alignSurfacesVertically() {
+    public void centerSurfacesVertically() {
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }
@@ -756,7 +756,7 @@ public class UiController implements Initializable {
         this.renderFromProject();
     }
 
-    public void alignSurfacesHorizontally(){
+    public void centerSurfacesHorizontally(){
         if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }

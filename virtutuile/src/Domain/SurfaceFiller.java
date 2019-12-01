@@ -28,7 +28,7 @@ class SurfaceFiller {
         }
 
         if (type == PatternType.GROUP_MIX) {
-            throw new RuntimeException("Pas encore implémenté le gros...");
+            return fillSurfaceWithGroupMix(surface, masterTile, sealsInfo);
         }
 
         if (type == PatternType.X) {
@@ -101,6 +101,71 @@ class SurfaceFiller {
 
                 tiles.add(horizontalTile);
                 tiles.add(verticalTile);
+            }
+        }
+
+        return tileCutter.cutTilesThatExceed(surface, tiles);
+    }
+
+    private List<Tile> fillSurfaceWithGroupMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {
+        AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
+        utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
+        double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
+        double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
+
+        Tile masterTile = pMasterTile.deepCopy();
+        if (RectangleHelper.getOrientation(masterTile.getSummits()) == RectangleOrientation.HORIZONTAL) {
+            masterTile.setSummits(RectangleHelper.flip(masterTile.getSummits()));
+        }
+
+        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.getSummits());
+        double tileWidth = info.width;
+        double tileHeight = info.height;
+
+        List<Tile> tiles = new ArrayList<>();
+
+        double unitOfWidth = 2 * (tileWidth + sealing.getWidth());
+        double unitOfHeight = tileHeight + sealing.getWidth();
+
+        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight) + 2; // 2 is for security...
+        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth) + 2;
+
+        Point masterTileRelativeCorner = info.topLeftCorner;
+        Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
+
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+
+        double xTranslation = -(masterTileColumnIndex * tileWidth);
+        double yTranslation = -(masterTileLineIndex * tileHeight);
+
+        Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
+
+        for (int line = -1; line < amountOfLines; line++) {
+            for (int column = 0; column < amountOfColumns; column++) {
+
+                Point firstTileTopLeft = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
+                List<Tile> twoTilesToAdd = new ArrayList<>(2);
+                if (column % 2 == 1) {
+                    Point secondTileTopLeft = firstTileTopLeft.translate(new Point(tileWidth + sealing.getWidth(), 0));
+
+                    List<Point> firstTileSummits = RectangleHelper.rectangleInfoToSummits(firstTileTopLeft, tileWidth, tileHeight);
+                    List<Point> secondTileSummits = RectangleHelper.rectangleInfoToSummits(secondTileTopLeft, tileWidth, tileHeight);
+                    twoTilesToAdd.add(new Tile(firstTileSummits, masterTile.getMaterial()));
+                    twoTilesToAdd.add(new Tile(secondTileSummits, masterTile.getMaterial()));
+                } else {
+                    double cheatHeight = tileWidth - (sealing.getWidth() / 2);
+                    double cheatWidth = tileHeight + sealing.getWidth();
+
+                    Point secondTileTopLeft = firstTileTopLeft.translate(new Point(0, cheatHeight + sealing.getWidth()));
+
+                    List<Point> firstTileSummits = RectangleHelper.rectangleInfoToSummits(firstTileTopLeft, cheatWidth, cheatHeight);
+                    List<Point> secondTileSummits = RectangleHelper.rectangleInfoToSummits(secondTileTopLeft, cheatWidth, cheatHeight);
+                    twoTilesToAdd.add(new Tile(firstTileSummits, masterTile.getMaterial()));
+                    twoTilesToAdd.add(new Tile(secondTileSummits, masterTile.getMaterial()));
+                }
+
+                tiles.addAll(twoTilesToAdd);
             }
         }
 

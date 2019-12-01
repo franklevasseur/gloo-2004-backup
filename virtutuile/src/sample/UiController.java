@@ -208,7 +208,7 @@ public class UiController implements Initializable {
         if (stateTopLeftCornerCreated) {
             drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
 
-            Point mouseCoord = new Point(e.getX(), e.getY());
+            Point mouseCoord = this.getPointInReferenceToOrigin(new Point(e.getX(), e.getY()));
             Point topLeft = RectangleHelper.getTopLeft(firstClickCoord, mouseCoord);
 
             double width = Math.abs(mouseCoord.x - firstClickCoord.x);

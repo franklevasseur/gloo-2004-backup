@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import utils.Point;
+import utils.RectangleError;
 import utils.RectangleHelper;
 import utils.RectangleInfo;
 
@@ -37,14 +38,14 @@ public class SnapGridUI {
     }
 
     public void renderForViewBox(List<Point> viewBoxSummits) {
-        if (!this.isVisible) {
+        removeGrid();
+
+        RectangleInfo viewBoxRectangle;
+        try {
+            viewBoxRectangle = RectangleHelper.summitsToRectangleInfo(viewBoxSummits);
+        } catch (RectangleError err) {
             return;
         }
-
-        removeGrid();
-        RectangleInfo viewBoxRectangle = RectangleHelper.summitsToRectangleInfo(viewBoxSummits);
-
-        originIndicator.setRadius(viewBoxRectangle.width / 100);
 
         xAxis.setStartX(viewBoxRectangle.topLeftCorner.x);
         xAxis.setStartY(0);
@@ -57,6 +58,12 @@ public class SnapGridUI {
         yAxis.setEndX(0);
         yAxis.setEndY(viewBoxRectangle.topLeftCorner.y + viewBoxRectangle.height);
         yAxis.setStrokeWidth(viewBoxRectangle.width / 750);
+
+        if (!this.isVisible) {
+            return;
+        }
+
+        originIndicator.setRadius(viewBoxRectangle.width / 100);
 
         this.renderLines(viewBoxRectangle);
         this.renderColumn(viewBoxRectangle);

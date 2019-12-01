@@ -10,6 +10,7 @@ public class Material implements Serializable {
     private utils.Color color;
     private MaterialType materialType;
     private String materialName;
+
     private int nbTilePerBox;
     private double costPerBox;
     private double tileTypeWidth = 0.2;

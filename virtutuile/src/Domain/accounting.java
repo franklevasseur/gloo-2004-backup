@@ -22,7 +22,7 @@ public class accounting {
     }
 
     public double getNbBoxes() {
-        nbBoxes = material.getNbTilePerBox()/F_usedTiles();
+        nbBoxes = F_usedTiles()/material.getNbTilePerBox();
         return Math.ceil(nbBoxes);
     }
 

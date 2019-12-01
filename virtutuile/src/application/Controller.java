@@ -17,6 +17,8 @@ public class Controller {
     }
     private UndoRedoManager undoRedoManager = new UndoRedoManager();
 
+    public List<accounting> Maccount  = new ArrayList<>();
+
     private InspectionService inspector = InspectionService.getInstance();
 
     private Project vraiProject;
@@ -170,8 +172,18 @@ public class Controller {
         for (Material i: this.vraiProject.getMaterials()) {
             accounting temp = new accounting(this.vraiProject.getSurfaces(), i);
             account.add(temp);
-
         }
+        Maccount = account;
+    }
+
+    public void getSurfaceAccount(List<Surface> pSurface){
+        List<accounting> account = new ArrayList<>();
+        for(Surface i: pSurface){
+            accounting temp = new accounting(pSurface, i.getTiles().get(0).getMaterial());
+            account.add(temp);
+        }
+        Maccount = account;
+
     }
 
     public String inspect() {

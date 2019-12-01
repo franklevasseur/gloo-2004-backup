@@ -89,7 +89,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
                         .collect(Collectors.toList()), s.toDto().isHole == HoleStatus.HOLE))
                 .collect(Collectors.toList());
 
-        super.summits = FusionHelper.getFusionResultSummits(allSurfacesSummits).summits;
+        super.summits = ShapeHelper.getFlattedSummits(FusionHelper.getFusionResultSummits(allSurfacesSummits));
         double minX = Collections.min(super.summits.stream().map(s -> s.x).collect(Collectors.toList()));
         this.position = Collections.min(super.summits.stream().filter(s -> s.x == minX).collect(Collectors.toList()), Comparator.comparing(s -> s.y));
 
@@ -97,7 +97,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
     }
 
     private void setShapeColor() {
-        if (sealsInfo != null) {
+        if (sealsInfo != null && super.isHole == HoleStatus.FILLED) {
             shape.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
             shape.setStroke(Color.BLACK);
             return;

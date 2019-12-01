@@ -1,6 +1,8 @@
 package utils;
 
-public class Id {
+import java.io.Serializable;
+
+public class Id implements Serializable {
 
     private static int instanceCount = 0;
     private int id;

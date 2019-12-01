@@ -3,7 +3,9 @@ package Domain;
 import utils.Color;
 import utils.Id;
 
-public class Material {
+import java.io.Serializable;
+
+public class Material implements Serializable {
     private utils.Color color;
     private MaterialType materialType;
     private String materialName;

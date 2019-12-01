@@ -36,7 +36,12 @@ public class FusionedSurfaceUI extends SurfaceUI {
                 = surfaceDto
                 .fusionnedSurface
                 .stream()
-                .map(fs -> new RectangleSurfaceUI(fs, zoomManager, selectionManager, snapGrid, new Label()))
+                .map(fs -> {
+                    if (fs.isRectangular) {
+                        return new RectangleSurfaceUI(fs, zoomManager, selectionManager, snapGrid, tileInfoLabel);
+                    }
+                    return new IrregularSurfaceUI(fs, zoomManager, selectionManager, snapGrid, tileInfoLabel);
+                })
                 .collect(Collectors.toList());
 
         this.zoomManager = zoomManager;

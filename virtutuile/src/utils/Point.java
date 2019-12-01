@@ -65,17 +65,17 @@ public class Point {
         return new Point(x, y);
     }
 
-    public boolean isInside(List<Point> outline) {
-        return isInsideSegments(Segment.toSegments(outline));
+    public boolean isInside(List<Point> outline, boolean includeBorder) {
+        return isInsideSegments(Segment.toSegments(outline), includeBorder);
     }
 
-    public boolean isInsideSegments(List<Segment> outlineSegments) {
+    public boolean isInsideSegments(List<Segment> outlineSegments, boolean includeBorder) {
         Segment currentPointExtendedToInfinity = new Segment(this, new Point(Double.POSITIVE_INFINITY, this.y));
 
         int interSectionCount = 0;
         for (Segment segment: outlineSegments) {
             if (segment.contains(this)) {
-                return true; // point is exactly on edge
+                return includeBorder; // point is exactly on edge
             }
 
             if (segment.doesIntersect(currentPointExtendedToInfinity)) {

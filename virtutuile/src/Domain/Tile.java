@@ -118,6 +118,10 @@ public class Tile {
         List<Point> firstHalfSummits = Point.fromSegments(firstHalfSegments);
         List<Point> secondHalfSummits = Point.fromSegments(secondHalfSegments);
 
+        if (firstHalfSegments.size() < 3 || secondHalfSegments.size() < 3) {
+            throw new RuntimeException("WHAT THE FUCKKKKKKKKKKKK, tu dois absolument avertir Frank Levasseur");
+        }
+
         return Arrays.asList(new Tile(firstHalfSummits, this.material, true), new Tile(secondHalfSummits, this.material, true));
     }
 

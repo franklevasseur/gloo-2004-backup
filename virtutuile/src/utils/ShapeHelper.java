@@ -42,6 +42,33 @@ public class ShapeHelper {
         return resultantSummits;
     }
 
+    public static boolean isAllInside(AbstractShape small, AbstractShape big) {
+        return small.summits.stream().allMatch(s -> s.isInside(big.summits, true));
+    }
+
+    public static boolean isAllOutside(AbstractShape small, AbstractShape big) {
+        if (areSame(small, big)) {
+            return false;
+        }
+
+        return small.summits.stream().allMatch(s -> !s.isInside(big.summits, false));
+    }
+
+    public static boolean areSame(AbstractShape shape1, AbstractShape shape2) {
+        if (shape1.summits.size() != shape2.summits.size()) {
+            return false;
+        }
+
+        int index = 0;
+        for (Point summit : shape1.summits) {
+            if (!summit.isSame(shape2.summits.get(index))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static Point getMinX(AbstractShape shape) {
         return Collections.min(shape.summits, Comparator.comparing(p -> p.x));
     }

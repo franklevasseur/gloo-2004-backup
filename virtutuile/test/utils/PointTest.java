@@ -20,7 +20,7 @@ class PointTest {
         summits.add(new Point(10, -5));
 
         // act
-        boolean isInside = new Point(0, -3).isInside(summits);
+        boolean isInside = new Point(0, -3).isInside(summits, false);
 
         // assert
         assertTrue(isInside);
@@ -37,7 +37,7 @@ class PointTest {
         summits.add(new Point(10, -5));
 
         // act
-        boolean isInside = new Point(0, 3).isInside(summits);
+        boolean isInside = new Point(0, 3).isInside(summits, true);
 
         // assert
         assertFalse(isInside);
@@ -54,7 +54,7 @@ class PointTest {
         summits.add(new Point(10, -5));
 
         // act
-        boolean isInside = new Point(-6, -3).isInside(summits);
+        boolean isInside = new Point(-6, -3).isInside(summits, true);
 
         // assert
         assertTrue(isInside);
@@ -71,7 +71,7 @@ class PointTest {
         summits.add(new Point(10, -5));
 
         // act
-        boolean isInside = new Point(0, 0).isInside(summits);
+        boolean isInside = new Point(0, 0).isInside(summits, true);
 
         // assert
         assertTrue(isInside);
@@ -91,7 +91,7 @@ class PointTest {
         summits.add(new Point(2.95, 1.04));
 
         // act
-        boolean isInside = new Point(1.4, 1.35).isInside(summits);
+        boolean isInside = new Point(1.4, 1.35).isInside(summits, false);
 
         // assert
         assertTrue(isInside);

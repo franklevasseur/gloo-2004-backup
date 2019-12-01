@@ -132,7 +132,7 @@ public class Segment {
         return currentIntersections;
     }
 
-    public boolean isInside(List<Segment> outline) {
-        return pt1.isInsideSegments(outline) && pt2.isInsideSegments(outline);
+    public boolean isInside(List<Segment> outline, boolean includeBorders) {
+        return pt1.isInsideSegments(outline, includeBorders) && pt2.isInsideSegments(outline, includeBorders);
     }
 }

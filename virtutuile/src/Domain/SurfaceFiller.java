@@ -55,29 +55,30 @@ class SurfaceFiller {
 
     private static List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
         List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
-
         List<Tile> tilesToCut = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
         insideTiles.removeIf(tilesToCut::contains);
 
-        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
-        tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
+//        uncomment to display in red desired tiles...
+//        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
+//        tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
 
-        tilesToCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
+        List<Tile> tileResultantOfCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
+        List<Tile> newKeepers = tileResultantOfCut.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
 
-        // TODO: might need N filtering
-        List<Tile> secondFiltering = tilesToCut.stream().filter(t -> isAllInside(surface, t)).collect(Collectors.toList());
-
-        insideTiles.addAll(secondFiltering);
-
+        insideTiles.addAll(newKeepers);
         return insideTiles;
     }
 
     private static boolean isAllInside(Surface surface, Tile tile) {
-        return tile.getSummits().stream().allMatch(s -> s.isInside(surface.getSummits()));
+        AbstractShape surfaceShape = new AbstractShape(surface.getSummits());
+        AbstractShape tileShape = new AbstractShape(tile.getSummits());
+        return ShapeHelper.isAllInside(tileShape, surfaceShape);
     }
 
     private static boolean isAllOutside(Surface surface, Tile tile) {
-        return tile.getSummits().stream().allMatch(s -> !s.isInside(surface.getSummits()));
+        AbstractShape surfaceShape = new AbstractShape(surface.getSummits());
+        AbstractShape tileShape = new AbstractShape(tile.getSummits());
+        return ShapeHelper.isAllOutside(tileShape, surfaceShape);
     }
 
     private static List<Tile> cutTilesThatNeedToBeCut(Surface surface, List<Tile> tiles) {
@@ -93,7 +94,7 @@ class SurfaceFiller {
             int nInterSections = Segment.findIntersection(seg, tileSegments).size();
             if (nInterSections == 2) {
                 return tileToCut.cutSideToSide(seg);
-            } else if (nInterSections == 1 || seg.isInside(tileSegments)) {
+            } else if (nInterSections == 1 || seg.isInside(tileSegments, false)) {
                 segmentsThatPartiallyCutTheTile.add(seg);
             }
         }

@@ -782,7 +782,7 @@ public class UiController implements Initializable {
     }
 
     public void stickSurfacesVertically(){
-        if(this.selectionManager.getSelectedSurfaces().size() < 1){
+        if(this.selectionManager.getSelectedSurfaces().size() <= 1){
             return;
         }
 
@@ -799,10 +799,23 @@ public class UiController implements Initializable {
             }
             RectangleInfo rect = RectangleHelper.summitsToRectangleInfo(s.toDto().summits);
             double rectX = rect.topLeftCorner.x;
-            s.setPosition(new Point(rectX, firstY + height));
+            double rectY = rect.topLeftCorner.y;
+            double rectHeight = rect.height;
+            if(rectY > firstY) {
+                s.setPosition(new Point(rectX, firstY + height));
+            }
+            else{
+                s.setPosition(new Point(rectX, firstY - rectHeight));
+            }
             domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternDto.DEFAULT, s.getSealsInfo());
         }
         this.renderFromProject();
+    }
+
+    public void stickSurfacesHorizontally(){
+        if(this.selectionManager.getSelectedSurfaces().size() <= 1){
+            return;
+        }
     }
 
     public void inspect() {

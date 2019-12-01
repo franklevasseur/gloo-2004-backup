@@ -188,10 +188,14 @@ public class Controller {
     }
 
     public String inspectProject(double pWidth, double pHeight) {
-        return inspector.inspect(this.vraiProject, pWidth, pHeight);
+        pairResult temp = inspector.inspect(this.vraiProject, pWidth, pHeight);
+        vraiProject = temp.project;
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+        return temp.message;
     }
 
     public String inspectSurface(SurfaceDto dto, double pWidth, double pHeight) {
+        // TODO: Cette methode n'est pas linké avec le ui
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
         return inspector.inspect(desiredSurface, pWidth, pHeight);
     }

@@ -1047,6 +1047,7 @@ public class UiController implements Initializable {
 
         String inspectionResult = domainController.inspectProject(minInspectionLength, minInspectionLength);
         inspectionArea.setText(String.format("Inspection result for min lenght = %.2f m : \n\n%s", minInspectionLength, inspectionResult));
+        renderFromProject();
     }
 
     public void SaveProject(){

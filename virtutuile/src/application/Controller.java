@@ -101,7 +101,7 @@ public class Controller {
     }
 
     private Tile getDefaultTileForSurface(Surface surface) {
-        List<Point> tileSummits = RectangleHelper.rectangleInfoToSummits(new Point(0, 0), 0.2, 0.3);
+        List<Point> tileSummits = RectangleHelper.rectangleInfoToSummits(new Point(0, 0), 0.3, 0.6);
         Material material = vraiProject.getMaterials().get(0);
         return new Tile(tileSummits, material);
     }

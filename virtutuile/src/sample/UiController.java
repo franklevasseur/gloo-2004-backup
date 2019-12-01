@@ -806,7 +806,11 @@ public class UiController implements Initializable {
             double halfWidth = rect.width / 2;
             double rectY = rect.topLeftCorner.y;
             s.setPosition(new Point((firstX + centerX) - halfWidth, rectY));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternType.DEFAULT, s.getSealsInfo());
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }
@@ -831,7 +835,11 @@ public class UiController implements Initializable {
             double halfHeight = rect.height/2;
             double rectX = rect.topLeftCorner.x;
             s.setPosition(new Point(rectX, (firstY + centerY) - halfHeight));
-            domainController.updateAndRefill(s.toDto(), s.getMasterTile(), PatternType.DEFAULT, s.getSealsInfo());
+            if (s.toDto().isHole == HoleStatus.FILLED) {
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo());
+            } else {
+                domainController.updateSurface(s.toDto());
+            }
         }
         this.renderFromProject();
     }

@@ -18,8 +18,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
+import javafx.stage.FileChooser;
 import utils.*;
 
+import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -1053,12 +1055,28 @@ public class UiController implements Initializable {
 
     public void SaveProject(){
         // TODO: Linker le path au fichier a save
-        domainController.saveProject("sauce");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Sauvegarder Plan");
+        fileChooser.setInitialDirectory(new File("./"));
+        fileChooser.setInitialFileName("TaMereEnShort.bin");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Serialized object", "*.bin"));
+        File file = fileChooser.showSaveDialog(null);
+        if (file != null){
+            domainController.saveProject(file.getPath().toString());
+        }
+
     }
 
     public void LoadProject(){
-        // TODO: Linker le path au fichier a load
-        domainController.loadProject("sauce");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Plan");
+        fileChooser.setInitialDirectory(new File("./"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Serialized object", "*.bin"));
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null){
+            domainController.loadProject(file.getPath().toString());
+        }
+
         this.renderFromProject();
     }
 

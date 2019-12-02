@@ -113,7 +113,7 @@ public class Controller {
     }
 
     public void loadProject(String projectPath) {
-        try(FileInputStream fi = new FileInputStream("TestSave.bin")){
+        try(FileInputStream fi = new FileInputStream(projectPath)){
             ObjectInputStream os = new ObjectInputStream(fi);
             this.vraiProject = (Project) os.readObject();
 
@@ -128,7 +128,7 @@ public class Controller {
     }
 
     public void saveProject(String projectPath) {
-        try(FileOutputStream fs = new FileOutputStream("TestSave.bin")){
+        try(FileOutputStream fs = new FileOutputStream(projectPath)){
             ObjectOutputStream os = new ObjectOutputStream(fs);
 
             os.writeObject(this.vraiProject);

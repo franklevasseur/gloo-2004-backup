@@ -9,7 +9,7 @@ public class Point implements Serializable {
     public double y;
     public CardinalPoint cardinality;
 
-    public static double DOUBLE_TOLERANCE = 0.001;
+    public static double DOUBLE_TOLERANCE = 1e-5;
 
     public static Point translate(Point oldPoint, double delatX, double deltaY) {
         return oldPoint.translate(new Point(delatX, deltaY));

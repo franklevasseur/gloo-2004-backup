@@ -437,7 +437,7 @@ public class UiController implements Initializable {
     private PatternType checkPattern(PatternType newPattern, PatternType previous, TileDto masterTIile) {
         if (newPattern == PatternType.MIX || newPattern == PatternType.GROUP_MIX) {
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(masterTIile.summits);
-            boolean isAllowed = tileRect.height == 2 * tileRect.width;
+            boolean isAllowed = (tileRect.height - 2 * tileRect.width) < Point.DOUBLE_TOLERANCE;
 
             if (!isAllowed) {
                 patternPreconditionAlert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",

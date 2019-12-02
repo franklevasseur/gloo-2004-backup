@@ -21,7 +21,7 @@ class SegmentTest {
         summits.add(new Point(10, -5));
 
         // act
-        List<Segment> segments = Segment.toSegments(summits);
+        List<Segment> segments = Segment.fromPoints(summits);
 
         // assert
         List<Segment> expectedSegments = new ArrayList<>();
@@ -66,8 +66,8 @@ class SegmentTest {
         Segment seg2 = new Segment(new Point(10, -5), new Point(0,0));
 
         // act
-        boolean doesIntersect1 = seg1.doesIntersect(infiniteSegment, 0);
-        boolean doesIntersect2 = seg2.doesIntersect(infiniteSegment, 0);
+        boolean doesIntersect1 = seg1.doesIntersect(infiniteSegment, Point.DOUBLE_TOLERANCE);
+        boolean doesIntersect2 = seg2.doesIntersect(infiniteSegment, Point.DOUBLE_TOLERANCE);
 
         // assert
         assertTrue(doesIntersect2);
@@ -85,26 +85,5 @@ class SegmentTest {
 
         // assert
         assertTrue(intersect.isSame(new Point(0, 0)));
-    }
-
-    @Test
-    public void countIntersectionsWithTile() {
-        // arrange
-        List<Point> tileSummits = new ArrayList<>();
-        tileSummits.add(new Point(0, 0));
-        tileSummits.add(new Point(0, 10));
-        tileSummits.add(new Point(10, 10));
-        tileSummits.add(new Point(10, 0));
-        List<Segment> tileSegments = Segment.toSegments(tileSummits);
-
-        Segment cuttingSegment = new Segment(new Point(-5, 5), new Point(15, 5));
-
-        // act
-        List<Point> intersections = Segment.findIntersection(cuttingSegment, tileSegments);
-
-        // assert
-        assertEquals(intersections.size(), 2);
-        assertTrue(intersections.get(0).isSame(new Point(0, 5)));
-        assertTrue(intersections.get(1).isSame(new Point(10, 5)));
     }
 }

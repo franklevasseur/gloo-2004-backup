@@ -30,7 +30,19 @@ public class Segment {
         return (contains(theoricalIntersection, tolerance) && other.contains(theoricalIntersection, tolerance)) ? theoricalIntersection : null;
     }
 
-    public Point getTheoricalIntersection(Segment other) {
+    public boolean barelyTouches(Segment other, double tolerance) {
+        return this.contains(other.pt1, tolerance)
+                || this.contains(other.pt2, tolerance)
+                || other.contains(this.pt1, tolerance)
+                || other.contains(this.pt2, tolerance);
+    }
+
+    public Point extendAndIntersect(Segment other, double tolerance) {
+        Point theoricalIntersection = this.getTheoricalIntersection(other);
+        return other.contains(theoricalIntersection, tolerance) ? theoricalIntersection : null;
+    }
+
+    private Point getTheoricalIntersection(Segment other) {
         if (sameSlope(other)) {
             return null;
         }
@@ -74,8 +86,8 @@ public class Segment {
         if (this.getSlope() == Double.POSITIVE_INFINITY
                 || this.getSlope() == Double.NEGATIVE_INFINITY) {
             return p.x == pt1.x
-                    && p.y <= Math.max(pt1.y, pt2.y)
-                    && p.y >= Math.min(pt1.y, pt2.y);
+                    && p.y <= Math.max(pt1.y, pt2.y) + tolerance
+                    && p.y >= Math.min(pt1.y, pt2.y) - tolerance;
         }
 
         // really fucking important condition !!
@@ -86,10 +98,10 @@ public class Segment {
         }
 
         return isInLine(p, tolerance)
-            && p.x <= Math.max(pt1.x, pt2.x)
-            && p.x >= Math.min(pt1.x, pt2.x)
-            && p.y <= Math.max(pt1.y, pt2.y)
-            && p.y >= Math.min(pt1.y, pt2.y);
+            && p.x <= Math.max(pt1.x, pt2.x) + tolerance
+            && p.x >= Math.min(pt1.x, pt2.x) - tolerance
+            && p.y <= Math.max(pt1.y, pt2.y) + tolerance
+            && p.y >= Math.min(pt1.y, pt2.y) - tolerance;
     }
 
     private boolean isInLine(Point p, double tolerance) {
@@ -111,7 +123,7 @@ public class Segment {
         return pt1.y - (getSlope() * pt1.x);
     }
 
-    public static List<Segment> toSegments(List<Point> summits) {
+    public static List<Segment> fromPoints(List<Point> summits) {
         List<Segment> segments = new ArrayList<>();
 
         int tail = 0;
@@ -125,25 +137,6 @@ public class Segment {
         }
 
         return segments;
-    }
-
-    public static List<Point> findIntersection(Segment segment, List<Segment> tileSegments) {
-        return findIntersection(segment, tileSegments, false);
-    }
-
-    public static List<Point> findTheoricalIntersection(Segment segment, List<Segment> tileSegments) {
-        return findIntersection(segment, tileSegments, true);
-    }
-
-    private static List<Point> findIntersection(Segment segment, List<Segment> tileSegments, boolean extendSegment) {
-        List<Point> currentIntersections = new ArrayList<>();
-        for (Segment seg: tileSegments) {
-            Point intersection = extendSegment ? seg.getTheoricalIntersection(segment) : seg.intersect(segment, Point.DOUBLE_TOLERANCE);
-            if (intersection != null && currentIntersections.stream().noneMatch(i -> i.isSame(intersection))) {
-                currentIntersections.add(intersection);
-            }
-        }
-        return currentIntersections;
     }
 
     public boolean isInside(List<Segment> outline, boolean includeBorders) {

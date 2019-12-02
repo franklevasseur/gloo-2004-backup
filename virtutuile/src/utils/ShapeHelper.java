@@ -28,21 +28,6 @@ public class ShapeHelper {
         return new Point(minX, minY);
     }
 
-    public static List<Point> simplifySummits(AbstractShape shape) {
-        List<Point> resultantSummits = new ArrayList<>();
-        for (int i = 0; i < shape.summits.size(); i++) {
-            int tail = i - 1 < 0 ? shape.summits.size() - 1 : i - 1;
-            int current = i % shape.summits.size();
-            int head = (i + 1) % shape.summits.size();
-
-            Segment segment = new Segment(shape.summits.get(tail), shape.summits.get(head));
-            if (!segment.contains(shape.summits.get(current))) {
-                resultantSummits.add(shape.summits.get(current));
-            }
-        }
-        return resultantSummits;
-    }
-
     public static boolean isAllInside(AbstractShape small, AbstractShape big) {
         return small.summits.stream().allMatch(s -> s.isInside(big.summits, true));
     }

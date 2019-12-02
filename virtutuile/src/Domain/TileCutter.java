@@ -1,9 +1,6 @@
 package Domain;
 
-import utils.AbstractShape;
-import utils.FusionHelper;
-import utils.Segment;
-import utils.ShapeHelper;
+import utils.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,13 +16,19 @@ public class TileCutter implements Serializable {
         insideTiles.removeIf(tilesToCut::contains);
 
 //        uncomment to display in red desired tiles...
-//        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
+        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
 //        tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
 
         List<Tile> tileResultantOfCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
         List<Tile> newKeepers = tileResultantOfCut.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
-
         insideTiles.addAll(newKeepers);
+
+        List<Tile> unableToCutTiles = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
+        if (unableToCutTiles.size() > 0) {
+            System.out.println(String.format("System was unable to cut %d", unableToCutTiles.size()));
+        }
+        unableToCutTiles.forEach(t -> t.setMaterial(newMaterialToCut));
+
         return insideTiles;
     }
 
@@ -81,10 +84,8 @@ public class TileCutter implements Serializable {
             List<AbstractShape> allPlainPolygons = FusionHelper.getFusionResultSummits(noHoles.stream().map(s -> new AbstractShape(s.getSummits())).collect(Collectors.toList()));
 
             List<Tile> allCuts = new ArrayList<>();
-
             for (AbstractShape plainPolygon: allPlainPolygons) {
-                List<Segment> surfaceSegments = Segment.toSegments(plainPolygon.summits);
-                allCuts = allCuts.stream().flatMap(t -> cutOneTile(surfaceSegments, t).stream()).collect(Collectors.toList());
+                allCuts = allCuts.stream().flatMap(t -> cutOneTile(plainPolygon, t).stream()).collect(Collectors.toList());
             }
 
             for (Surface hole: holes) {
@@ -94,8 +95,7 @@ public class TileCutter implements Serializable {
             return allCuts;
         }
 
-        List<Segment> surfaceSegments = Segment.toSegments(surface.getSummits());
-        return tiles.stream().flatMap(t -> cutOneTile(surfaceSegments, t).stream()).collect(Collectors.toList());
+        return tiles.stream().flatMap(t -> cutOneTile(surface, t).stream()).collect(Collectors.toList());
     }
 
     private boolean isOnlyOnePolygon(Surface surface) {
@@ -109,24 +109,21 @@ public class TileCutter implements Serializable {
         return allPlainPolygons.size() == 1;
     }
 
-    private List<Tile> cutOneTile(List<Segment> surfaceSegments, Tile tileToCut) {
-        List<Segment> tileSegments = Segment.toSegments(tileToCut.getSummits());
-
-        List<Segment> segmentsThatPartiallyCutTheTile = new ArrayList<>();
-        for (Segment seg: surfaceSegments) {
-            int nInterSections = Segment.findIntersection(seg, tileSegments).size();
-            if (nInterSections == 2) {
-                return tileToCut.cutSideToSide(seg);
-            } else if (nInterSections == 1 || seg.isInside(tileSegments, false)) {
-                segmentsThatPartiallyCutTheTile.add(seg);
-            }
-        }
-
-        // TODO: attention il y a peut-être deux différents boutes de segments qui rentrent dans la tuile... ici on suppose qu'il n'y a qu'un seul pick
-        if (segmentsThatPartiallyCutTheTile.size() >= 2) {
-            return tileToCut.cut(segmentsThatPartiallyCutTheTile);
-        }
-        return Arrays.asList(tileToCut);
+    private List<Tile> cutOneTile(Surface surface, Tile tileToCut) {
+        return cutOneTile(new AbstractShape(surface.getSummits(), surface.isHole() == HoleStatus.HOLE), tileToCut);
     }
 
+    private List<Tile> cutOneTile(AbstractShape surfaceShape, Tile tileToCut) {
+
+        List<Segment> surfaceSegments = Segment.fromPoints(surfaceShape.summits);
+        List<Tile> returned = Arrays.asList(tileToCut);
+
+        for (Segment seg: surfaceSegments) {
+            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).filter(t ->
+                    !ShapeHelper.isAllOutside(new AbstractShape(t.getSummits()), surfaceShape)
+            ).collect(Collectors.toList());
+        }
+
+        return returned;
+    }
 }

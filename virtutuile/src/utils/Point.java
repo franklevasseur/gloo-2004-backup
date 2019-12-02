@@ -32,6 +32,31 @@ public class Point implements Serializable {
         return summits;
     }
 
+    public static List<Point> removeRedundantSummits(List<Point> points) {
+        List<Point> resultantSummits = new ArrayList<>();
+        for (int i = 0; i < points.size(); i++) {
+            int tail = i - 1 < 0 ? points.size() - 1 : i - 1;
+            int current = i % points.size();
+            int head = (i + 1) % points.size();
+
+            Segment segment = new Segment(points.get(tail), points.get(head));
+            if (!segment.contains(points.get(current))) {
+                resultantSummits.add(points.get(current));
+            }
+        }
+        return resultantSummits;
+    }
+
+    public static List<Point> removeDuplicatedSummits(List<Point> points, double tolerance) {
+        List<Point> uniqSummits = new ArrayList<>();
+        for (Point point: points) {
+            if (uniqSummits.stream().noneMatch(p -> p.isInRange(point, tolerance))) {
+                uniqSummits.add(point);
+            }
+        }
+        return uniqSummits;
+    }
+
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
@@ -65,11 +90,11 @@ public class Point implements Serializable {
     }
 
     public Point deepCpy() {
-        return new Point(x, y);
+        return new Point(x, y, cardinality);
     }
 
     public boolean isInside(List<Point> outline, boolean includeBorder) {
-        return isInsideSegments(Segment.toSegments(outline), includeBorder);
+        return isInsideSegments(Segment.fromPoints(outline), includeBorder);
     }
 
     public boolean isInsideSegments(List<Segment> outlineSegments, boolean includeBorder) {

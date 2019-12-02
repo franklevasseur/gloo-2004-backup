@@ -545,6 +545,7 @@ public class UiController implements Initializable {
     }
 
     public void snapGridToggle() {
+        // TODO: ajouter un input box pour la taille des espaces snapgrid
         if (snapGridCheckBox.isSelected()) {
             this.snapGridUI.setVisibility(true);
             this.snapGridUI.renderForViewBox(this.getViewBoxSummits());

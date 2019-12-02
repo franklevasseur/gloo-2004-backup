@@ -134,4 +134,12 @@ public class SnapGridUI {
         this.parentNode.getChildren().removeIf(displayedLines::contains);
         this.displayedLines.clear();
     }
+
+    public void setSnapGridGap(double pGap){
+        gridGap = pGap;
+    }
+
+    public double getSnapGripGap(){
+        return this.gridGap;
+    }
 }

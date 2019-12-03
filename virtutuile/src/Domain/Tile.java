@@ -101,14 +101,18 @@ public class Tile implements Serializable {
         List<Segment> currentHalf = firstHalfSegments;
         List<Segment> otherHalf = secondHalfSegments;
 
-        int nIntersectionCounted = 0;
+        List<Point> alreadyTaggedIntersection = new ArrayList<>();
         for (Segment s : fullTileSegments) {
+            // on prend toujours la méthode extend finalement, j'ai pas le temps de mettre ca propre, j'suis désolé!
             Point intersection = true ? cuttingSegment.extendAndIntersect(s, Point.DOUBLE_TOLERANCE) : cuttingSegment.intersect(s, Point.DOUBLE_TOLERANCE);
-            if (intersection == null || nIntersectionCounted >= intersections.size()) {
+            if (intersection == null
+                    || alreadyTaggedIntersection.size() >= intersections.size()
+                    || !alreadyTaggedIntersection.stream().noneMatch(i -> i.isInRange(intersection, Point.DOUBLE_TOLERANCE))) {
                 currentHalf.add(s);
                 continue;
             }
-            nIntersectionCounted++;
+
+            alreadyTaggedIntersection.add(intersection);
 
             Point otherIntersection = intersection.isSame(intersections.get(0)) ? intersections.get(1) : intersections.get(0);
 

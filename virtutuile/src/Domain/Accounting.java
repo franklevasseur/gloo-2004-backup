@@ -26,8 +26,8 @@ public class Accounting {
         return this.material;
     }
     public double getNbBoxes() {
-        nbBoxes = usedTiles/ Double.valueOf(material.getNbTilePerBox());
-        return Math.ceil(nbBoxes);
+        nbBoxes = Math.ceil(usedTiles/ Double.valueOf(material.getNbTilePerBox()));
+        return nbBoxes;
     }
 
     public double getTotalCost() {

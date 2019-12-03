@@ -178,10 +178,13 @@ public class Controller {
         Maccount = account;
     }
 
-    public void getSurfaceAccount(List<Surface> pSurface){
+    public void getSurfaceAccount(List<SurfaceDto> pSurface){
         List<Accounting> account = new ArrayList<>();
-        for(Surface i: pSurface){
-            Accounting temp = new Accounting(pSurface, i.getTiles().get(0).getMaterial());
+        List<Surface> surfaces = pSurface.stream().map(dto -> {
+            return this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+        }).collect(Collectors.toList());
+        for(Surface i: surfaces){
+            Accounting temp = new Accounting(surfaces, i.getTiles().get(0).getMaterial());
             account.add(temp);
         }
         Maccount = account;

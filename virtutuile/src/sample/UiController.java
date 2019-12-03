@@ -268,6 +268,8 @@ public class UiController implements Initializable {
         fusionButton.setText("Fusion surfaces");
 
         selectionManager.unselectAll();
+        List<SurfaceUI> temp = new ArrayList<>();
+        this.getAccountingForSelectedSurface(temp);
         hideRectangleInfo();
     }
 
@@ -346,7 +348,6 @@ public class UiController implements Initializable {
             stateCurrentlyFusionning = true;
             fusionButton.setText("Fusion surfaces");
         }
-
         return null;
     }
 
@@ -358,29 +359,31 @@ public class UiController implements Initializable {
             NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
             try{
 
+                //ce block nest pu utile a cause de la propriété tiletypeHeight
                 //new Tile Height
                 CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
                 Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
-                //Double newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
+                newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
 
+                //ce block nest pu utile a cause de la propriété tiletypeWidth
                 //new Tile Width
                 CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
                 Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
-                //Double newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
+                newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
 
                 //new master Tile position
                 CharSequence masterTileXInput = this.masterTileX.getCharacters();
                 Double newMasterTileX = masterTileXInput.toString().equals("") ? null : format.parse(masterTileXInput.toString()).doubleValue();
-                //Double newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
+                newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
 
                 CharSequence masterTileYInput = this.masterTileY.getCharacters();
                 Double newMasterTileY = masterTileYInput.toString().equals("") ? null : format.parse(masterTileYInput.toString()).doubleValue();
-                //Double newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
+                newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
 
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
-                //Double newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
+                newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
@@ -389,12 +392,12 @@ public class UiController implements Initializable {
                 //new surface height
                 CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
                 double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
-                //double newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
+                newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
 
                 //new surface width
                 CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
-                //double newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
+                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
 
                 TileDto masterTile = null;
                 if (newTileWidth != null && newTileHeight != null && newMasterTileX != null && newMasterTileY != null) {
@@ -408,7 +411,7 @@ public class UiController implements Initializable {
                     masterTile = new TileDto();
                     masterTile.material = chosenMaterial;
 
-                    RectangleInfo masterTileRect = new RectangleInfo(new Point(newMasterTileX, newMasterTileY), newTileWidth, newTileHeight);
+                    RectangleInfo masterTileRect = new RectangleInfo(new Point(newMasterTileX, newMasterTileY), chosenMaterial.tileTypeWidth, chosenMaterial.tileTypeHeight);
                     masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
                     chosenSurface.setMasterTile(masterTile);
                 }
@@ -515,6 +518,7 @@ public class UiController implements Initializable {
         } else {
             materialColorDisplay.setText("");
         }
+        this.getAccountingForSelectedSurface(selectedSurfaces);
 
     }
 
@@ -605,7 +609,7 @@ public class UiController implements Initializable {
             surface.forceFill();
         }
 
-        renderFromProject();
+        this.renderFromProject();
     }
 
     public void unfillTiles() {
@@ -617,7 +621,7 @@ public class UiController implements Initializable {
             surface.hideTiles();
         }
         hideRectangleInfo();
-        renderFromProject();
+        this.renderFromProject();
     }
 
     public void setHole() {
@@ -628,7 +632,7 @@ public class UiController implements Initializable {
             domainController.updateSurface(surface.toDto());
         }
 
-        renderFromProject();
+        this.renderFromProject();
     }
 
     private void removeSelectedSurfaces() {
@@ -677,7 +681,7 @@ public class UiController implements Initializable {
     }
 
     private void renderFromProject() {
-
+        // TODO : Quand on aggrandit une surface le accounting update pas
         this.clearDrawings();
 
         this.undoButton.setDisable(!this.domainController.undoAvailable());
@@ -696,6 +700,7 @@ public class UiController implements Initializable {
 
                 tileMaterialChoiceBox.getItems().add(mDto.name);
             }
+            /**
             domainController.getAccounting();
             List<Accounting> account = domainController.Maccount;
             for (Accounting  accounting : account) {
@@ -713,7 +718,9 @@ public class UiController implements Initializable {
 
 
                 materialTableView.getItems().add(materialUI);
-            }
+            }*/
+            List<SurfaceUI> temp = new ArrayList<>();
+            getAccountingForSelectedSurface(temp);
         }
     }
 
@@ -794,19 +801,19 @@ public class UiController implements Initializable {
 
             CharSequence boxCost = this.boxPriceInputBox.getCharacters();
             dto.costPerBox = boxCost.toString().equals("") ? 0 : format.parse(boxCost.toString()).doubleValue();
-            //dto.costPerBox = boxCost.toString().equals("") ? 0 : Double.valueOf(boxCost.toString()).doubleValue();
+            dto.costPerBox = boxCost.toString().equals("") ? 0 : Double.parseDouble(boxCost.toString());
 
             CharSequence tilePerBox = this.tilePerBoxInputBox.getCharacters();
             dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
-            //dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
+            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
 
             CharSequence tileHeight = this.tileHeightMaterialInputBox.getCharacters();
             dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tileHeight.toString()).doubleValue();
-            //dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
+            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
 
             CharSequence tileWidth = this.tileWidthMaterialInputBox.getCharacters();
             dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tileWidth.toString()).doubleValue();
-            //dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
+            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
 
             domainController.createMaterial(dto);
 
@@ -1106,7 +1113,7 @@ public class UiController implements Initializable {
 
         String inspectionResult = domainController.inspectProject(minInspectionLength, minInspectionLength);
         inspectionArea.setText(String.format("Inspection result for min lenght = %.2f m : \n\n%s", minInspectionLength, inspectionResult));
-        renderFromProject();
+        this.renderFromProject();
     }
 
     public void SaveProject(){
@@ -1147,5 +1154,38 @@ public class UiController implements Initializable {
             parseSucess = false;
         }
         return parseSucess;
+    }
+
+    private void getAccountingForSelectedSurface(List<SurfaceUI> pSelectedSurfaces){
+        this.materialTableView.getItems().clear();
+
+            List<SurfaceDto> listDTO = new ArrayList<>();
+            for (SurfaceUI i : pSelectedSurfaces) {
+                if (i.toDto().isHole == HoleStatus.FILLED) {
+                    listDTO.add(i.toDto());
+                }
+            }
+            if(listDTO.size() == 0){
+                domainController.getAccounting();
+            }else{
+                domainController.getSurfaceAccount(listDTO);
+            }
+            List<Accounting> account = domainController.Maccount;
+            for (Accounting accounting : account) {
+
+                NumberFormat formatter = new DecimalFormat("#0.000");
+
+                MaterialUI materialUI = new MaterialUI();
+                materialUI.name = accounting.getMaterial().getMaterialName();
+                materialUI.pricePerBoxe = formatter.format(accounting.getMaterial().getCostPerBox());
+                materialUI.color = ColorHelper.utilsColorToString(accounting.getMaterial().getColor());
+                materialUI.tilePerBox = formatter.format(accounting.getMaterial().getNbTilePerBox());
+                materialUI.numberOfTiles = formatter.format(accounting.getUsedTiles());
+                materialUI.numberOfBoxes = formatter.format(accounting.getNbBoxes());
+                materialUI.totalPrice = formatter.format(accounting.getTotalCost());
+
+
+                materialTableView.getItems().add(materialUI);
+            }
     }
 }

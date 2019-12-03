@@ -132,6 +132,9 @@ public class UiController implements Initializable {
         materialTotalPriceColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("totalPrice"));
         nbTileColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("numberOfTiles"));
 
+        tileWidthInputbox.setDisable(true);
+        tileHeightInputbox.setDisable(true);
+
         this.snapGridUI = new SnapGridUI(this.drawingSection);
         this.selectionManager = new SelectionManager(this::handleSelection);
 
@@ -156,7 +159,7 @@ public class UiController implements Initializable {
             try {
                 CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
                 minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : format.parse(minInspectionLengthInput.toString()).doubleValue();
-                //minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : Double.valueOf(minInspectionLengthInput.toString()).doubleValue();
+//                minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : Double.valueOf(minInspectionLengthInput.toString()).doubleValue();
 
             } catch (ParseException e) {
                 parseSucess = false;
@@ -359,31 +362,30 @@ public class UiController implements Initializable {
             NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
             try{
 
-                //ce block nest pu utile a cause de la propriété tiletypeHeight
-                //new Tile Height
-                CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
-                Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
-                newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
-
-                //ce block nest pu utile a cause de la propriété tiletypeWidth
-                //new Tile Width
-                CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
-                Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
-                newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
+//                new Tile Height
+//                CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
+//                Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
+////                newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
+//
+//                //ce block nest pu utile a cause de la propriété tiletypeWidth
+//                //new Tile Width
+//                CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
+//                Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
+////                newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
 
                 //new master Tile position
                 CharSequence masterTileXInput = this.masterTileX.getCharacters();
                 Double newMasterTileX = masterTileXInput.toString().equals("") ? null : format.parse(masterTileXInput.toString()).doubleValue();
-                newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
+//                newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
 
                 CharSequence masterTileYInput = this.masterTileY.getCharacters();
                 Double newMasterTileY = masterTileYInput.toString().equals("") ? null : format.parse(masterTileYInput.toString()).doubleValue();
-                newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
+//                newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
 
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
-                newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
+//                newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
@@ -392,15 +394,15 @@ public class UiController implements Initializable {
                 //new surface height
                 CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
                 double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
-                newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
+//                newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
 
                 //new surface width
                 CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
-                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
+//                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
 
                 TileDto masterTile = null;
-                if (newTileWidth != null && newTileHeight != null && newMasterTileX != null && newMasterTileY != null) {
+                if (newMasterTileX != null && newMasterTileY != null) {
                     MaterialDto chosenMaterial = domainController
                             .getProject()
                             .materials
@@ -456,7 +458,10 @@ public class UiController implements Initializable {
     private PatternType checkPattern(PatternType newPattern, PatternType previous, TileDto masterTIile) {
         if (newPattern == PatternType.MIX || newPattern == PatternType.GROUP_MIX) {
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(masterTIile.summits);
-            boolean isAllowed = (tileRect.height - 2 * tileRect.width) < Point.DOUBLE_TOLERANCE;
+
+            double minSide = Math.min(tileRect.height, tileRect.width);
+            double maxSide = Math.min(tileRect.height, tileRect.width);
+            boolean isAllowed = (maxSide - 2 * minSide) < Point.DOUBLE_TOLERANCE;
 
             if (!isAllowed) {
                 patternPreconditionAlert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",
@@ -805,15 +810,15 @@ public class UiController implements Initializable {
 
             CharSequence tilePerBox = this.tilePerBoxInputBox.getCharacters();
             dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
-            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
+//            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
 
             CharSequence tileHeight = this.tileHeightMaterialInputBox.getCharacters();
             dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tileHeight.toString()).doubleValue();
-            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
+//            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
 
             CharSequence tileWidth = this.tileWidthMaterialInputBox.getCharacters();
             dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tileWidth.toString()).doubleValue();
-            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
+//            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
 
             domainController.createMaterial(dto);
 
@@ -849,8 +854,8 @@ public class UiController implements Initializable {
         dto.materialType = MaterialType.tileMaterial;
         dto.nbTilePerBox = 45;
         dto.costPerBox = 50;
-        dto.tileTypeHeight = 0.2;
-        dto.tileTypeWidth = 0.3;
+        dto.tileTypeHeight = 0.3;
+        dto.tileTypeWidth = 0.6;
         domainController.createMaterial(dto);
     }
 

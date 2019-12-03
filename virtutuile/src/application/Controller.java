@@ -88,7 +88,7 @@ public class Controller {
     public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto) {
 
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
-        Tile masterTile = masterTileDto != null ? SurfaceAssembler.fromDto(masterTileDto) : getDefaultTileForSurface(desiredSurface);
+        Tile masterTile = masterTileDto != null ? SurfaceAssembler.fromDto(masterTileDto) : getDefaultTile();
         SealsInfo sealing = sealingDto != null ? SurfaceAssembler.fromDto(sealingDto) : getDefaultSealing();
         PatternType pattern = patternType != null ? patternType : PatternType.DEFAULT;
 
@@ -102,9 +102,9 @@ public class Controller {
         return newDto.tiles;
     }
 
-    private Tile getDefaultTileForSurface(Surface surface) {
-        List<Point> tileSummits = RectangleHelper.rectangleInfoToSummits(new Point(0, 0), 0.3, 0.6);
+    private Tile getDefaultTile() {
         Material material = vraiProject.getMaterials().get(0);
+        List<Point> tileSummits = RectangleHelper.rectangleInfoToSummits(new Point(0, 0), material.getTileTypeWidth(), material.getTileTypeHeight());
         return new Tile(tileSummits, material);
     }
 

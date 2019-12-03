@@ -33,11 +33,32 @@ public class ShapeHelper {
     }
 
     public static boolean isAllOutside(AbstractShape small, AbstractShape big) {
-        if (areSame(small, big)) {
+        if (areSame(small, big) || allSummitsAreOnBorder(small, big)) {
             return false;
         }
 
         return small.summits.stream().allMatch(s -> !s.isInside(big.summits, false));
+    }
+
+    public static boolean allSummitsAreOnBorder(AbstractShape small, AbstractShape big) {
+        List<Segment> bigBorders = Segment.fromPoints(big.summits);
+
+        boolean allSummitsAreOnBorder = small.summits.stream().allMatch(
+                su -> bigBorders.stream().filter(
+                        seg -> seg.contains(su, Point.DOUBLE_TOLERANCE)).collect(Collectors.toList()).size() > 0);
+        return allSummitsAreOnBorder;
+    }
+
+    private static Point getMiddle(AbstractShape shape) {
+        double minX = getMinX(shape).x;
+        double minY = getMinY(shape).y;
+        double maxX = getMaxX(shape).x;
+        double maxY = getMaxY(shape).y;
+
+        double middleX = (maxX + minX) / 2;
+        double middleY = (maxY + minY) / 2;
+
+        return new Point(middleX, middleY);
     }
 
     public static boolean areSame(AbstractShape shape1, AbstractShape shape2) {

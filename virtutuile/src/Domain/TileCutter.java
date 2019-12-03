@@ -16,18 +16,19 @@ public class TileCutter implements Serializable {
         insideTiles.removeIf(tilesToCut::contains);
 
 //        uncomment to display in red desired tiles...
-        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
+//        Material newMaterialToCut = new Material(Color.RED, MaterialType.tileMaterial, "to cut");
 //        tilesToCut.forEach(t -> t.setMaterial(newMaterialToCut));
 
         List<Tile> tileResultantOfCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
-        List<Tile> newKeepers = tileResultantOfCut.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
+        List<Tile> newKeepers = tileResultantOfCut.stream().filter(t ->
+                !ShapeHelper.isAllOutside(new AbstractShape(t.getSummits()), new AbstractShape(surface.getSummits()))).collect(Collectors.toList());
         insideTiles.addAll(newKeepers);
 
-        List<Tile> unableToCutTiles = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
-        if (unableToCutTiles.size() > 0) {
-            System.out.println(String.format("System was unable to cut %d", unableToCutTiles.size()));
-        }
-        unableToCutTiles.forEach(t -> t.setMaterial(newMaterialToCut));
+//        List<Tile> unableToCutTiles = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
+//        if (unableToCutTiles.size() > 0) {
+//            System.out.println(String.format("System was unable to cut %d", unableToCutTiles.size()));
+//        }
+//        unableToCutTiles.forEach(t -> t.setMaterial(newMaterialToCut));
 
         return insideTiles;
     }
@@ -70,7 +71,21 @@ public class TileCutter implements Serializable {
         }
 
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits());
+        return isAllOutsidePolygon(surfaceShape, tile);
+    }
+
+    public boolean isAllOutsidePolygon(AbstractShape surfaceShape, Tile tile) {
         AbstractShape tileShape = new AbstractShape(tile.getSummits());
+
+        for (Segment segment: Segment.fromPoints(surfaceShape.summits)) {
+            List<Point> intersection = tile.findIntersections(segment, false);
+            List<Point> forbiddenPoints = Arrays.asList(surfaceShape.summits, tile.getSummits()).stream().flatMap(x -> x.stream()).collect(Collectors.toList());
+            intersection.removeIf(i -> forbiddenPoints.stream().anyMatch(p -> p.isInRange(i, Point.DOUBLE_TOLERANCE)));
+            if (intersection.size() > 0) {
+                return false;
+            }
+        }
+
         return ShapeHelper.isAllOutside(tileShape, surfaceShape);
     }
 
@@ -119,8 +134,7 @@ public class TileCutter implements Serializable {
         List<Tile> returned = Arrays.asList(tileToCut);
 
         for (Segment seg: surfaceSegments) {
-            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).filter(t ->
-                    !ShapeHelper.isAllOutside(new AbstractShape(t.getSummits()), surfaceShape)
+            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).filter(t -> !this.isAllOutsidePolygon(surfaceShape, tileToCut)
             ).collect(Collectors.toList());
         }
 

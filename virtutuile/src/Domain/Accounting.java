@@ -21,16 +21,17 @@ public class Accounting {
         nbBoxes = 0;
     }
 
+
     public Material getMaterial(){
         return this.material;
     }
     public double getNbBoxes() {
-        nbBoxes = F_usedTiles()/material.getNbTilePerBox();
+        nbBoxes = usedTiles/ Double.valueOf(material.getNbTilePerBox());
         return Math.ceil(nbBoxes);
     }
 
     public double getTotalCost() {
-        totalCost = material.getCostPerBox() * getNbBoxes();
+        totalCost = material.getCostPerBox() * nbBoxes;
         return totalCost;
     }
 
@@ -43,12 +44,16 @@ public class Accounting {
         for (Surface var : surfaces)
         {
             List<Tile> tiles = var.getTiles();
-            if (tiles.get(0).getMaterial().getMaterialName() == material.getMaterialName()){
-                usedTiles += tiles.size();
+            if (!(tiles.size() <= 0)){
+                if (tiles.get(0).getMaterial().getMaterialName() == material.getMaterialName()){
+                    usedTiles += tiles.size();
+                }
             }
+
         }
         return usedTiles;
     }
+
 
     private double TotalArea(){
         for ( Surface i: surfaces){

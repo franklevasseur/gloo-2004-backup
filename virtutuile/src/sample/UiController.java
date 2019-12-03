@@ -367,9 +367,11 @@ public class UiController implements Initializable {
                 //new master Tile position
                 CharSequence masterTileXInput = this.masterTileX.getCharacters();
                 Double newMasterTileX = masterTileXInput.toString().equals("") ? null : format.parse(masterTileXInput.toString()).doubleValue();
+                //Double newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
 
                 CharSequence masterTileYInput = this.masterTileY.getCharacters();
                 Double newMasterTileY = masterTileYInput.toString().equals("") ? null : format.parse(masterTileYInput.toString()).doubleValue();
+                //Double newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
 
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
@@ -700,9 +702,10 @@ public class UiController implements Initializable {
                 materialUI.pricePerBoxe = formatter.format(accounting.getMaterial().getCostPerBox());
                 materialUI.color = ColorHelper.utilsColorToString(accounting.getMaterial().getColor());
                 materialUI.tilePerBox = formatter.format(accounting.getMaterial().getNbTilePerBox());
+                materialUI.numberOfTiles = formatter.format(accounting.getUsedTiles());
                 materialUI.numberOfBoxes = formatter.format(accounting.getNbBoxes());
                 materialUI.totalPrice = formatter.format(accounting.getTotalCost());
-                materialUI.numberOfTiles = formatter.format(accounting.getUsedTiles());
+
 
                 materialTableView.getItems().add(materialUI);
             }
@@ -786,15 +789,19 @@ public class UiController implements Initializable {
 
             CharSequence boxCost = this.boxPriceInputBox.getCharacters();
             dto.costPerBox = boxCost.toString().equals("") ? 0 : format.parse(boxCost.toString()).doubleValue();
+            //dto.costPerBox = boxCost.toString().equals("") ? 0 : Double.valueOf(boxCost.toString()).doubleValue();
 
             CharSequence tilePerBox = this.tilePerBoxInputBox.getCharacters();
             dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
+            //dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
 
             CharSequence tileHeight = this.tileHeightMaterialInputBox.getCharacters();
-            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
+            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tileHeight.toString()).doubleValue();
+            //dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
 
             CharSequence tileWidth = this.tileWidthMaterialInputBox.getCharacters();
-            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
+            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tileWidth.toString()).doubleValue();
+            //dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
 
             domainController.createMaterial(dto);
 
@@ -828,6 +835,10 @@ public class UiController implements Initializable {
         dto.color = Color.GREEN;
         dto.name = "Melon d'eau";
         dto.materialType = MaterialType.tileMaterial;
+        dto.nbTilePerBox = 45;
+        dto.costPerBox = 50;
+        dto.tileTypeHeight = 0.2;
+        dto.tileTypeWidth = 0.3;
         domainController.createMaterial(dto);
     }
 

@@ -94,7 +94,7 @@ public class Tile implements Serializable {
             return Arrays.asList(this);
         }
         if (intersections.size() > 2) {
-            System.out.println(String.format("Icitte on coupe bord en bord, call une autre méthode si t'es pas content... La t'as %d intersections", intersections.size()));
+//            System.out.println(String.format("Icitte on coupe bord en bord, call une autre méthode si t'es pas content... La t'as %d intersections", intersections.size()));
             return Arrays.asList(this);
         }
 
@@ -132,7 +132,7 @@ public class Tile implements Serializable {
         List<Point> secondHalfSummits = Point.removeDuplicatedSummits(Point.fromSegments(secondHalfSegments), Point.DOUBLE_TOLERANCE);
 
         if (firstHalfSummits.size() < 3 || secondHalfSummits.size() < 3) {
-            System.out.println(String.format("WHAT THE FUCKKKKKKKKKKKK, firstHalf = %d, secondHalf = %d", firstHalfSummits.size(), secondHalfSummits.size()));
+//            System.out.println(String.format("WHAT THE FUCKKKKKKKKKKKK, firstHalf = %d, secondHalf = %d", firstHalfSummits.size(), secondHalfSummits.size()));
             return Arrays.asList(this);
         }
 

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -11,17 +9,18 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+
 <!--<?import javafx.scene.control.TreeTableColumn?>-->
 <!--<?import javafx.scene.control.TreeTableView?>-->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="920.0" prefWidth="1300.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="sample.UiController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="920.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.UiController">
   <children>
     <TabPane prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
       <tabs>
@@ -29,8 +28,8 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Save" onAction="#SaveProject"/>
-                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Load" onAction="#LoadProject" />
+                <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#SaveProject" prefHeight="47.0" prefWidth="65.0" text="Save" />
+                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" onAction="#LoadProject" prefHeight="47.0" prefWidth="65.0" text="Load" />
                 <Button layoutX="177.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="New" />
                 <Button fx:id="redoButton" layoutX="261.0" layoutY="13.0" mnemonicParsing="false" onAction="#redo" prefHeight="47.0" prefWidth="65.0" text="Redo" />
                 <Button fx:id="undoButton" layoutX="344.0" layoutY="13.0" mnemonicParsing="false" onAction="#undo" prefHeight="47.0" prefWidth="65.0" text="Undo" />
@@ -69,7 +68,7 @@
       <items>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="719.0" prefWidth="790.0">
           <children>
-            <Pane fx:id="pane" onMouseClicked="#onPaneClicked" onMouseMoved="#onMouseMoved" onScroll="#handleZoom" prefHeight="718.0" prefWidth="737.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Pane fx:id="pane" layoutX="7.0" onMouseClicked="#onPaneClicked" onMouseMoved="#onMouseMoved" onScroll="#handleZoom" prefHeight="718.0" prefWidth="737.0" style=" -fx-border-color:black; -fx-border-width: 1; -fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="7.0" AnchorPane.rightAnchor="-7.0" AnchorPane.topAnchor="0.0">
               <children>
                 <Label fx:id="tileInfo" layoutX="15.0" layoutY="668.0" prefWidth="500.0" />
                 <Pane fx:id="drawingSection" />
@@ -116,7 +115,7 @@
                         <Label text="Surface height" GridPane.rowIndex="8" />
                         <Label text="Surface width" GridPane.rowIndex="9" />
                         <TextField fx:id="materialColorDisplay" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                        <Label prefWidth="118.0" text="first Tile position" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label prefWidth="118.0" text="first Tile position" GridPane.rowIndex="3" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                           <children>
                             <TextField fx:id="masterTileX" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
@@ -171,12 +170,13 @@
                           <children>
                             <TableView fx:id="materialTableView" prefHeight="304.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                               <columns>
-                                <TableColumn prefWidth="87.0" text="Material name" fx:id="materialNameColumn" />
-                                <TableColumn minWidth="2.0" prefWidth="30.0" text="Box" fx:id="materialNumberOfBoxInputColumn" />
-                                <TableColumn prefWidth="56.0" text="Tile/box" fx:id="materialTilePerBoxColumn" />
-                                <TableColumn prefWidth="62.0" text="color" fx:id="materialColorColumn" />
-                                <TableColumn prefWidth="64.0" text="Price/box" fx:id="materialPricePerBoxColumn" />
-                                <TableColumn prefWidth="69.0" text="total price" fx:id="materialTotalPriceColumn" />
+                                <TableColumn fx:id="materialNameColumn" prefWidth="87.0" text="Material name" />
+                                <TableColumn fx:id="materialNumberOfBoxInputColumn" minWidth="2.0" prefWidth="30.0" text="Box" />
+                                                <TableColumn fx:id="nbTileColumn" prefWidth="75.0" text="number of tiles" />
+                                <TableColumn fx:id="materialTilePerBoxColumn" prefWidth="56.0" text="Tile/box" />
+                                <TableColumn fx:id="materialColorColumn" prefWidth="62.0" text="color" />
+                                <TableColumn fx:id="materialPricePerBoxColumn" prefWidth="64.0" text="Price/box" />
+                                <TableColumn fx:id="materialTotalPriceColumn" prefWidth="69.0" text="total price" />
                               </columns>
                             </TableView>
                           </children>
@@ -197,22 +197,28 @@
                             <Label text="Material color" GridPane.rowIndex="2" />
                             <TextField fx:id="materialNameInputBox" GridPane.columnIndex="1" />
                             <TextField fx:id="tilePerBoxInputBox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <Button mnemonicParsing="false" onAction="#createNewMaterial" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                            <Button mnemonicParsing="false" onAction="#createNewMaterial" text="Create" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                             <TextField fx:id="boxPriceInputBox" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                             <Label text="Box price" GridPane.rowIndex="3" />
                             <ChoiceBox fx:id="materialColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <TextField fx:id="tileHeightMaterialInputBox" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <TextField fx:id="tileWidthMaterialInputBox" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <Label text="Tile Height" GridPane.rowIndex="4" />
+                                          <Label text="Tile Width" GridPane.rowIndex="5" />
                           </children>
                           <columnConstraints>
                             <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="179.0" minWidth="10.0" prefWidth="147.0" />
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="151.0" minWidth="10.0" prefWidth="138.0" />
                           </columnConstraints>
                           <rowConstraints>
-                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
-                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
-                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
-                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="27.0" valignment="CENTER" vgrow="NEVER" />
-                            <RowConstraints maxHeight="541.0" minHeight="10.0" prefHeight="514.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="29.0" valignment="CENTER" vgrow="NEVER" />
+                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="56.0" valignment="CENTER" vgrow="NEVER" />
+                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="48.0" valignment="CENTER" vgrow="NEVER" />
+                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="56.0" valignment="CENTER" vgrow="NEVER" />
+                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="50.0" valignment="CENTER" vgrow="NEVER" />
+                            <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="71.0" valignment="CENTER" vgrow="NEVER" />
+                                          <RowConstraints maxHeight="541.0" minHeight="10.0" prefHeight="372.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
                       </children>

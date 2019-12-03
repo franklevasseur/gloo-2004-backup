@@ -1,5 +1,6 @@
 package sample;
 
+import Domain.Accounting;
 import Domain.HoleStatus;
 import Domain.MaterialType;
 import Domain.PatternType;
@@ -38,6 +39,8 @@ public class UiController implements Initializable {
     public TextField materialNameInputBox;
     public TextField tilePerBoxInputBox;
     public TextField boxPriceInputBox;
+    public TextField tileHeightMaterialInputBox;
+    public TextField tileWidthMaterialInputBox;
 
     public ChoiceBox<String> materialColorChoiceBox;
 
@@ -48,6 +51,7 @@ public class UiController implements Initializable {
     public TableColumn<MaterialUI,String> materialColorColumn;
     public TableColumn<MaterialUI,String> materialPricePerBoxColumn;
     public TableColumn<MaterialUI,String> materialTotalPriceColumn;
+    public TableColumn<MaterialUI,String> nbTileColumn;
 
     // surface properties inputs
     public TextField tileHeightInputbox;
@@ -124,6 +128,7 @@ public class UiController implements Initializable {
         materialColorColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("color"));
         materialPricePerBoxColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("pricePerBoxe"));
         materialTotalPriceColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("totalPrice"));
+        nbTileColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI,String>("numberOfTiles"));
 
         this.snapGridUI = new SnapGridUI(this.drawingSection);
         this.selectionManager = new SelectionManager(this::handleSelection);
@@ -155,6 +160,15 @@ public class UiController implements Initializable {
 
             if (parseSucess) {
                 inspectButton.setDisable(false);
+            }
+        });
+
+        materialNameInputBox.textProperty().addListener((observableValue, oldString, newString) -> {
+
+            if (!createMaterialListener()) {
+                inspectButton.setDisable(false);
+            }else {
+                inspectButton.setDisable(true);
             }
         });
 
@@ -672,17 +686,25 @@ public class UiController implements Initializable {
         if (project.materials != null) {
             this.tileMaterialChoiceBox.getItems().clear();
             for (MaterialDto mDto: project.materials) {
-                //List<accounting> account = domainController.Maccount;
+
+                tileMaterialChoiceBox.getItems().add(mDto.name);
+            }
+            domainController.getAccounting();
+            List<Accounting> account = domainController.Maccount;
+            for (Accounting  accounting : account) {
+
+                NumberFormat formatter = new DecimalFormat("#0.000");
+
                 MaterialUI materialUI = new MaterialUI();
-                materialUI.name = mDto.name;
-                materialUI.pricePerBoxe = "50";
-                materialUI.color = ColorHelper.utilsColorToString(mDto.color);
-                materialUI.tilePerBox = "50";
-                materialUI.numberOfBoxes = "50";
-                materialUI.totalPrice = "50$";
+                materialUI.name = accounting.getMaterial().getMaterialName();
+                materialUI.pricePerBoxe = formatter.format(accounting.getMaterial().getCostPerBox());
+                materialUI.color = ColorHelper.utilsColorToString(accounting.getMaterial().getColor());
+                materialUI.tilePerBox = formatter.format(accounting.getMaterial().getNbTilePerBox());
+                materialUI.numberOfBoxes = formatter.format(accounting.getNbBoxes());
+                materialUI.totalPrice = formatter.format(accounting.getTotalCost());
+                materialUI.numberOfTiles = formatter.format(accounting.getUsedTiles());
 
                 materialTableView.getItems().add(materialUI);
-                tileMaterialChoiceBox.getItems().add(materialUI.name);
             }
         }
     }
@@ -753,19 +775,42 @@ public class UiController implements Initializable {
     }
 
     public void createNewMaterial() {
-        if(materialColorChoiceBox.getValue() != null){
+
+        try{
+            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+
             MaterialDto dto = new MaterialDto();
             dto.materialType = MaterialType.tileMaterial;
             dto.name = materialNameInputBox.getText();
             dto.color = ColorHelper.stringToUtils(materialColorChoiceBox.getValue());
+
+            CharSequence boxCost = this.boxPriceInputBox.getCharacters();
+            dto.costPerBox = boxCost.toString().equals("") ? 0 : format.parse(boxCost.toString()).doubleValue();
+
+            CharSequence tilePerBox = this.tilePerBoxInputBox.getCharacters();
+            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
+
+            CharSequence tileHeight = this.tileHeightMaterialInputBox.getCharacters();
+            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
+
+            CharSequence tileWidth = this.tileWidthMaterialInputBox.getCharacters();
+            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
+
             domainController.createMaterial(dto);
 
             materialNameInputBox.clear();
             boxPriceInputBox.clear();
             tilePerBoxInputBox.clear();
+            tileHeightMaterialInputBox.clear();
+            tileWidthMaterialInputBox.clear();
+
 
             renderFromProject();
         }
+        catch (ParseException e){
+            displayRectangleInfo();
+        }
+
     }
 
     public void undo() {
@@ -1055,5 +1100,13 @@ public class UiController implements Initializable {
         // TODO: Linker le path au fichier a load
         domainController.loadProject("sauce");
         this.renderFromProject();
+    }
+
+    private boolean createMaterialListener(){
+        boolean parseSucess = true;
+        if(materialNameInputBox.getText() == null){
+            parseSucess = false;
+        }
+        return parseSucess;
     }
 }

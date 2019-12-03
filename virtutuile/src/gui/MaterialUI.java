@@ -8,6 +8,7 @@ public class MaterialUI {
     public String color;
     public String pricePerBoxe;
     public String totalPrice;
+    public String numberOfTiles;
 
     public String getName() {
         return name;
@@ -33,6 +34,7 @@ public class MaterialUI {
         return totalPrice;
     }
 
-
-
+    public String getNumberOfTiles() {
+        return numberOfTiles;
+    }
 }

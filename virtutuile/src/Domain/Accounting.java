@@ -5,7 +5,7 @@ import utils.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-public class accounting {
+public class Accounting {
 
     private List<Surface> surfaces = new ArrayList<>();
     private Material material;
@@ -13,7 +13,7 @@ public class accounting {
     private double totalCost;
     private double nbBoxes;
 
-    public accounting(List<Surface> pSurfaces, Material pMaterials){
+    public Accounting(List<Surface> pSurfaces, Material pMaterials){
         this.material = pMaterials;
         this.surfaces = pSurfaces;
         usedTiles = 0;
@@ -21,6 +21,9 @@ public class accounting {
         nbBoxes = 0;
     }
 
+    public Material getMaterial(){
+        return this.material;
+    }
     public double getNbBoxes() {
         nbBoxes = F_usedTiles()/material.getNbTilePerBox();
         return Math.ceil(nbBoxes);

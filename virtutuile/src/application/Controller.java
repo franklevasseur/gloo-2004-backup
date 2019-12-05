@@ -1,6 +1,7 @@
 package application;
 
 import Domain.*;
+import gui.ColorHelper;
 import utils.*;
 import utils.Point;
 
@@ -37,6 +38,24 @@ public class Controller {
     public void updateSurface(SurfaceDto surfaceDto) {
         this.internalUpdateSurface(surfaceDto);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
+    }
+
+    public void updateMaterial(MaterialDto materialDto){
+
+        List<Material> allMaterials = vraiProject.getMaterials();
+        for (Material material : allMaterials){
+            if(material.getMaterialName() == materialDto.name){
+                material.setColor(materialDto.color);
+                material.setCostPerBox(materialDto.costPerBox);
+                material.setNbTilePerBox(materialDto.nbTilePerBox);
+                material.setTileTypeHeight(materialDto.tileTypeHeight);
+                material.setTileTypeWidth(materialDto.tileTypeWidth);
+//                MaterialAssembler.fromDto(materialDto);
+            }
+        }
+
+
+        //TODO undo/redo manager ?
     }
 
     private void internalUpdateSurface(SurfaceDto surfaceDto) {
@@ -202,5 +221,14 @@ public class Controller {
         // TODO: Cette methode n'est pas linké avec le ui
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
         return inspector.inspect(desiredSurface, pWidth, pHeight);
+    }
+    public Material getSelectedMaterial(MaterialDto materialDto){
+        Material material = new Material(materialDto.color,MaterialType.tileMaterial,materialDto.name);
+        for(Material m:vraiProject.getMaterials()){
+            if(m.getMaterialName().equals(material.getMaterialName())){
+                material = m;
+            }
+        }
+        return material;
     }
 }

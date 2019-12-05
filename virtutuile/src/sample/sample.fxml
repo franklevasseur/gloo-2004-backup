@@ -131,6 +131,8 @@
                                     </AnchorPane>
                                     <Button fx:id="snapGridbutton" mnemonicParsing="false" onAction="#snapGridApply" text="Snap grid " GridPane.columnIndex="1" GridPane.rowIndex="18" />
                                     <Label fx:id="snapgridLabel" text="Snap grid dimensions" GridPane.rowIndex="17" />
+                                    <Label text="Tile shifting" GridPane.rowIndex="4" />
+                                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" />
                       </children>
                       <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -192,7 +194,22 @@
                             </TableView>
                           </children>
                         </AnchorPane>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="297.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="297.0">
+                                       <children>
+                                          <ChoiceBox fx:id="editTileMaterialChoiceBox" layoutX="186.0" layoutY="31.0" prefWidth="150.0" />
+                                          <TextField fx:id="mNewHeightInputBox" layoutX="187.0" layoutY="73.0" />
+                                          <TextField fx:id="mNewLenghtInputBox" layoutX="187.0" layoutY="109.0" />
+                                          <Label layoutX="64.0" layoutY="35.0" text="Material" />
+                                          <Label layoutX="64.0" layoutY="77.0" text="Material height" />
+                                          <Label layoutX="64.0" layoutY="113.0" text="Materal width" />
+                                          <Label layoutX="64.0" layoutY="148.0" text="Material color" />
+                                          <Button layoutX="262.0" layoutY="279.0" mnemonicParsing="false" onAction="#editMaterialButton" text="Apply" />
+                                          <TextField fx:id="mNewTilePerBoxInput" layoutX="187.0" layoutY="177.0" />
+                                          <TextField fx:id="mNewPricePerBoxInputBox" layoutX="188.0" layoutY="215.0" />
+                                          <Label layoutX="48.0" layoutY="181.0" text="Number of tile per Box" />
+                                          <Label layoutX="70.0" layoutY="219.0" text="Price per box" />
+                                          <ChoiceBox fx:id="mNewColorInputBox" layoutX="187.0" layoutY="144.0" prefWidth="150.0" />
+                                       </children></AnchorPane>
                       </items>
                     </SplitPane>
                   </content>

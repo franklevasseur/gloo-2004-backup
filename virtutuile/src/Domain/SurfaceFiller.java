@@ -165,7 +165,6 @@ class SurfaceFiller implements Serializable {
     private List<Tile> fillSurfaceWithOneOrientation(Surface surface, Tile pMasterTile, SealsInfo sealing, double horizontalShift, double verticalShift, double angle) {
 
         AbstractShape surfaceShape;
-
         Tile masterTile = pMasterTile.deepCopy();
 
         if (angle == 0){

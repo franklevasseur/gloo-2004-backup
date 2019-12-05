@@ -120,7 +120,7 @@ public class UiController implements Initializable {
 
     private Controller domainController = Controller.getInstance();
 
-    Alert patternPreconditionAlert = new Alert(Alert.AlertType.INFORMATION);
+    Alert alert = new Alert(Alert.AlertType.WARNING);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -191,7 +191,7 @@ public class UiController implements Initializable {
             }
         });
 
-        patternPreconditionAlert.setTitle("WARNING");
+        alert.setTitle("WARNING");
         hideSnapgridInfo();
 
         editTileMaterialChoiceBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> displayMaterialInfo()));
@@ -460,7 +460,11 @@ public class UiController implements Initializable {
                     PatternType fallBackPattern = chosenSurface.getPattern() == null ? PatternType.DEFAULT : chosenSurface.getPattern();
                     pattern = checkPattern(pattern, fallBackPattern, masterTile);
                     chosenSurface.setPattern(pattern);
+
+                    tileAngle = checkTileAngle(tileAngle);
                     chosenSurface.setTileAngle(tileAngle);
+
+                    tileShift = checkShift(tileShift);
                     chosenSurface.setTileShifting(tileShift);
                     this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, pattern, sealsInfoDto, tileAngle, tileShift);
                 }
@@ -487,14 +491,34 @@ public class UiController implements Initializable {
             boolean isAllowed = (maxSide - 2 * minSide) < Point.DOUBLE_TOLERANCE;
 
             if (!isAllowed) {
-                patternPreconditionAlert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",
+                alert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",
                         PatternHelperUI.patternToDisplayString(newPattern)));
-                patternPreconditionAlert.setContentText(String.format("Falling back on pattern '%s'", PatternHelperUI.patternToDisplayString(previous)));
-                patternPreconditionAlert.showAndWait();
+                alert.setContentText(String.format("Falling back on pattern '%s'", PatternHelperUI.patternToDisplayString(previous)));
+                alert.showAndWait();
                 return previous;
             }
         }
         return newPattern;
+    }
+
+    private double checkShift(double newShift) {
+//        if (false) {
+//            alert.setHeaderText(String.format("Tile shift must be a percentage between 0 and 100... %f is out of bound", newShift));
+//            alert.setContentText(String.format("Falling back on shift = %f", 0.0));
+//            alert.showAndWait();
+//            return 0;
+//        }
+        return newShift;
+    }
+
+    private double checkTileAngle(double newAngle) {
+        if (newAngle < 0 || newAngle > 90) {
+            alert.setHeaderText(String.format("Tile angle must be an angle in degrees between 0 and 90... %.1f is out of bound", newAngle));
+            alert.setContentText(String.format("Falling back on angle = %f", 0.0));
+            alert.showAndWait();
+            return 0;
+        }
+        return newAngle;
     }
 
     private void displayRectangleInfo() {

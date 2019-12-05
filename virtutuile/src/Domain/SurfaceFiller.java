@@ -4,6 +4,7 @@ import utils.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -233,10 +234,13 @@ class SurfaceFiller implements Serializable {
 
     private List<Tile> fillSurfaceWithAngle(Surface surface, Tile masterTile, SealsInfo sealing) {
 
-        double degreesAngle = 20;
+        // TODO décalage part à partir d'un coin qui n'existe pas...
 
-        AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
+        double degreesAngle = 45;
+
+        AbstractShape surfaceShape = new AbstractShape(surface.getSummits().stream().map(s -> s.transform(degreesAngle)).collect(Collectors.toList()), false);
         utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
+
         double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
         double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
 
@@ -262,11 +266,10 @@ class SurfaceFiller implements Serializable {
         double yTranslation = -(masterTileLineIndex * tileHeight);
 
         Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
-        Point firstCornerPrime = firstCorner.transform(degreesAngle);
 
         for (int line = 0; line < amountOfLines; line++) {
             for (int column = 0; column < amountOfColumns; column++) {
-                Point topLeftCorner = Point.translate(firstCornerPrime, column * unitOfWidth, line * unitOfHeight);
+                Point topLeftCorner = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
 
                 RectangleInfo rectangleInfo = new RectangleInfo(topLeftCorner, tileWidth, tileHeight);
                 List<Point> summits = RectangleHelper.rectangleInfoToSummits(rectangleInfo);
@@ -279,6 +282,6 @@ class SurfaceFiller implements Serializable {
             }
         }
 
-        return tiles;
+        return tileCutter.cutTilesThatExceed(surface, tiles);
     }
 }

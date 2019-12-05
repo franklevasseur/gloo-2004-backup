@@ -12,18 +12,18 @@ class SurfaceFiller implements Serializable {
 
     private TileCutter tileCutter = new TileCutter();
 
-    public List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealsInfo, PatternType type) {
+    public List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealsInfo, PatternType type, double angle) {
 
         if (type == PatternType.DEFAULT) {
-            return fillSurfaceWithDefaults(surface, masterTile, sealsInfo);
+            return fillSurfaceWithDefaults(surface, masterTile, sealsInfo, angle);
         }
 
         if (type == PatternType.HORIZONTAL_SHIFT) {
-            return fillSurfaceWithHorizontalShift(surface, masterTile, sealsInfo);
+            return fillSurfaceWithHorizontalShift(surface, masterTile, sealsInfo, angle);
         }
 
         if (type == PatternType.VERTICAL_SHIFT) {
-            return fillSurfaceWithVertcialShift(surface, masterTile, sealsInfo);
+            return fillSurfaceWithVertcialShift(surface, masterTile, sealsInfo, angle);
         }
 
         if (type == PatternType.MIX) {
@@ -34,25 +34,21 @@ class SurfaceFiller implements Serializable {
             return fillSurfaceWithGroupMix(surface, masterTile, sealsInfo);
         }
 
-        if (type == PatternType.X) {
-            return fillSurfaceWithAngle(surface, masterTile, sealsInfo);
-        }
-
-        return fillSurfaceWithDefaults(surface, masterTile, sealsInfo);
+        return fillSurfaceWithDefaults(surface, masterTile, sealsInfo, 0);
     }
 
-    private List<Tile> fillSurfaceWithDefaults(Surface surface, Tile masterTile, SealsInfo sealing) {
-        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, 0);
+    private List<Tile> fillSurfaceWithDefaults(Surface surface, Tile masterTile, SealsInfo sealing, double angle) {
+        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, 0, angle);
     }
 
-    private List<Tile> fillSurfaceWithHorizontalShift(Surface surface, Tile masterTile, SealsInfo sealing) {
+    private List<Tile> fillSurfaceWithHorizontalShift(Surface surface, Tile masterTile, SealsInfo sealing, double angle) {
         double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
-        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, shift, 0);
+        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, shift, 0, angle);
     }
 
-    private List<Tile> fillSurfaceWithVertcialShift(Surface surface, Tile masterTile, SealsInfo sealing) {
+    private List<Tile> fillSurfaceWithVertcialShift(Surface surface, Tile masterTile, SealsInfo sealing, double angle) {
         double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
-        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, shift);
+        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, shift, angle);
     }
 
     private  List<Tile> fillSurfaceWithMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {
@@ -176,9 +172,24 @@ class SurfaceFiller implements Serializable {
     }
 
 
-    private List<Tile> fillSurfaceWithOneOrientation(Surface surface, Tile masterTile, SealsInfo sealing, double horizontalShift, double verticalShift) {
+    private List<Tile> fillSurfaceWithOneOrientation(Surface surface, Tile pMasterTile, SealsInfo sealing, double horizontalShift, double verticalShift, double angle) {
 
-        AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
+        AbstractShape surfaceShape;
+
+        Tile masterTile = pMasterTile.deepCopy();
+
+        if (angle == 0){
+            surfaceShape = new AbstractShape(surface.getSummits());
+        } else if (angle == 90) {
+            surfaceShape = new AbstractShape(surface.getSummits());
+            masterTile.setSummits(RectangleHelper.flip(masterTile.getSummits()));
+        } else if (angle > 90 || angle < 0) {
+            throw new RuntimeException("L'angle doit être entre 0 et 90 mon ti gars :P");
+        }
+        else {
+            surfaceShape = new AbstractShape(surface.getSummits().stream().map(s -> s.transform(angle)).collect(Collectors.toList()));
+        }
+
         utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
         double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
         double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
@@ -223,59 +234,12 @@ class SurfaceFiller implements Serializable {
                     topLeftCorner = topLeftCorner.translate(new Point(0, actualVerticalShift));
                 }
 
-                Tile nextTile = new Tile(RectangleHelper.rectangleInfoToSummits(topLeftCorner, tileWidth, tileHeight), masterTile.getMaterial());
-
-                tiles.add(nextTile);
-            }
-        }
-
-        return tileCutter.cutTilesThatExceed(surface, tiles);
-    }
-
-    private List<Tile> fillSurfaceWithAngle(Surface surface, Tile masterTile, SealsInfo sealing) {
-
-        // TODO décalage part à partir d'un coin qui n'existe pas...
-
-        double degreesAngle = 45;
-
-        AbstractShape surfaceShape = new AbstractShape(surface.getSummits().stream().map(s -> s.transform(degreesAngle)).collect(Collectors.toList()), false);
-        utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
-
-        double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
-        double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
-
-        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.getSummits());
-        double tileWidth = info.width;
-        double tileHeight = info.height;
-
-        List<Tile> tiles = new ArrayList<>();
-
-        double unitOfWidth = tileWidth + sealing.getWidth();
-        double unitOfHeight = tileHeight + sealing.getWidth();
-
-        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight) + 2; // 2 is for security...
-        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth) + 2;
-
-        Point masterTileRelativeCorner = info.topLeftCorner;
-        Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
-
-        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
-        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
-
-        double xTranslation = -(masterTileColumnIndex * tileWidth);
-        double yTranslation = -(masterTileLineIndex * tileHeight);
-
-        Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
-
-        for (int line = 0; line < amountOfLines; line++) {
-            for (int column = 0; column < amountOfColumns; column++) {
-                Point topLeftCorner = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
-
                 RectangleInfo rectangleInfo = new RectangleInfo(topLeftCorner, tileWidth, tileHeight);
                 List<Point> summits = RectangleHelper.rectangleInfoToSummits(rectangleInfo);
 
-                summits = summits.stream().map(x -> x.transformBack(degreesAngle)).collect(Collectors.toList());
-
+                if (angle != 0 && angle != 90) {
+                    summits = summits.stream().map(x -> x.transformBack(angle)).collect(Collectors.toList());
+                }
                 Tile nextTile = new Tile(summits, masterTile.getMaterial());
 
                 tiles.add(nextTile);

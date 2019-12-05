@@ -84,7 +84,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
                     controller.updateSurface(this.toDto());
                     return;
                 }
-                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo));
+                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle));
             }
         });
 
@@ -117,7 +117,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
     }
 
     public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo));
+        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle));
         setRectangleColor();
     }
 
@@ -138,7 +138,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
 
     public void commitIncreaseSize() {
         if (this.isHole == HoleStatus.FILLED) {
-            this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo));
+            this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle));
             return;
         }
         this.controller.updateSurface(this.toDto());

@@ -25,6 +25,8 @@ public class SurfaceAssembler {
         dto.tiles = surface.getTiles().stream().map(t -> toDto(t)).collect(Collectors.toList());
         dto.pattern = surface.getPattern();
 
+        dto.tileAngle = surface.getTileAngle();
+
         if (surface.getMasterTile() != null) {
             dto.masterTile = toDto(surface.getMasterTile());
         }
@@ -51,6 +53,7 @@ public class SurfaceAssembler {
         destinationSurface.setHole(dto.isHole);
         destinationSurface.setSummits(summits);
         destinationSurface.setIsRectangular(dto.isRectangular);
+        destinationSurface.setTileAngle(dto.tileAngle);
         if (dto.masterTile != null) {
             destinationSurface.setMasterTile(fromDto(dto.masterTile));
         }

@@ -31,6 +31,9 @@ public abstract class SurfaceUI {
     protected SelectionManager selectionManager;
     protected SnapGridUI snapGrid;
 
+    protected double tileAngle;
+    protected double tileShift;
+
     protected List<TileUI> tiles;
 
     protected Label tileInfoTextField;
@@ -52,6 +55,7 @@ public abstract class SurfaceUI {
         this.selectionManager = selectionManager;
         this.snapGrid = snapGrid;
         this.tileInfoTextField = tileInfoLabel;
+        this.tileAngle  = surfaceDto.tileAngle;
 
         this.surfaceGroup = new Group();
         this.id = surfaceDto.id;
@@ -160,5 +164,21 @@ public abstract class SurfaceUI {
 
         this.tiles = tiles.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager, this)).collect(Collectors.toList());
         this.surfaceGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
+    }
+
+    public double getTileAngle() {
+        return tileAngle;
+    }
+
+    public void setTileAngle(double tileAngle) {
+        this.tileAngle = tileAngle;
+    }
+
+    public double getTileShift() {
+        return tileShift;
+    }
+
+    public void setTileShift(double tileShift) {
+        this.tileShift = tileShift;
     }
 }

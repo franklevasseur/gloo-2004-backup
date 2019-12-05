@@ -18,6 +18,8 @@ public class SurfaceDto {
     public SealsInfoDto sealsInfoDto;
     public PatternType pattern;
 
+    public double tileAngle;
+
     public List<Point> summits; // summits in meters
     public List<TileDto> tiles;
     public List<SurfaceDto> fusionnedSurface;

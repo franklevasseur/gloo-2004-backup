@@ -22,6 +22,8 @@ public class Surface implements Serializable {
     private Tile masterTile;
     private PatternType pattern;
 
+    private double tileAngle;
+
     public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular) {
         this.isHole = pIsHole;
         this.summits = pSummits;
@@ -61,10 +63,11 @@ public class Surface implements Serializable {
         this.tiles = tiles;
     }
 
-    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType) {
+    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType, double angle) {
         this.sealsInfo = pSealsInfo;
+        this.tileAngle = angle;
 
-        tiles = surfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType);
+        tiles = surfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType, angle);
 
         // très important !!
         isHole = HoleStatus.FILLED;
@@ -92,7 +95,7 @@ public class Surface implements Serializable {
         return new AbstractShape(summits, this.isHole == HoleStatus.HOLE);
     }
 
-    public double getWidth(){
+    public double getWidth() {
         return ShapeHelper.getWidth(this.toAbstractShape());
     }
 
@@ -114,5 +117,13 @@ public class Surface implements Serializable {
 
     public void setPattern(PatternType pattern) {
         this.pattern = pattern;
+    }
+
+    public double getTileAngle() {
+        return tileAngle;
+    }
+
+    public void setTileAngle(double tileAngle) {
+        this.tileAngle = tileAngle;
     }
 }

@@ -20,8 +20,6 @@ public class PatternHelperUI {
             tilePatternString = "Mix";
         } else if (pattern == PatternType.GROUP_MIX) {
             tilePatternString = "Group mix";
-        } else if (pattern == PatternType.X) {
-            tilePatternString = "X";
         } else {
             tilePatternString = "";
         }
@@ -40,8 +38,6 @@ public class PatternHelperUI {
             pattern = PatternType.MIX;
         } else if (tilePatternString == "Group mix") {
             pattern = PatternType.GROUP_MIX;
-        } else if (tilePatternString == "X") {
-            pattern = PatternType.X;
         } else {
             pattern = PatternType.DEFAULT;
         }

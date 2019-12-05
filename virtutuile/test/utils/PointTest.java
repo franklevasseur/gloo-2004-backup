@@ -154,4 +154,76 @@ class PointTest {
         assertTrue(simplifiedPoints.get(2).isSame(bottomRight));
         assertTrue(simplifiedPoints.get(3).isSame(bottomLeft));
     }
+
+    @Test
+    void transform_withInFirstCadrant() {
+        // arrange
+        Point point1 = new Point(10, 10);
+        Point point2 = new Point(1, 10);
+        Point point3 = new Point(10, 1);
+
+        // act
+        Point actual1 = point1.transform(20).transformBack(20);
+        Point actual2 = point2.transform(20).transformBack(20);
+        Point actual3 = point3.transform(20).transformBack(20);
+
+        // assert
+        assertTrue(actual1.isInRange(point1, 1e-5));
+        assertTrue(actual2.isInRange(point2, 1e-5));
+        assertTrue(actual3.isInRange(point3, 1e-5));
+    }
+
+    @Test
+    void transform_withInFourthCadrant() {
+        // arrange
+        Point point1 = new Point(10, -10);
+        Point point2 = new Point(1, -10);
+        Point point3 = new Point(10, -1);
+
+        // act
+        Point actual1 = point1.transform(20).transformBack(20);
+        Point actual2 = point2.transform(20).transformBack(20);
+        Point actual3 = point3.transform(20).transformBack(20);
+
+        // assert
+        assertTrue(actual1.isInRange(point1, 1e-5));
+        assertTrue(actual2.isInRange(point2, 1e-5));
+        assertTrue(actual3.isInRange(point3, 1e-5));
+    }
+
+    @Test
+    void transform_withInThirdCadrant() {
+        // arrange
+        Point point1 = new Point(-10, -10);
+        Point point2 = new Point(-1, -10);
+        Point point3 = new Point(-10, -1);
+
+        // act
+        Point actual1 = point1.transform(20).transformBack(20);
+        Point actual2 = point2.transform(20).transformBack(20);
+        Point actual3 = point3.transform(20).transformBack(20);
+
+        // assert
+        assertTrue(actual1.isInRange(point1, 1e-5));
+        assertTrue(actual2.isInRange(point2, 1e-5));
+        assertTrue(actual3.isInRange(point3, 1e-5));
+    }
+
+    @Test
+    void transform_withInSecondCadrant() {
+        // arrange
+        Point point1 = new Point(-10, 10);
+        Point point2 = new Point(-1, 10);
+        Point point3 = new Point(-10, 1);
+
+        // act
+        Point actual1 = point1.transform(20).transformBack(20);
+        Point actual2 = point2.transform(20).transformBack(20);
+        Point actual3 = point3.transform(20).transformBack(20);
+
+        // assert
+        assertTrue(actual1.isInRange(point1, 1e-5));
+        assertTrue(actual2.isInRange(point2, 1e-5));
+        assertTrue(actual3.isInRange(point3, 1e-5));
+    }
 }

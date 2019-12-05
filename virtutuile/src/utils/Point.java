@@ -129,9 +129,10 @@ public class Point implements Serializable {
         }
 
         Segment segment = new Segment(origin, this);
+        double phi = segment.getAngle();
+
 
         double r = segment.getLenght();
-        double phi = segment.getAngle();
         double gamma = phi - theta;
 
         return new Point(r * Math.cos(Math.toRadians(gamma)), r * Math.sin(Math.toRadians(gamma)));

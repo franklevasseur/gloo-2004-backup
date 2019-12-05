@@ -156,7 +156,14 @@ public class Segment {
     }
 
     public double getAngle() {
-        return Math.toDegrees(Math.atan(getSlope()));
+        double shortestAngle = Math.toDegrees(Math.atan(getSlope()));
+        if (deltaX() < 0) {
+            return shortestAngle + 180;
+        }
+        if (deltaX() > 0 && deltaY() < 0) {
+            return shortestAngle + 360;
+        }
+        return shortestAngle;
     }
 
     public boolean isPerpendicular(Segment other, double tolerance) {

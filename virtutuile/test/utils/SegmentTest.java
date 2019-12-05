@@ -86,4 +86,25 @@ class SegmentTest {
         // assert
         assertTrue(intersect.isSame(new Point(0, 0)));
     }
+
+    @Test
+    public void getAngle() {
+        // arrange
+        Segment seg1 = new Segment(new Point(0, 0), new Point(5, 5));
+        Segment seg2 = new Segment(new Point(0, 0), new Point(-5, 5));
+        Segment seg3 = new Segment(new Point(0, 0), new Point(-5, -5));
+        Segment seg4 = new Segment(new Point(0, 0), new Point(5, -5));
+
+        // act
+        double angle1 = seg1.getAngle();
+        double angle2 = seg2.getAngle();
+        double angle3 = seg3.getAngle();
+        double angle4 = seg4.getAngle();
+
+        // assert
+        assertEquals(angle1, 45);
+        assertEquals(angle2, 135);
+        assertEquals(angle3, 225);
+        assertEquals(angle4, 315);
+    }
 }

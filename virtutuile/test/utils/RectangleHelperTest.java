@@ -42,4 +42,52 @@ class RectangleHelperTest {
         assertTrue(new Point(5, 10).isSame(summits.get(2)));
         assertTrue(new Point(0, 10).isSame(summits.get(3)));
     }
+
+    @Test
+    void isARectangle_withHorizontalRectangle_shouldReturnTrue() {
+        // arrange
+        List<Point> summits = new ArrayList<>();
+        summits.add(new Point(0,0));
+        summits.add(new Point(0,10));
+        summits.add(new Point(10,10));
+        summits.add(new Point(10,0));
+
+        // act
+        boolean actual = RectangleHelper.isARectangle(summits);
+
+        // assert
+        assertTrue(actual);
+    }
+
+    @Test
+    void isARectangle_withNotARectangleRectangle_shouldReturnFalse() {
+        // arrange
+        List<Point> summits = new ArrayList<>();
+        summits.add(new Point(0,0));
+        summits.add(new Point(0,10));
+        summits.add(new Point(10,10));
+        summits.add(new Point(5,5));
+
+        // act
+        boolean actual = RectangleHelper.isARectangle(summits);
+
+        // assert
+        assertFalse(actual);
+    }
+
+    @Test
+    void isInclinedRectangle_withInclinedRectangle_shouldWork() {
+        // arrange
+        List<Point> summits = new ArrayList<>();
+        summits.add(new Point(5,0));
+        summits.add(new Point(0,5));
+        summits.add(new Point(10,15));
+        summits.add(new Point(15,10));
+
+        // act
+        boolean actual = RectangleHelper.isInclinedRectangle(summits);
+
+        // assert
+        assertTrue(actual);
+    }
 }

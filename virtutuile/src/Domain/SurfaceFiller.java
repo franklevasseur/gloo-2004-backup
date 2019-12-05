@@ -5,6 +5,7 @@ import utils.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 class SurfaceFiller implements Serializable {
 
@@ -33,7 +34,7 @@ class SurfaceFiller implements Serializable {
         }
 
         if (type == PatternType.X) {
-            throw new RuntimeException("Pas encore implémenté le gros...");
+            return fillSurfaceWithAngle(surface, masterTile, sealsInfo);
         }
 
         return fillSurfaceWithDefaults(surface, masterTile, sealsInfo);
@@ -228,5 +229,56 @@ class SurfaceFiller implements Serializable {
         }
 
         return tileCutter.cutTilesThatExceed(surface, tiles);
+    }
+
+    private List<Tile> fillSurfaceWithAngle(Surface surface, Tile masterTile, SealsInfo sealing) {
+
+        double degreesAngle = 20;
+
+        AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
+        utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
+        double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
+        double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
+
+        RectangleInfo info = RectangleHelper.summitsToRectangleInfo(masterTile.getSummits());
+        double tileWidth = info.width;
+        double tileHeight = info.height;
+
+        List<Tile> tiles = new ArrayList<>();
+
+        double unitOfWidth = tileWidth + sealing.getWidth();
+        double unitOfHeight = tileHeight + sealing.getWidth();
+
+        int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight) + 2; // 2 is for security...
+        int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth) + 2;
+
+        Point masterTileRelativeCorner = info.topLeftCorner;
+        Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
+
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+
+        double xTranslation = -(masterTileColumnIndex * tileWidth);
+        double yTranslation = -(masterTileLineIndex * tileHeight);
+
+        Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
+        Point firstCornerPrime = firstCorner.transform(degreesAngle);
+
+        for (int line = 0; line < amountOfLines; line++) {
+            for (int column = 0; column < amountOfColumns; column++) {
+                Point topLeftCorner = Point.translate(firstCornerPrime, column * unitOfWidth, line * unitOfHeight);
+
+                RectangleInfo rectangleInfo = new RectangleInfo(topLeftCorner, tileWidth, tileHeight);
+                List<Point> summits = RectangleHelper.rectangleInfoToSummits(rectangleInfo);
+
+                summits = summits.stream().map(x -> x.transformBack(degreesAngle)).collect(Collectors.toList());
+
+                Tile nextTile = new Tile(summits, masterTile.getMaterial());
+
+                tiles.add(nextTile);
+            }
+        }
+
+        return tiles;
     }
 }

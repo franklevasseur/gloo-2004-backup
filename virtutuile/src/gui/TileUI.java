@@ -6,8 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import utils.*;
 
 import java.util.Arrays;
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class TileUI {
 
-    private Shape shape;
+    private Polygon shape;
     private Label tileInfoTextField;
     private ZoomManager zoomManager;
     private MaterialDto material;
@@ -32,14 +30,9 @@ public class TileUI {
         isCut = dto.isCut;
         pixelSummits = dto.summits.stream().map(s -> zoomManager.metersToPixels(s)).collect(Collectors.toList());
 
-        if (dto.isCut) {
-            List<Double> flattedSummits = pixelSummits.stream().flatMap(p -> Arrays.asList(p.x, p.y).stream()).collect(Collectors.toList());
-            shape = new Polygon();
-            ((Polygon) shape).getPoints().addAll(flattedSummits);
-        } else {
-            RectangleInfo rectInfo = RectangleHelper.summitsToRectangleInfo(pixelSummits);
-            shape = new Rectangle(rectInfo.topLeftCorner.x, rectInfo.topLeftCorner.y, rectInfo.width, rectInfo.height);
-        }
+        List<Double> flattedSummits = pixelSummits.stream().flatMap(p -> Arrays.asList(p.x, p.y).stream()).collect(Collectors.toList());
+        shape = new Polygon();
+        shape.getPoints().addAll(flattedSummits);
 
         if (material.color == utils.Color.BLACK) {
             shape.setFill(Color.BLACK);

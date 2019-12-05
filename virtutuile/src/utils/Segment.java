@@ -115,8 +115,16 @@ public class Segment {
         return (getSlope() * x) + getYAxisIntercept();
     }
 
-    public double getSlope() {
-        return (pt2.y - pt1.y) / (pt2.x - pt1.x);
+    private double getSlope() {
+        return  deltaY() / deltaX();
+    }
+
+    private double deltaX() {
+        return pt2.x - pt1.x;
+    }
+
+    private double deltaY() {
+        return pt2.y - pt1.y;
     }
 
     public double getYAxisIntercept() {
@@ -141,5 +149,22 @@ public class Segment {
 
     public boolean isInside(List<Segment> outline, boolean includeBorders) {
         return pt1.isInsideSegments(outline, includeBorders) && pt2.isInsideSegments(outline, includeBorders);
+    }
+
+    public double getAngle(Segment other) {
+        return Math.abs(getAngle() - other.getAngle());
+    }
+
+    public double getAngle() {
+        return Math.toDegrees(Math.atan(getSlope()));
+    }
+
+    public boolean isPerpendicular(Segment other, double tolerance) {
+        double temp = -1 / other.getSlope();
+        return Math.abs(getSlope() - temp) < tolerance;
+    }
+
+    public double getLenght() {
+        return Math.sqrt(Math.pow(deltaX(), 2) + Math.pow(deltaY(), 2));
     }
 }

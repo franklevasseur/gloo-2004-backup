@@ -121,4 +121,34 @@ public class Point implements Serializable {
 
         return (intersections.size() % 2 == 1);
     }
+
+    public Point transformBack(double theta) {
+        Point origin = new Point(0, 0);
+        if (origin.isSame(this)) {
+            return this;
+        }
+
+        Segment segment = new Segment(origin, this);
+
+        double r = segment.getLenght();
+        double phi = segment.getAngle();
+        double gamma = phi - theta;
+
+        return new Point(r * Math.cos(Math.toRadians(gamma)), r * Math.sin(Math.toRadians(gamma)));
+    }
+
+    public Point transform(double theta) {
+        Point origin = new Point(0, 0);
+        if (origin.isSame(this)) {
+            return this;
+        }
+
+        Segment segment = new Segment(origin, this);
+
+        double r = segment.getLenght();
+        double gamma = segment.getAngle();
+        double phi = gamma + theta;
+
+        return new Point(r * Math.cos(Math.toRadians(phi)), r * Math.sin(Math.toRadians(phi)));
+    }
 }

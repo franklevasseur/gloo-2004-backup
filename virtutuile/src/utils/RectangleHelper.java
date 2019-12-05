@@ -1,16 +1,14 @@
 package utils;
 
+import Domain.Material;
+import javafx.scene.shape.Rectangle;
+
 import java.util.*;
 
 public class RectangleHelper {
 
     public static List<Point> rectangleInfoToSummits(RectangleInfo rect) {
         return rectangleInfoToSummits(rect.topLeftCorner, rect.width, rect.height);
-    }
-
-    public static List<Point> rectangleInfoToSummits(double topLeftCornerX, double topLeftCornerY, double width, double height) {
-        Point topLeftCorner = new Point(topLeftCornerX, topLeftCornerY);
-        return rectangleInfoToSummits(topLeftCorner, width, height);
     }
 
     public static List<Point> rectangleInfoToSummits(Point topLeftCorner, double width, double height) {
@@ -84,6 +82,32 @@ public class RectangleHelper {
         }
 
         return xs.size() == 2 && ys.size() == 2;
+    }
+
+    public static boolean isInclinedRectangle(List<Point> summits) {
+        return !isARectangle(summits) && areSegmentsARectangle(Segment.fromPoints(summits));
+    }
+
+    public static boolean areSegmentsARectangle(List<Segment> segments) {
+        if (segments.size() != 4) {
+            return false;
+        }
+
+        for (int i = 0; i < 4; i++) {
+
+            int tail = i;
+            int head = (i + 1) % 4;
+
+            Segment tailSegment = segments.get(tail);
+            Segment headSegment = segments.get(head);
+
+            if (!tailSegment.isPerpendicular(headSegment, Point.DOUBLE_TOLERANCE)
+                    || !tailSegment.pt2.isSame(headSegment.pt1)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static Point getTopLeft(Point point1, Point point2) {

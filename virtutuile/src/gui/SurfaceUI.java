@@ -32,7 +32,6 @@ public abstract class SurfaceUI {
     protected SnapGridUI snapGrid;
 
     protected double tileAngle;
-    protected double tileShift;
 
     protected List<TileUI> tiles;
 
@@ -172,13 +171,5 @@ public abstract class SurfaceUI {
 
     public void setTileAngle(double tileAngle) {
         this.tileAngle = tileAngle;
-    }
-
-    public double getTileShift() {
-        return tileShift;
-    }
-
-    public void setTileShift(double tileShift) {
-        this.tileShift = tileShift;
     }
 }

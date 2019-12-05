@@ -1202,12 +1202,11 @@ public class UiController implements Initializable {
     }
 
     public void snapGridApply(){
-
         try{
             NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
             CharSequence newSnapgridSize = this.resizeSG.getCharacters();
             Double snapGridSize = format.parse(newSnapgridSize.toString()).doubleValue();
-            snapGridUI.setSnapGridGap(snapGridSize);
+            snapGridUI.setSnapGridGap(zoomManager.metersToPixels(snapGridSize));
         }catch(ParseException e){
             displayRectangleInfo();
         }
@@ -1219,7 +1218,7 @@ public class UiController implements Initializable {
         this.snapgridLabel.setVisible(true);
         this.snapGridbutton.setVisible(true);
 
-        resizeSG.setText(formatter.format(snapGridUI.getSnapGripGap()));
+        resizeSG.setText(formatter.format(zoomManager.pixelsToMeters(snapGridUI.getSnapGripGap())));
     }
     private void hideSnapgridInfo(){
         this.resizeSG.setVisible(false);

@@ -34,6 +34,10 @@ public class UiController implements Initializable {
 
     public Pane pane;
     public Pane drawingSection;
+    //Snap grid
+    public TextField resizeSG;
+    public Label snapgridLabel;
+    public Button snapGridbutton;
 
     //Material propreties
     private ObservableList<String> possibleColor = FXCollections.observableArrayList("", "BLACK","WHITE","YELLOW","GREEN","BLUE","RED","VIOLET");
@@ -180,6 +184,7 @@ public class UiController implements Initializable {
         });
 
         patternPreconditionAlert.setTitle("WARNING");
+        hideSnapgridInfo();
 
         defaultMaterial();
         renderFromProject();
@@ -576,9 +581,11 @@ public class UiController implements Initializable {
         if (snapGridCheckBox.isSelected()) {
             this.snapGridUI.setVisibility(true);
             this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
+            showSnapgridInfo();
         } else {
             this.snapGridUI.setVisibility(false);
             this.snapGridUI.removeGrid();
+            hideSnapgridInfo();
         }
     }
 
@@ -1192,5 +1199,31 @@ public class UiController implements Initializable {
 
                 materialTableView.getItems().add(materialUI);
             }
+    }
+
+    public void snapGridApply(){
+
+        try{
+            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+            CharSequence newSnapgridSize = this.resizeSG.getCharacters();
+            Double snapGridSize = format.parse(newSnapgridSize.toString()).doubleValue();
+            snapGridUI.setSnapGridGap(snapGridSize);
+        }catch(ParseException e){
+            displayRectangleInfo();
+        }
+    }
+    private void showSnapgridInfo(){
+        NumberFormat formatter = new DecimalFormat("#0.000");
+
+        this.resizeSG.setVisible(true);
+        this.snapgridLabel.setVisible(true);
+        this.snapGridbutton.setVisible(true);
+
+        resizeSG.setText(formatter.format(snapGridUI.getSnapGripGap()));
+    }
+    private void hideSnapgridInfo(){
+        this.resizeSG.setVisible(false);
+        this.snapgridLabel.setVisible(false);
+        this.snapGridbutton.setVisible(false);
     }
 }

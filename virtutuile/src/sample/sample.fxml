@@ -28,9 +28,9 @@
           <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Save" onAction="#SaveProject"/>
-                <Button layoutX="177.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="Load" onAction="#LoadProject" />
-                <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="65.0" text="New" onAction="#newProject"/>
+                <Button layoutX="100.0" layoutY="14.0" mnemonicParsing="false" onAction="#SaveProject" prefHeight="47.0" prefWidth="65.0" text="Save" />
+                <Button layoutX="177.0" layoutY="14.0" mnemonicParsing="false" onAction="#LoadProject" prefHeight="47.0" prefWidth="65.0" text="Load" />
+                <Button layoutX="14.0" layoutY="13.0" mnemonicParsing="false" onAction="#newProject" prefHeight="47.0" prefWidth="65.0" text="New" />
                 <Button fx:id="redoButton" layoutX="261.0" layoutY="13.0" mnemonicParsing="false" onAction="#redo" prefHeight="47.0" prefWidth="65.0" text="Redo" />
                 <Button fx:id="undoButton" layoutX="344.0" layoutY="13.0" mnemonicParsing="false" onAction="#undo" prefHeight="47.0" prefWidth="65.0" text="Undo" />
               </children>
@@ -124,6 +124,13 @@
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>
                         </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="17">
+                                       <children>
+                                          <TextField fx:id="resizeSG" layoutX="39.0" layoutY="3.0" prefHeight="30.0" prefWidth="185.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <Button fx:id="snapGridbutton" mnemonicParsing="false" onAction="#snapGridApply" text="Snap grid " GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                                    <Label fx:id="snapgridLabel" text="Snap grid dimensions" GridPane.rowIndex="17" />
                       </children>
                       <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -145,7 +152,11 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                     </GridPane>
                   </content>

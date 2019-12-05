@@ -23,6 +23,8 @@ public class SnapGridUI {
     private Line xAxis;
     private Line yAxis;
 
+    private List<Point> currentViewBox;
+
     public SnapGridUI(Pane parentNode) {
         this.parentNode = parentNode;
 
@@ -38,6 +40,7 @@ public class SnapGridUI {
     }
 
     public void renderForViewBox(List<Point> viewBoxSummits) {
+        currentViewBox = viewBoxSummits;
         removeGrid();
 
         RectangleInfo viewBoxRectangle;
@@ -137,6 +140,7 @@ public class SnapGridUI {
 
     public void setSnapGridGap(double pGap){
         gridGap = pGap;
+        renderForViewBox(currentViewBox);
     }
 
     public double getSnapGripGap(){

@@ -1,9 +1,6 @@
 package sample;
 
-import Domain.Accounting;
-import Domain.HoleStatus;
-import Domain.MaterialType;
-import Domain.PatternType;
+import Domain.*;
 import application.*;
 import gui.*;
 
@@ -49,6 +46,16 @@ public class UiController implements Initializable {
     public TextField tileWidthMaterialInputBox;
 
     public ChoiceBox<String> materialColorChoiceBox;
+
+    //Édit material
+    public TextField mNewHeightInputBox;
+    public TextField mNewLenghtInputBox;
+    public TextField mNewTilePerBoxInput;
+    public TextField mNewPricePerBoxInputBox;
+
+
+    public ChoiceBox<String> editTileMaterialChoiceBox;
+    public ChoiceBox<String> mNewColorInputBox;
 
     public TableView<MaterialUI> materialTableView;
     public TableColumn<MaterialUI,String> materialNameColumn;
@@ -126,6 +133,7 @@ public class UiController implements Initializable {
         drawingSection.setPrefHeight(1);
         drawingSection.setPrefWidth(1);
         materialColorChoiceBox.setItems(possibleColor);
+        mNewColorInputBox.setItems(possibleColor);
         sealColorChoiceBox.setItems(possibleColor);
         tilePatternInputBox.setItems(PatternHelperUI.getPossibleTilePatterns());
 
@@ -186,6 +194,8 @@ public class UiController implements Initializable {
 
         patternPreconditionAlert.setTitle("WARNING");
         hideSnapgridInfo();
+
+        editTileMaterialChoiceBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> displayMaterialInfo()));
 
         defaultMaterial();
         renderFromProject();
@@ -714,29 +724,14 @@ public class UiController implements Initializable {
 
         if (project.materials != null) {
             this.tileMaterialChoiceBox.getItems().clear();
+            editTileMaterialChoiceBox.getItems().clear();
             for (MaterialDto mDto: project.materials) {
 
                 tileMaterialChoiceBox.getItems().add(mDto.name);
+                editTileMaterialChoiceBox.getItems().add(mDto.name);
             }
-            /**
-            domainController.getAccounting();
-            List<Accounting> account = domainController.Maccount;
-            for (Accounting  accounting : account) {
+            displayMaterialInfo();
 
-                NumberFormat formatter = new DecimalFormat("#0.000");
-
-                MaterialUI materialUI = new MaterialUI();
-                materialUI.name = accounting.getMaterial().getMaterialName();
-                materialUI.pricePerBoxe = formatter.format(accounting.getMaterial().getCostPerBox());
-                materialUI.color = ColorHelper.utilsColorToString(accounting.getMaterial().getColor());
-                materialUI.tilePerBox = formatter.format(accounting.getMaterial().getNbTilePerBox());
-                materialUI.numberOfTiles = formatter.format(accounting.getUsedTiles());
-                materialUI.numberOfBoxes = formatter.format(accounting.getNbBoxes());
-                materialUI.totalPrice = formatter.format(accounting.getTotalCost());
-
-
-                materialTableView.getItems().add(materialUI);
-            }*/
             List<SurfaceUI> temp = new ArrayList<>();
             getAccountingForSelectedSurface(temp);
         }
@@ -1231,4 +1226,62 @@ public class UiController implements Initializable {
         this.snapgridLabel.setVisible(false);
         this.snapGridbutton.setVisible(false);
     }
+
+    public void editMaterialButton(){
+        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+            try{
+                MaterialDto mDTO = new MaterialDto();
+
+                CharSequence mNewHeight = this.mNewHeightInputBox.getCharacters();
+                Double newMaterialHeight = mNewHeight.toString().equals("") ? null : format.parse(mNewHeight.toString()).doubleValue();
+
+                CharSequence mNewWidth = this.mNewLenghtInputBox.getCharacters();
+                Double newMaterialWidth = mNewWidth.toString().equals("") ? null : format.parse(mNewWidth.toString()).doubleValue();
+
+                CharSequence mNbTilePerBox = this.mNewTilePerBoxInput.getCharacters();
+                Integer newNbTilePerBox = mNbTilePerBox.toString().equals("") ? null : format.parse(mNbTilePerBox.toString()).intValue();
+
+                CharSequence mCostPerBox = this.mNewPricePerBoxInputBox.getCharacters();
+                Integer newCostPerBox = mCostPerBox.toString().equals("") ? null : format.parse(mCostPerBox.toString()).intValue();
+
+                mDTO.name = editTileMaterialChoiceBox.getValue();
+                mDTO.tileTypeHeight = newMaterialHeight;
+                mDTO.tileTypeWidth = newMaterialWidth;
+                mDTO.nbTilePerBox =newNbTilePerBox;
+                mDTO.costPerBox =newCostPerBox;
+                mDTO.materialType = MaterialType.tileMaterial;
+                mDTO.color = ColorHelper.stringToUtils(mNewColorInputBox.getValue());
+                domainController.updateMaterial(mDTO);
+
+            }catch (ParseException e){
+                displayMaterialInfo();
+            }
+            renderFromProject();
+        hideMaterialInfo();
+
+    }
+    private void displayMaterialInfo(){
+        NumberFormat formatter = new DecimalFormat("#0.000");
+
+        MaterialDto mDTO = new MaterialDto();
+        mDTO.name = editTileMaterialChoiceBox.getValue();
+        //stupide ? je dois lui donner une couleur temporairement pour constructeur dans getSelected material
+        mDTO.color = Color.GREEN;
+        Material displayedMaterial = this.domainController.getSelectedMaterial(mDTO);
+
+        mNewHeightInputBox.setText(formatter.format(displayedMaterial.getTileTypeHeight()));
+        mNewLenghtInputBox.setText(formatter.format(displayedMaterial.getTileTypeWidth()));
+        mNewTilePerBoxInput.setText(formatter.format(displayedMaterial.getNbTilePerBox()));
+        mNewPricePerBoxInputBox.setText(formatter.format(displayedMaterial.getCostPerBox()));
+        mNewColorInputBox.setValue(ColorHelper.utilsColorToString(displayedMaterial.getColor()));
+
+    }
+    private void hideMaterialInfo(){
+        mNewHeightInputBox.clear();
+        mNewLenghtInputBox.clear();
+        mNewTilePerBoxInput.clear();
+        mNewPricePerBoxInputBox.clear();
+        mNewColorInputBox.setValue("");
+    }
+
 }

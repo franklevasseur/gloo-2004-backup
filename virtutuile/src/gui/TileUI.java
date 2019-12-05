@@ -9,6 +9,8 @@ import javafx.scene.shape.Polygon;
 import utils.*;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,8 +102,16 @@ public class TileUI {
     private String formatInfoString() {
         AbstractShape shape = new AbstractShape(pixelSummits);
 
-        double width = this.zoomManager.pixelsToMeters(ShapeHelper.getWidth(shape));
-        double height = this.zoomManager.pixelsToMeters(ShapeHelper.getHeight(shape));
+        double width;
+        double height;
+        if (RectangleHelper.isInclinedRectangle(pixelSummits)) {
+            List<Double> segmentsLenght = Segment.fromPoints(pixelSummits).stream().map(s -> s.getLenght()).collect(Collectors.toList());
+            width = this.zoomManager.pixelsToMeters(Collections.min(segmentsLenght));
+            height = this.zoomManager.pixelsToMeters(Collections.max(segmentsLenght));
+        } else {
+            width = this.zoomManager.pixelsToMeters(ShapeHelper.getWidth(shape));
+            height = this.zoomManager.pixelsToMeters(ShapeHelper.getHeight(shape));
+        }
 
         Point topLeft = ShapeHelper.getTopLeftCorner(shape);
         double x = this.zoomManager.pixelsToMeters(topLeft.x);

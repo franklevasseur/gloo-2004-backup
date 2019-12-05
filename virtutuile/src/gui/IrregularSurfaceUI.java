@@ -96,7 +96,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
                     controller.updateSurface(this.toDto());
                     return;
                 }
-                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle));
+                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
                 setPolygonColor();
             }
         });
@@ -179,7 +179,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
 
     @Override
     public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle));
+        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
         setPolygonColor();
     }
 

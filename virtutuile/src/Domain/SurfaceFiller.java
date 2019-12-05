@@ -12,18 +12,18 @@ class SurfaceFiller implements Serializable {
 
     private TileCutter tileCutter = new TileCutter();
 
-    public List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealsInfo, PatternType type, double angle) {
+    public List<Tile> fillSurface(Surface surface, Tile masterTile, SealsInfo sealsInfo, PatternType type, double angle, double shifting) {
 
         if (type == PatternType.DEFAULT) {
             return fillSurfaceWithDefaults(surface, masterTile, sealsInfo, angle);
         }
 
         if (type == PatternType.HORIZONTAL_SHIFT) {
-            return fillSurfaceWithHorizontalShift(surface, masterTile, sealsInfo, angle);
+            return fillSurfaceWithOneOrientation(surface, masterTile, sealsInfo, shifting, 0, angle);
         }
 
         if (type == PatternType.VERTICAL_SHIFT) {
-            return fillSurfaceWithVertcialShift(surface, masterTile, sealsInfo, angle);
+            return fillSurfaceWithOneOrientation(surface, masterTile, sealsInfo, 0, shifting, angle);
         }
 
         if (type == PatternType.MIX) {
@@ -39,16 +39,6 @@ class SurfaceFiller implements Serializable {
 
     private List<Tile> fillSurfaceWithDefaults(Surface surface, Tile masterTile, SealsInfo sealing, double angle) {
         return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, 0, angle);
-    }
-
-    private List<Tile> fillSurfaceWithHorizontalShift(Surface surface, Tile masterTile, SealsInfo sealing, double angle) {
-        double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
-        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, shift, 0, angle);
-    }
-
-    private List<Tile> fillSurfaceWithVertcialShift(Surface surface, Tile masterTile, SealsInfo sealing, double angle) {
-        double shift = masterTile.getWidth() / 2; // TODO make this a parameter...
-        return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, shift, angle);
     }
 
     private  List<Tile> fillSurfaceWithMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {

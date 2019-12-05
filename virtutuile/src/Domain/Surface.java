@@ -23,6 +23,7 @@ public class Surface implements Serializable {
     private PatternType pattern;
 
     private double tileAngle;
+    private double tileShifting;
 
     public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular) {
         this.isHole = pIsHole;
@@ -63,11 +64,12 @@ public class Surface implements Serializable {
         this.tiles = tiles;
     }
 
-    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType, double angle) {
+    public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType, double angle, double tileShifting) {
         this.sealsInfo = pSealsInfo;
         this.tileAngle = angle;
+        this.tileShifting = tileShifting;
 
-        tiles = surfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType, angle);
+        tiles = surfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType, angle, tileShifting);
 
         // très important !!
         isHole = HoleStatus.FILLED;
@@ -125,5 +127,13 @@ public class Surface implements Serializable {
 
     public void setTileAngle(double tileAngle) {
         this.tileAngle = tileAngle;
+    }
+
+    public double getTileShifting() {
+        return tileShifting;
+    }
+
+    public void setTileShifting(double tileShifting) {
+        this.tileShifting = tileShifting;
     }
 }

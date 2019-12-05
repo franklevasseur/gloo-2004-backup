@@ -26,6 +26,7 @@ public class SurfaceAssembler {
         dto.pattern = surface.getPattern();
 
         dto.tileAngle = surface.getTileAngle();
+        dto.tileShifting = surface.getTileShifting();
 
         if (surface.getMasterTile() != null) {
             dto.masterTile = toDto(surface.getMasterTile());
@@ -54,6 +55,7 @@ public class SurfaceAssembler {
         destinationSurface.setSummits(summits);
         destinationSurface.setIsRectangular(dto.isRectangular);
         destinationSurface.setTileAngle(dto.tileAngle);
+        destinationSurface.setTileShifting(dto.tileShifting);
         if (dto.masterTile != null) {
             destinationSurface.setMasterTile(fromDto(dto.masterTile));
         }

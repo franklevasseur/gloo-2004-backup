@@ -64,9 +64,9 @@ public class Controller {
     }
 
     // atomic move and fill or resize and fill
-    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing, double angle)  {
+    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing, double angle, double shift)  {
         internalUpdateSurface(dto);
-        List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing, angle);
+        List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing, angle, shift);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
         return tiles;
     }
@@ -104,15 +104,16 @@ public class Controller {
         return undoRedoManager.undoAvailable();
     }
 
-    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto, Double tileAngle) {
+    public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto, Double tileAngle, Double tileShifting) {
 
         Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
         Tile masterTile = masterTileDto != null ? SurfaceAssembler.fromDto(masterTileDto) : getDefaultTile();
         SealsInfo sealing = sealingDto != null ? SurfaceAssembler.fromDto(sealingDto) : getDefaultSealing();
         double angle = tileAngle != null ? tileAngle : 0;
+        double shift = tileShifting != null ? tileShifting : 0;
         PatternType pattern = patternType != null ? patternType : PatternType.DEFAULT;
 
-        desiredSurface.fillSurface(masterTile, sealing, pattern, angle);
+        desiredSurface.fillSurface(masterTile, sealing, pattern, angle, shift);
 
         SurfaceDto newDto = SurfaceAssembler.toDto(desiredSurface);
 

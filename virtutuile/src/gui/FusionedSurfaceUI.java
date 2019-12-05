@@ -125,7 +125,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
                    controller.updateSurface(this.toDto());
                    return;
                }
-               this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle));
+               this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
            }
        });
 
@@ -185,7 +185,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
     @Override
     public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle));
+        this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
         setShapeColor();
     }
 

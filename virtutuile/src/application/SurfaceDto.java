@@ -19,6 +19,7 @@ public class SurfaceDto {
     public PatternType pattern;
 
     public double tileAngle;
+    public double tileShifting;
 
     public List<Point> summits; // summits in meters
     public List<TileDto> tiles;

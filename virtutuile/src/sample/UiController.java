@@ -53,7 +53,6 @@ public class UiController implements Initializable {
     public TextField mNewTilePerBoxInput;
     public TextField mNewPricePerBoxInputBox;
 
-
     public ChoiceBox<String> editTileMaterialChoiceBox;
     public ChoiceBox<String> mNewColorInputBox;
 
@@ -75,6 +74,7 @@ public class UiController implements Initializable {
     public TextField masterTileX;
     public TextField masterTileY;
     public TextField tileAngleInputBox;
+    public TextField tileShiftingInputBox;
     public TextField surfacePositionXInputBox;
     public TextField surfacePositionYInputBox;
 
@@ -112,7 +112,6 @@ public class UiController implements Initializable {
     private Rectangle rectangleSurfaceCreationIndicator;
 
     private List<AttachmentPointUI> irregularSurfaceSummits = new ArrayList<>();
-    private double samePositionTolerance = 10;
 
     public TextField minInspectionLengthTextField;
     public Button inspectButton;
@@ -329,6 +328,7 @@ public class UiController implements Initializable {
         }
 
         AttachmentPointUI firstPoint = irregularSurfaceSummits.get(0);
+        double samePositionTolerance = 10;
         if (clickCoord.isInRange(firstPoint.getPixelCoords(), samePositionTolerance)) {
             if (irregularSurfaceSummits.size() > 2) {
                 // remove last point added
@@ -400,6 +400,9 @@ public class UiController implements Initializable {
                 CharSequence tileAngleInput = this.tileAngleInputBox.getCharacters();
                 Double tileAngle = tileAngleInput.toString().equals("") ? null : format.parse(tileAngleInput.toString()).doubleValue();
 
+                CharSequence tileShiftInput = this.tileShiftingInputBox.getCharacters();
+                Double tileShift = tileShiftInput.toString().equals("") ? null : format.parse(tileShiftInput.toString()).doubleValue();
+
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
@@ -444,7 +447,7 @@ public class UiController implements Initializable {
                 chosenSurface.setPosition(position);
 
                 chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
-                if (masterTile == null || newSealWidth == null || sealColorInput == null || patternInput == null || tileAngle == null) {
+                if (masterTile == null || newSealWidth == null || sealColorInput == null || patternInput == null || tileAngle == null || tileShift == null) {
                     this.domainController.updateSurface(chosenSurface.toDto());
                 } else {
                     SealsInfoDto sealsInfoDto = new SealsInfoDto();
@@ -458,7 +461,8 @@ public class UiController implements Initializable {
                     pattern = checkPattern(pattern, fallBackPattern, masterTile);
                     chosenSurface.setPattern(pattern);
                     chosenSurface.setTileAngle(tileAngle);
-                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, pattern, sealsInfoDto, tileAngle);
+                    chosenSurface.setTileShifting(tileShift);
+                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, pattern, sealsInfoDto, tileAngle, tileShift);
                 }
 
                 this.renderFromProject();
@@ -521,6 +525,7 @@ public class UiController implements Initializable {
         }
 
         tileAngleInputBox.setText(formatter.format(firstOne.getTileAngle()));
+        tileShiftingInputBox.setText(formatter.format(firstOne.getTileShifting()));
 
         surfacePositionXInputBox.setText(formatter.format(topLeft.x));
         surfacePositionYInputBox.setText(formatter.format(topLeft.y));
@@ -560,6 +565,9 @@ public class UiController implements Initializable {
 
         masterTileX.clear();
         masterTileY.clear();
+
+        tileAngleInputBox.clear();
+        tileShiftingInputBox.clear();
 
         tilePatternInputBox.setValue("");
         sealColorChoiceBox.setValue("");
@@ -890,7 +898,7 @@ public class UiController implements Initializable {
             double surfaceY = surfaceTopLeft.y;
             s.setPosition(new Point((firstX + centerX) - surfaceHalfWidth, surfaceY));
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -922,7 +930,7 @@ public class UiController implements Initializable {
             double halfHeight = ShapeHelper.getHeight(surface)/2;
             s.setPosition(new Point(surfaceX, (firstY + centerY) - halfHeight));
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -951,7 +959,7 @@ public class UiController implements Initializable {
             s.setPosition(new Point(firstX - surfaceWidth - 0.25, firstY));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -980,7 +988,7 @@ public class UiController implements Initializable {
             s.setPosition(new Point(firstX + firstWidth + 0.25, firstY));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -1009,7 +1017,7 @@ public class UiController implements Initializable {
             s.setPosition(new Point(firstX, firstY - surfaceHeight - 0.25));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -1038,7 +1046,7 @@ public class UiController implements Initializable {
             s.setPosition(new Point(firstX, firstY + firstHeight + 0.25));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -1077,7 +1085,7 @@ public class UiController implements Initializable {
             }
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }
@@ -1114,7 +1122,7 @@ public class UiController implements Initializable {
             }
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
-                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle());
+                domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
             } else {
                 domainController.updateSurface(s.toDto());
             }

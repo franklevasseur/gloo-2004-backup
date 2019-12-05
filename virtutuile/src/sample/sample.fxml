@@ -89,21 +89,21 @@
                         <Label text="Tile properties" />
                         <Label contentDisplay="CENTER" text="Tile height" GridPane.rowIndex="1" />
                         <Label text="Tile width" GridPane.rowIndex="2" />
-                        <Label text="Tile material" GridPane.rowIndex="7" />
-                        <Label text="Surface position" GridPane.rowIndex="11" />
-                        <Label text="Tile pattern" GridPane.rowIndex="8" />
-                        <Label text="Seal width" GridPane.rowIndex="14" />
-                        <Label text="Seal color" GridPane.rowIndex="15" />
+                        <Label text="Tile material" GridPane.rowIndex="8" />
+                        <Label text="Surface position" GridPane.rowIndex="12" />
+                        <Label text="Tile pattern" GridPane.rowIndex="9" />
+                        <Label text="Seal width" GridPane.rowIndex="15" />
+                        <Label text="Seal color" GridPane.rowIndex="16" />
                         <TextField fx:id="tileHeightInputbox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="tileWidthInputbox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <ChoiceBox fx:id="tileMaterialChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <ChoiceBox fx:id="tilePatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                        <TextField fx:id="sealWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                        <ChoiceBox fx:id="sealColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-                        <Label text="Surface propreties" GridPane.rowIndex="6" />
-                        <Label text="Seal propreties" GridPane.rowIndex="13" />
-                        <Label text="Material Color" GridPane.rowIndex="12" />
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                        <ChoiceBox fx:id="tileMaterialChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <ChoiceBox fx:id="tilePatternInputBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <TextField fx:id="sealWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                        <ChoiceBox fx:id="sealColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                        <Label text="Surface propreties" GridPane.rowIndex="7" />
+                        <Label text="Seal propreties" GridPane.rowIndex="14" />
+                        <Label text="Material Color" GridPane.rowIndex="13" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
                           <children>
                             <TextField fx:id="surfacePositionXInputBox" layoutX="8.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
                             <TextField fx:id="surfacePositionYInputBox" layoutX="71.0" layoutY="3.0" prefHeight="16.0" prefWidth="36.0" />
@@ -111,12 +111,12 @@
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>
                         </AnchorPane>
-                        <Button fx:id="applyButton" mnemonicParsing="false" onAction="#editSurface" prefHeight="25.0" prefWidth="100.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-                        <TextField fx:id="surfaceHeightInputBox" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                        <TextField fx:id="surfaceWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                        <Label text="Surface height" GridPane.rowIndex="9" />
-                        <Label text="Surface width" GridPane.rowIndex="10" />
-                        <TextField fx:id="materialColorDisplay" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <Button fx:id="applyButton" mnemonicParsing="false" onAction="#editSurface" prefHeight="25.0" prefWidth="100.0" text="Apply" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                        <TextField fx:id="surfaceHeightInputBox" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <TextField fx:id="surfaceWidthInputBox" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label text="Surface height" GridPane.rowIndex="10" />
+                        <Label text="Surface width" GridPane.rowIndex="11" />
+                        <TextField fx:id="materialColorDisplay" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="13" />
                         <Label prefWidth="118.0" text="first Tile position" GridPane.rowIndex="3" />
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                           <children>
@@ -126,17 +126,17 @@
                             <Label layoutX="111.0" layoutY="6.0" text="y" />
                           </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="18">
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="19">
                           <children>
                             <TextField fx:id="resizeSG" prefHeight="30.0" prefWidth="185.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                           </children>
                         </AnchorPane>
-                        <Button fx:id="snapGridbutton" mnemonicParsing="false" onAction="#snapGridApply" text="Snap grid " GridPane.columnIndex="1" GridPane.rowIndex="19" />
-                        <Label fx:id="snapgridLabel" text="Snap grid dimensions" GridPane.rowIndex="18" />
-                        <Label prefWidth="118.0" text="tile angle " GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <Button fx:id="snapGridbutton" mnemonicParsing="false" onAction="#snapGridApply" text="Snap grid " GridPane.columnIndex="1" GridPane.rowIndex="20" />
+                        <Label fx:id="snapgridLabel" text="Snap grid dimensions" GridPane.rowIndex="19" />
+                        <Label prefWidth="70.0" text="tile angle " GridPane.columnIndex="0" GridPane.rowIndex="4" />
                         <TextField fx:id="tileAngleInputBox" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                    <Label text="Tile shifting" GridPane.rowIndex="4" />
-                                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label text="Tile shifting" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                        <TextField fx:id="tileShiftingInputBox" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                       </children>
                       <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -145,6 +145,7 @@
                       <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" />
@@ -200,21 +201,22 @@
                           </children>
                         </AnchorPane>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="205.0" prefWidth="297.0">
-                                       <children>
-                                          <ChoiceBox fx:id="editTileMaterialChoiceBox" layoutX="186.0" layoutY="31.0" prefWidth="150.0" />
-                                          <TextField fx:id="mNewHeightInputBox" layoutX="187.0" layoutY="73.0" />
-                                          <TextField fx:id="mNewLenghtInputBox" layoutX="187.0" layoutY="109.0" />
-                                          <Label layoutX="64.0" layoutY="35.0" text="Material" />
-                                          <Label layoutX="64.0" layoutY="77.0" text="Material height" />
-                                          <Label layoutX="64.0" layoutY="113.0" text="Materal width" />
-                                          <Label layoutX="64.0" layoutY="148.0" text="Material color" />
-                                          <Button layoutX="262.0" layoutY="279.0" mnemonicParsing="false" onAction="#editMaterialButton" text="Apply" />
-                                          <TextField fx:id="mNewTilePerBoxInput" layoutX="187.0" layoutY="177.0" />
-                                          <TextField fx:id="mNewPricePerBoxInputBox" layoutX="188.0" layoutY="215.0" />
-                                          <Label layoutX="48.0" layoutY="181.0" text="Number of tile per Box" />
-                                          <Label layoutX="70.0" layoutY="219.0" text="Price per box" />
-                                          <ChoiceBox fx:id="mNewColorInputBox" layoutX="187.0" layoutY="144.0" prefWidth="150.0" />
-                                       </children></AnchorPane>
+                          <children>
+                            <ChoiceBox fx:id="editTileMaterialChoiceBox" layoutX="186.0" layoutY="31.0" prefWidth="150.0" />
+                            <TextField fx:id="mNewHeightInputBox" layoutX="187.0" layoutY="73.0" />
+                            <TextField fx:id="mNewLenghtInputBox" layoutX="187.0" layoutY="109.0" />
+                            <Label layoutX="64.0" layoutY="35.0" text="Material" />
+                            <Label layoutX="64.0" layoutY="77.0" text="Material height" />
+                            <Label layoutX="64.0" layoutY="113.0" text="Materal width" />
+                            <Label layoutX="64.0" layoutY="148.0" text="Material color" />
+                            <Button layoutX="262.0" layoutY="279.0" mnemonicParsing="false" onAction="#editMaterialButton" text="Apply" />
+                            <TextField fx:id="mNewTilePerBoxInput" layoutX="187.0" layoutY="177.0" />
+                            <TextField fx:id="mNewPricePerBoxInputBox" layoutX="188.0" layoutY="215.0" />
+                            <Label layoutX="48.0" layoutY="181.0" text="Number of tile per Box" />
+                            <Label layoutX="70.0" layoutY="219.0" text="Price per box" />
+                            <ChoiceBox fx:id="mNewColorInputBox" layoutX="187.0" layoutY="144.0" prefWidth="150.0" />
+                          </children>
+                        </AnchorPane>
                       </items>
                     </SplitPane>
                   </content>

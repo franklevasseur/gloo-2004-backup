@@ -1,9 +1,7 @@
 package gui;
 
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import utils.CardinalPoint;
@@ -74,6 +72,9 @@ public class AttachmentPointUI {
     }
 
     public Point getPixelCoords() {
-        return new Point(this.rectangle.getX(), this.rectangle.getY());
+        // gives the middle of attachment point as its considered a point
+        Point topLeftCorner = new Point(this.rectangle.getX(), this.rectangle.getY());
+        double halfWidth = pointWidth / 2;
+        return new Point(topLeftCorner.x + halfWidth, topLeftCorner.y + halfWidth);
     }
 }

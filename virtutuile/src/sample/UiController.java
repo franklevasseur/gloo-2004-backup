@@ -277,7 +277,6 @@ public class UiController implements Initializable {
             handleIrregularSurfaceCreation(clickCoord);
         }
 
-
         stateCurrentlyFilling = true;
         fillTilesButton.setText("Fill tiles");
 
@@ -290,7 +289,13 @@ public class UiController implements Initializable {
         hideRectangleInfo();
     }
 
-    private void handleRectangularSurfaceCreation(Point clickCoord) {
+    private void handleRectangularSurfaceCreation(Point click) {
+
+        Point clickCoord = click;
+        if (this.snapGridUI.isVisible()) {
+            clickCoord = this.snapGridUI.getNearestGridPoint(clickCoord);
+        }
+
         if (!stateTopLeftCornerCreated) {
             firstClickCoord = new Point(clickCoord.x, clickCoord.y);
             stateTopLeftCornerCreated = true;
@@ -300,7 +305,7 @@ public class UiController implements Initializable {
         stateCurrentlyCreatingRectangularSurface = false;
         stateTopLeftCornerCreated = false;
 
-        if (!clickCoord.isSame(firstClickCoord)) {
+        if (!clickCoord.isInRange(firstClickCoord, 5)) {
             createRectangularSurfaceHere(new Point(firstClickCoord.x, firstClickCoord.y), new Point(clickCoord.x, clickCoord.y) );
         }
 
@@ -315,6 +320,9 @@ public class UiController implements Initializable {
     private void handleIrregularSurfaceCreation(Point clickCoord) {
 
         Point pointToAdd = clickCoord;
+        if (this.snapGridUI.isVisible()) {
+            pointToAdd = this.snapGridUI.getNearestGridPoint(clickCoord);
+        }
 
         boolean isFirstPoint = irregularSurfaceSummits.size() < 1;
         Cursor cursor = isFirstPoint ? Cursor.HAND : null;

@@ -35,30 +35,14 @@ public class TileUI {
         shape = new Polygon();
         shape.getPoints().addAll(flattedSummits);
 
-        if (material.color == utils.Color.BLACK) {
-            shape.setFill(Color.BLACK);
-        }else if(material.color == utils.Color.WHITE){
-            shape.setFill(Color.WHITE);
-        }else if(material.color == utils.Color.YELLOW){
-            shape.setFill(Color.YELLOW);
-        }else if(material.color == utils.Color.GREEN){
-            shape.setFill(Color.GREEN);
-        }else if(material.color == utils.Color.BLUE){
-            shape.setFill(Color.BLUE);
-        }else if(material.color == utils.Color.RED){
-            shape.setFill(Color.RED);
-        }else if(material.color == utils.Color.VIOLET){
-            shape.setFill(Color.VIOLET);
-        }
+        shape.setFill(ColorHelper.utilsColorToJavafx(dto.material.color));
 
         shape.setOnMouseEntered(event -> select());
         shape.setOnMouseExited(event -> unselect());
 
 //        shape.setOnMouseClicked(e -> {
-//            AbstractShape thisFuckingTile = new AbstractShape(this.toDto().summits);
-//            AbstractShape thisFuckingParentSurface = new AbstractShape(parentSurface.toDto().summits);
-//            boolean isAllOut = ShapeHelper.isAllOutside(thisFuckingTile, thisFuckingParentSurface);
-//            System.out.println(String.format("tile is all outside : %b", isAllOut));
+//            Controller controller = Controller.getInstance();
+//            controller.debugTileCutting(parentSurface.toDto(), this.toDto());
 //        });
     }
 

@@ -3,7 +3,6 @@ package Domain;
 import utils.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 public class TileCutter implements Serializable {
 
     public List<Tile> cutTilesThatExceed(Surface surface, List<Tile> tiles) {
-        List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t)).collect(Collectors.toList());
+        List<Tile> insideTiles = tiles.stream().filter(t -> !isAllOutside(surface, t, true)).collect(Collectors.toList());
         List<Tile> tilesToCut = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
         insideTiles.removeIf(tilesToCut::contains);
 
@@ -21,14 +20,8 @@ public class TileCutter implements Serializable {
 
         List<Tile> tileResultantOfCut = cutTilesThatNeedToBeCut(surface, tilesToCut);
         List<Tile> newKeepers = tileResultantOfCut.stream().filter(t ->
-                !ShapeHelper.isAllOutside(new AbstractShape(t.getSummits()), new AbstractShape(surface.getSummits()))).collect(Collectors.toList());
+                !isAllOutside(surface, t, false)).collect(Collectors.toList());
         insideTiles.addAll(newKeepers);
-
-//        List<Tile> unableToCutTiles = insideTiles.stream().filter(t -> !isAllInside(surface, t)).collect(Collectors.toList());
-//        if (unableToCutTiles.size() > 0) {
-//            System.out.println(String.format("System was unable to cut %d", unableToCutTiles.size()));
-//        }
-//        unableToCutTiles.forEach(t -> t.setMaterial(newMaterialToCut));
 
         return insideTiles;
     }
@@ -39,7 +32,7 @@ public class TileCutter implements Serializable {
 
             return fs.getFusionnedSurfaces().stream().allMatch(s -> {
                if (s.isHole() == HoleStatus.HOLE) {
-                   return isAllOutside(s, tile);
+                   return isAllOutside(s, tile, true);
                }
                return isAllInside(s, tile);
             });
@@ -50,7 +43,7 @@ public class TileCutter implements Serializable {
         return ShapeHelper.isAllInside(tileShape, surfaceShape);
     }
 
-    public boolean isAllOutside(Surface surface, Tile tile) {
+    public boolean isAllOutside(Surface surface, Tile tile, boolean considerIntersections) {
         if (surface.isFusionned()) {
             FusionnedSurface fs = (FusionnedSurface) surface;
 
@@ -61,7 +54,7 @@ public class TileCutter implements Serializable {
                         return true;
                     }
                 } else {
-                    if (!isAllOutside(s, tile)) {
+                    if (!isAllOutside(s, tile, considerIntersections)) {
                         accumulator = false; // the only way it can still be outside here is if its all inside a hole that still has not been seen in the loop
                     }
                 }
@@ -71,18 +64,20 @@ public class TileCutter implements Serializable {
         }
 
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits());
-        return isAllOutsidePolygon(surfaceShape, tile);
+        return isAllOutsidePolygon(surfaceShape, tile, considerIntersections);
     }
 
-    public boolean isAllOutsidePolygon(AbstractShape surfaceShape, Tile tile) {
+    public boolean isAllOutsidePolygon(AbstractShape surfaceShape, Tile tile, boolean considerIntersections) {
         AbstractShape tileShape = new AbstractShape(tile.getSummits());
 
-        for (Segment segment: Segment.fromPoints(surfaceShape.summits)) {
-            List<Point> intersection = tile.findIntersections(segment, false);
-            List<Point> forbiddenPoints = Arrays.asList(surfaceShape.summits, tile.getSummits()).stream().flatMap(x -> x.stream()).collect(Collectors.toList());
-            intersection.removeIf(i -> forbiddenPoints.stream().anyMatch(p -> p.isInRange(i, Point.DOUBLE_TOLERANCE)));
-            if (intersection.size() > 0) {
-                return false;
+        if (considerIntersections) {
+            for (Segment segment: Segment.fromPoints(surfaceShape.summits)) {
+                List<Point> intersection = tile.findIntersections(segment, false);
+                List<Point> forbiddenPoints = Arrays.asList(surfaceShape.summits, tile.getSummits()).stream().flatMap(x -> x.stream()).collect(Collectors.toList());
+                intersection.removeIf(i -> forbiddenPoints.stream().anyMatch(p -> p.isInRange(i, Point.DOUBLE_TOLERANCE)));
+                if (intersection.size() > 0) {
+                    return false;
+                }
             }
         }
 
@@ -91,20 +86,22 @@ public class TileCutter implements Serializable {
 
     private List<Tile> cutTilesThatNeedToBeCut(Surface surface, List<Tile> tiles) {
         if (!isOnlyOnePolygon(surface)) {
-            System.out.println("Detected a Surface that is more than one Polygon or contains an inner hole. These surfaces are hard to handle mon p'tit chummé :P...");
+//            System.out.println("Detected a Surface that is more than one Polygon or contains an inner hole. These surfaces are hard to handle mon p'tit chummé :P...");
             FusionnedSurface fs = (FusionnedSurface) surface;
+
             List<Surface> noHoles = fs.getFusionnedSurfaces().stream().filter(s -> s.isHole() != HoleStatus.HOLE).collect(Collectors.toList());
             List<Surface> holes = fs.getFusionnedSurfaces().stream().filter(s -> s.isHole() == HoleStatus.HOLE).collect(Collectors.toList());
 
             List<AbstractShape> allPlainPolygons = FusionHelper.getFusionResultSummits(noHoles.stream().map(s -> new AbstractShape(s.getSummits())).collect(Collectors.toList()));
+            List<AbstractShape> allHolesPolygons = holes.stream().map(h -> new AbstractShape(h.getSummits(), true)).collect(Collectors.toList());
 
-            List<Tile> allCuts = new ArrayList<>();
+            List<Tile> allCuts = tiles;
             for (AbstractShape plainPolygon: allPlainPolygons) {
                 allCuts = allCuts.stream().flatMap(t -> cutOneTile(plainPolygon, t).stream()).collect(Collectors.toList());
             }
 
-            for (Surface hole: holes) {
-                allCuts.addAll(cutTilesThatNeedToBeCut(hole, tiles));
+            for (AbstractShape holePolygon: allHolesPolygons) {
+                allCuts = allCuts.stream().flatMap(t -> cutOneTile(holePolygon, t).stream()).collect(Collectors.toList());
             }
 
             return allCuts;
@@ -134,8 +131,8 @@ public class TileCutter implements Serializable {
         List<Tile> returned = Arrays.asList(tileToCut);
 
         for (Segment seg: surfaceSegments) {
-            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).filter(t -> !this.isAllOutsidePolygon(surfaceShape, tileToCut)
-            ).collect(Collectors.toList());
+//            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).filter(t -> !this.isAllOutsidePolygon(surfaceShape, tileToCut, false)
+            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).collect(Collectors.toList());
         }
 
         return returned;

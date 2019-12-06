@@ -85,7 +85,7 @@ public class Segment {
 
         if (this.getSlope() == Double.POSITIVE_INFINITY
                 || this.getSlope() == Double.NEGATIVE_INFINITY) {
-            return p.x == pt1.x
+            return Math.abs(p.x - pt1.x) < tolerance
                     && p.y <= Math.max(pt1.y, pt2.y) + tolerance
                     && p.y >= Math.min(pt1.y, pt2.y) - tolerance;
         }

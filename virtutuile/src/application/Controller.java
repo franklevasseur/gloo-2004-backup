@@ -1,7 +1,6 @@
 package application;
 
 import Domain.*;
-import gui.ColorHelper;
 import utils.*;
 import utils.Point;
 
@@ -233,4 +232,18 @@ public class Controller {
         }
         return material;
     }
+
+//    public void debugTileCutting(SurfaceDto surfaceDto, TileDto tileDto) {
+//        Surface surface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(surfaceDto.id)).findFirst().get();
+//        SurfaceAssembler.fromDto(surfaceDto, surface);
+//
+//        Tile tile = SurfaceAssembler.fromDto(tileDto);
+//
+//        TileCutter tc = new TileCutter();
+//
+//        boolean isAllOutside = tc.isAllOutside(surface, tile, false);
+//        boolean isAllInside = tc.isAllInside(surface, tile);
+//
+//        System.out.println(String.format("all outside : %b, all inside : %b", isAllOutside, isAllInside));
+//    }
 }

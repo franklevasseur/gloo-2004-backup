@@ -149,8 +149,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
         if(this.snapGrid.isVisible()){
             Point currentFusionedSurfacePosition  = new Point(this.position.x, this.position.y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentFusionedSurfacePosition);
-            this.position.x = nearestGridPoint.x;
-            this.position.y = nearestGridPoint.y;
+            this.setPixelPosition(nearestGridPoint);
 
             this.controller.updateSurface(this.toDto());
         }

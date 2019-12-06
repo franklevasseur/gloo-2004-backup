@@ -124,7 +124,11 @@ public class IrregularSurfaceUI extends SurfaceUI {
             Point currentRectanglePosition = new Point(getPosition().x, getPosition().y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
 
-            Point translation = Point.diff(getPosition(), new Point(nearestGridPoint.x, nearestGridPoint.y));
+            Point position = getPosition();
+            Point translation = Point.diff(new Point(nearestGridPoint.x, nearestGridPoint.y), position);
+
+//            System.out.println(String.format("position: (%.1f, %.1f), translation: (%.1f, %.1f)", position.x, position.y, translation.x, translation.y));
+
             this.renderRectangleFromSummits(this.summits.stream().map(s -> s.translate(translation)).collect(Collectors.toList()));
 
             summits = this.getSummits();

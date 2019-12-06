@@ -131,8 +131,10 @@ public class TileCutter implements Serializable {
         List<Tile> returned = Arrays.asList(tileToCut);
 
         for (Segment seg: surfaceSegments) {
-//            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).filter(t -> !this.isAllOutsidePolygon(surfaceShape, tileToCut, false)
-            returned = returned.stream().flatMap(t -> t.doOneCut(seg).stream()).collect(Collectors.toList());
+            returned = returned.stream()
+                    .flatMap(t -> t.doOneCut(seg).stream())
+//                    .filter(t -> !this.isAllOutsidePolygon(surfaceShape, tileToCut, false))
+                    .collect(Collectors.toList());
         }
 
         return returned;

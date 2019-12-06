@@ -1,5 +1,6 @@
 package gui;
 
+import application.Controller;
 import application.MaterialDto;
 import application.TileDto;
 import javafx.scene.Node;
@@ -41,8 +42,7 @@ public class TileUI {
         shape.setOnMouseExited(event -> unselect());
 
 //        shape.setOnMouseClicked(e -> {
-//            Controller controller = Controller.getInstance();
-//            controller.debugTileCutting(parentSurface.toDto(), this.toDto());
+//            Controller.getInstance().debugTileCutting(parentSurface.toDto(), this.toDto());
 //        });
     }
 

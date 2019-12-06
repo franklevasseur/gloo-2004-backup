@@ -154,7 +154,7 @@ public class UiController implements Initializable {
         this.redoButton.setDisable(!this.domainController.redoAvailable());
 
         this.pane.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            if (this.stateCurrentlyCreatingRectangularSurface) {
+            if (this.stateCurrentlyCreatingRectangularSurface || this.stateCurrentlyCreatingIrregularSurface) {
                 onPaneClicked(e);
                 e.consume();
             }

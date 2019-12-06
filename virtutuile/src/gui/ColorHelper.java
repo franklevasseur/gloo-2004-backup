@@ -20,26 +20,7 @@ public class ColorHelper {
         }else if(utilsColor == utils.Color.VIOLET){
             return Color.VIOLET;
         }
-        return Color.RED;
-    }
-
-    public static utils.Color javafxColorToUtils(Color javaFxColor) {
-        if (javaFxColor == Color.BLACK) {
-            return utils.Color.BLACK;
-        }else if(javaFxColor == Color.WHITE) {
-            return utils.Color.WHITE;
-        }else if(javaFxColor == Color.YELLOW) {
-            return  utils.Color.YELLOW;
-        }else if(javaFxColor == Color.GREEN) {
-            return utils.Color.GREEN;
-        }else if(javaFxColor == Color.BLUE) {
-            return utils.Color.BLUE;
-        }else if(javaFxColor == Color.RED) {
-            return utils.Color.RED;
-        }else if(javaFxColor == Color.VIOLET) {
-            return utils.Color.VIOLET;
-        }
-        return utils.Color.RED;
+        return Color.WHITE;
     }
 
     public static String utilsColorToString(utils.Color utilsColor) {
@@ -58,7 +39,7 @@ public class ColorHelper {
         }else if(utilsColor == utils.Color.VIOLET){
             return "VIOLET";
         }
-        return "RED";
+        return "WHITE";
     }
 
     public static utils.Color stringToUtils(String stringColor) {
@@ -77,6 +58,6 @@ public class ColorHelper {
         }else if(stringColor == "VIOLET"){
             return utils.Color.VIOLET;
         }
-        return utils.Color.RED;
+        return utils.Color.WHITE;
     }
 }

@@ -1,9 +1,6 @@
 package Domain;
 
-import utils.AbstractShape;
-import utils.Id;
-import utils.Point;
-import utils.ShapeHelper;
+import utils.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,6 +13,7 @@ public class Surface implements Serializable {
     private List<Point> summits;
     private SealsInfo sealsInfo;
     private boolean isRectangular;
+    private Color surfaceColor;
 
     private SurfaceFiller surfaceFiller = new SurfaceFiller();
 
@@ -135,5 +133,13 @@ public class Surface implements Serializable {
 
     public void setTileShifting(double tileShifting) {
         this.tileShifting = tileShifting;
+    }
+
+    public Color getSurfaceColor() {
+        return surfaceColor;
+    }
+
+    public void setSurfaceColor(Color surfaceColor) {
+        this.surfaceColor = surfaceColor;
     }
 }

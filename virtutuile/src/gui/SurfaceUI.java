@@ -10,6 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Shape;
+import utils.Color;
 import utils.Id;
 import utils.Point;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class SurfaceUI {
+
+    protected Shape shape;
 
     protected TileDto masterTile;
     protected PatternType pattern;
@@ -33,6 +36,7 @@ public abstract class SurfaceUI {
 
     protected double tileAngle;
     protected double tileShifting;
+    protected Color surfaceColor;
 
     protected List<TileUI> tiles;
 
@@ -64,6 +68,7 @@ public abstract class SurfaceUI {
         this.sealsInfo = surfaceDto.sealsInfoDto;
         this.masterTile = surfaceDto.masterTile;
         this.pattern = surfaceDto.pattern;
+        this.surfaceColor = surfaceDto.surfaceColor;
     }
 
     abstract public Shape getMainShape(); // gives the rectangle without the tiles and anchor points
@@ -130,6 +135,27 @@ public abstract class SurfaceUI {
         attachmentPoints.clear();
     }
 
+    protected void updateColor() {
+        this.updateColor(false);
+    }
+
+    protected void updateColor(boolean isCurrentlyMoving) {
+        if (this.isHole == HoleStatus.HOLE) {
+            shape.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            shape.setStroke(javafx.scene.paint.Color.BLACK);
+        } else if (this.isHole == HoleStatus.NONE || isCurrentlyMoving) {
+            shape.setFill(ColorHelper.utilsColorToJavafx(this.surfaceColor));
+            shape.setStroke(javafx.scene.paint.Color.BLACK);
+        }
+        else if (sealsInfo != null) {
+            shape.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
+            shape.setStroke(javafx.scene.paint.Color.BLACK);
+        } else {
+            shape.setFill(javafx.scene.paint.Color.WHITE);
+            shape.setStroke(javafx.scene.paint.Color.BLACK);
+        }
+    }
+
     public void delete() {
         hide();
         controller.removeSurface(this.toDto());
@@ -181,5 +207,13 @@ public abstract class SurfaceUI {
 
     public void setTileShifting(double tileShifting) {
         this.tileShifting = tileShifting;
+    }
+
+    public Color getSurfaceColor() {
+        return surfaceColor;
+    }
+
+    public void setSurfaceColor(Color surfaceColor) {
+        this.surfaceColor = surfaceColor;
     }
 }

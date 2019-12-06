@@ -4,7 +4,6 @@ import Domain.HoleStatus;
 import application.*;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import utils.*;
@@ -13,8 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RectangleSurfaceUI extends SurfaceUI {
-    
-    private Rectangle rectangle;
 
     private Point lastPointOfContact = new Point(0, 0);
     private boolean currentlyBeingDragged = false;
@@ -34,34 +31,17 @@ public class RectangleSurfaceUI extends SurfaceUI {
         double width = zoomManager.metersToPixels(rectangleInfo.width);
         double height = zoomManager.metersToPixels(rectangleInfo.height);
 
-        rectangle = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
+        shape = new Rectangle(topLeftCorner.x, topLeftCorner.y, width, height);
         summits = this.getSummits();
 
-        super.surfaceGroup.getChildren().add(rectangle);
+        super.surfaceGroup.getChildren().add(shape);
         surfaceGroup.setCursor(Cursor.HAND);
 
-        this.setRectangleColor();
+        this.updateColor();
 
         this.renderTiles(surfaceDto.tiles);
 
         initializeGroup();
-    }
-
-    private void setRectangleColor() {
-        if (this.isHole == HoleStatus.HOLE) {
-            rectangle.setFill(Color.TRANSPARENT);
-            rectangle.setStroke(Color.BLACK);
-        } else if (this.isHole == HoleStatus.NONE) {
-            rectangle.setFill(Color.WHITE);
-            rectangle.setStroke(Color.BLACK);
-        }
-        else if (sealsInfo != null) {
-            rectangle.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
-            rectangle.setStroke(Color.BLACK);
-        } else {
-            rectangle.setFill(Color.WHITE);
-            rectangle.setStroke(Color.BLACK);
-        }
     }
 
     private void initializeGroup() {
@@ -71,6 +51,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         });
 
         surfaceGroup.setOnMousePressed(mouseEvent -> {
+            Rectangle rectangle = (Rectangle) shape;
             this.lastPointOfContact = new Point(mouseEvent.getX() - rectangle.getX(), mouseEvent.getY() - rectangle.getY());
 //            System.out.println(String.format("(%f, %f)", mouseEvent.getX(), mouseEvent.getY()));
         });
@@ -79,6 +60,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
             if (this.currentlyBeingDragged) {
                 this.currentlyBeingDragged = false;
                 this.snapToGrid();
+                super.updateColor();
 
                 if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
                     controller.updateSurface(this.toDto());
@@ -91,11 +73,14 @@ public class RectangleSurfaceUI extends SurfaceUI {
         surfaceGroup.setOnMouseDragged(t -> {
             hideAttachmentPoints();
             hideTiles();
+            this.shape.setFill(ColorHelper.utilsColorToJavafx(super.surfaceColor));
 
             this.currentlyBeingDragged = true;
 
             double newX = t.getX() - this.lastPointOfContact.x;
             double newY = t.getY() - this.lastPointOfContact.y;
+
+            Rectangle rectangle = (Rectangle) shape;
             rectangle.setX(newX);
             rectangle.setY(newY);
             summits = this.getSummits();
@@ -106,10 +91,12 @@ public class RectangleSurfaceUI extends SurfaceUI {
 
     private void snapToGrid() {
         if (this.snapGrid.isVisible()) {
-            Point currentRectanglePosition = new Point(this.rectangle.getX(), this.rectangle.getY());
+
+            Rectangle rectangle = (Rectangle) shape;
+            Point currentRectanglePosition = new Point(rectangle.getX(), rectangle.getY());
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
-            this.rectangle.setX(nearestGridPoint.x);
-            this.rectangle.setY(nearestGridPoint.y);
+            rectangle.setX(nearestGridPoint.x);
+            rectangle.setY(nearestGridPoint.y);
             summits = this.getSummits();
 
             this.controller.updateSurface(this.toDto());
@@ -118,10 +105,11 @@ public class RectangleSurfaceUI extends SurfaceUI {
 
     public void fill() {
         this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-        setRectangleColor();
+        updateColor();
     }
 
     public void increaseSizeBy(double deltaWidth, double deltaHeight) {
+        Rectangle rectangle = (Rectangle) shape;
         double newWidth = rectangle.getWidth() + deltaWidth;
         double newHeight = rectangle.getHeight() + deltaHeight;
 
@@ -153,6 +141,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         dto.isHole = this.isHole;
         dto.masterTile = super.masterTile;
         dto.pattern = super.pattern;
+        dto.surfaceColor = super.surfaceColor;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());
@@ -162,13 +151,16 @@ public class RectangleSurfaceUI extends SurfaceUI {
     }
 
     private List<Point> getSummits() {
-        Point topLeft = new Point(this.rectangle.getX(), this.rectangle.getY());
+        Rectangle rectangle = (Rectangle) shape;
+        Point topLeft = new Point(rectangle.getX(), rectangle.getY());
         return RectangleHelper.rectangleInfoToSummits(topLeft, rectangle.getWidth(), rectangle.getHeight());
     }
 
     public void setSize(double width, double height){
         double pixelWidth = zoomManager.metersToPixels(width);
         double pixelHeight = zoomManager.metersToPixels(height);
+
+        Rectangle rectangle = (Rectangle) shape;
         rectangle.setWidth(pixelWidth);
         rectangle.setHeight(pixelHeight);
         summits = this.getSummits();
@@ -178,18 +170,20 @@ public class RectangleSurfaceUI extends SurfaceUI {
 
         Point topLeftCorner = zoomManager.metersToPixels(position);
 
+        Rectangle rectangle = (Rectangle) shape;
         rectangle.setX(topLeftCorner.x);
         rectangle.setY(topLeftCorner.y);
         summits = this.getSummits();
     }
 
     public Shape getMainShape() {
-        return this.rectangle;
+        return this.shape;
     }
 
     public void translatePixelBy(Point translation) {
-        rectangle.setX(this.rectangle.getX() + translation.x);
-        rectangle.setY(this.rectangle.getY() + translation.y);
+        Rectangle rectangle = (Rectangle) shape;
+        rectangle.setX(rectangle.getX() + translation.x);
+        rectangle.setY(rectangle.getY() + translation.y);
         summits = this.getSummits();
     }
 }

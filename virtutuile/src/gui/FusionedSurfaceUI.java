@@ -1,12 +1,10 @@
 package gui;
 
 import Domain.HoleStatus;
-import application.Controller;
 import application.SurfaceDto;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import utils.*;
 
@@ -14,8 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FusionedSurfaceUI extends SurfaceUI {
-
-    private Shape shape;
 
     private Point lastPointOfContact = new Point(0,0);
     private Point position;
@@ -48,12 +44,11 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
         super.surfaceGroup = new Group();
         this.renderShapeFromChilds();
+        this.updateColor();
 
         this.snapGrid = snapGrid;
 
         surfaceGroup.setCursor(Cursor.HAND);
-
-        this.setShapeColor();
 
         this.renderTiles(surfaceDto.tiles);
 
@@ -78,8 +73,8 @@ public class FusionedSurfaceUI extends SurfaceUI {
             this.shape = Shape.union(this.shape, s.getMainShape());
         }
 
-        this.setShapeColor();
         super.surfaceGroup.getChildren().add(this.shape);
+        this.updateColor(this.currentlyBeingDragged);
 
         List<AbstractShape> allSurfacesSummits = allSurfacesToFusion
                 .stream()
@@ -96,16 +91,6 @@ public class FusionedSurfaceUI extends SurfaceUI {
 //        System.out.println(String.format("(%f, %f)", this.position.x, this.position.y));
     }
 
-    private void setShapeColor() {
-        if (sealsInfo != null && super.isHole == HoleStatus.FILLED) {
-            shape.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
-            shape.setStroke(Color.BLACK);
-            return;
-        }
-        shape.setFill(Color.WHITE);
-        shape.setStroke(Color.BLACK);
-    }
-
     private void initializeGroup(){
        surfaceGroup.setOnMouseClicked(t -> {
            selectionManager.selectSurface(this);
@@ -120,6 +105,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
            if(this.currentlyBeingDragged){
                this.currentlyBeingDragged = false;
                this.snapToGrid();
+               super.updateColor();
 
                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
                    controller.updateSurface(this.toDto());
@@ -170,6 +156,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
         dto.fusionnedSurface = this.allSurfacesToFusion.stream().map(s -> s.toDto()).collect(Collectors.toList());
         dto.isHole = this.isHole;
         dto.id = this.id;
+        dto.surfaceColor = super.surfaceColor;
 
         dto.masterTile = this.masterTile;
         dto.pattern = super.pattern;
@@ -185,7 +172,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
     @Override
     public void fill() {
         this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
-        setShapeColor();
+        updateColor();
     }
 
     @Override
@@ -215,6 +202,10 @@ public class FusionedSurfaceUI extends SurfaceUI {
         if (isHole != HoleStatus.HOLE) { // Can't be a hole...
             this.isHole = isHole;
         }
+    }
+
+    public List<SurfaceUI> getInnerSurfaces() {
+        return this.allSurfacesToFusion;
     }
 
     private static List<SurfaceUI> sortList(List<SurfaceUI> surfaces) {

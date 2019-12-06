@@ -24,6 +24,7 @@ public class SurfaceAssembler {
         dto.isFusionned = surface.isFusionned();
         dto.tiles = surface.getTiles().stream().map(t -> toDto(t)).collect(Collectors.toList());
         dto.pattern = surface.getPattern();
+        dto.surfaceColor = surface.getSurfaceColor();
 
         dto.tileAngle = surface.getTileAngle();
         dto.tileShifting = surface.getTileShifting();
@@ -56,6 +57,7 @@ public class SurfaceAssembler {
         destinationSurface.setIsRectangular(dto.isRectangular);
         destinationSurface.setTileAngle(dto.tileAngle);
         destinationSurface.setTileShifting(dto.tileShifting);
+        destinationSurface.setSurfaceColor(dto.surfaceColor);
         if (dto.masterTile != null) {
             destinationSurface.setMasterTile(fromDto(dto.masterTile));
         }

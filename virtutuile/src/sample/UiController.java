@@ -46,6 +46,7 @@ public class UiController implements Initializable {
     public TextField tileWidthMaterialInputBox;
 
     public ChoiceBox<String> materialColorChoiceBox;
+    public ChoiceBox<String> surfaceColorChoiceBox;
 
     //Édit material
     public TextField mNewHeightInputBox;
@@ -134,6 +135,7 @@ public class UiController implements Initializable {
         materialColorChoiceBox.setItems(possibleColor);
         mNewColorInputBox.setItems(possibleColor);
         sealColorChoiceBox.setItems(possibleColor);
+        surfaceColorChoiceBox.setItems(possibleColor);
         tilePatternInputBox.setItems(PatternHelperUI.getPossibleTilePatterns());
 
         materialNameColumn.setCellValueFactory(new PropertyValueFactory<MaterialUI, String>("name"));
@@ -418,6 +420,9 @@ public class UiController implements Initializable {
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
+                CharSequence surfaceColorInput = this.surfaceColorChoiceBox.getValue();
+                chosenSurface.setSurfaceColor(ColorHelper.stringToUtils(surfaceColorInput.toString()));
+
                 CharSequence patternInput = this.tilePatternInputBox.getValue();
 
                 //new surface height
@@ -460,7 +465,7 @@ public class UiController implements Initializable {
                 } else {
                     SealsInfoDto sealsInfoDto = new SealsInfoDto();
                     sealsInfoDto.sealWidth = newSealWidth;
-                    sealsInfoDto.color = ColorHelper.stringToUtils(sealColorChoiceBox.getValue());
+                    sealsInfoDto.color = ColorHelper.stringToUtils(sealColorInput.toString());
                     chosenSurface.setSealsInfo(sealsInfoDto);
 
                     PatternType pattern = PatternHelperUI.stringToPattern(patternInput.toString());
@@ -547,6 +552,8 @@ public class UiController implements Initializable {
             sealColorChoiceBox.setValue(ColorHelper.utilsColorToString(firstOne.getSealsInfo().color));
         }
 
+        surfaceColorChoiceBox.setValue(ColorHelper.utilsColorToString(firstOne.getSurfaceColor()));
+
         if(firstOne.getPattern() != null) {
             PatternType pattern = firstOne.getPattern();
             tilePatternInputBox.setValue(PatternHelperUI.patternToDisplayString(pattern));
@@ -556,13 +563,10 @@ public class UiController implements Initializable {
             tilePatternInputBox.setValue("");
         }
 
-        tileAngleInputBox.setText(formatter.format(firstOne.getTileAngle()));
-        tileShiftingInputBox.setText(formatter.format(firstOne.getTileShifting()));
-
         surfacePositionXInputBox.setText(formatter.format(topLeft.x));
         surfacePositionYInputBox.setText(formatter.format(topLeft.y));
 
-        if(firstOne.toDto().isHole == HoleStatus.FILLED) {
+        if(firstOne.toDto().isHole == HoleStatus.FILLED && firstOne.toDto().tiles != null && firstOne.toDto().tiles.size() > 0) {
             String tileMaterial = firstOne.toDto().tiles.get(0).material.name;
             utils.Color tilecolor = firstOne.toDto().tiles.get(0).material.color;
             String materialColor;
@@ -575,6 +579,8 @@ public class UiController implements Initializable {
             tileWidthInputbox.setText(formatter.format(tileRect.width));
             masterTileX.setText(formatter.format(tileRect.topLeftCorner.x));
             masterTileY.setText(formatter.format(tileRect.topLeftCorner.y));
+            tileAngleInputBox.setText(formatter.format(firstOne.getTileAngle()));
+            tileShiftingInputBox.setText(formatter.format(firstOne.getTileShifting()));
             materialColorDisplay.setText(materialColor);
         } else if (firstOne.toDto().isHole == HoleStatus.HOLE) {
             materialColorDisplay.setText("hole");
@@ -603,6 +609,7 @@ public class UiController implements Initializable {
 
         tilePatternInputBox.setValue("");
         sealColorChoiceBox.setValue("");
+        surfaceColorChoiceBox.setValue("");
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {
@@ -687,6 +694,12 @@ public class UiController implements Initializable {
             surface.setHole(HoleStatus.NONE);
             domainController.updateSurface(surface.toDto());
             surface.hideTiles();
+            surface.setHole(HoleStatus.NONE);
+
+            if (surface.toDto().isFusionned) {
+                FusionedSurfaceUI fs = (FusionedSurfaceUI) surface;
+                fs.getInnerSurfaces().forEach(s -> s.setHole(HoleStatus.NONE));
+            }
         }
         hideRectangleInfo();
         this.renderFromProject();
@@ -815,6 +828,8 @@ public class UiController implements Initializable {
     }
 
     public void fusionToggle() {
+        hideRectangleInfo();
+
         if (stateCurrentlyFusionning) {
             fusionSurfaces();
             return;
@@ -1300,6 +1315,7 @@ public class UiController implements Initializable {
         hideMaterialInfo();
 
     }
+
     private void displayMaterialInfo(){
         NumberFormat formatter = new DecimalFormat("#0.000");
 

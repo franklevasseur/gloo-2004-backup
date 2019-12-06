@@ -204,8 +204,10 @@ public class Controller {
             return this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
         }).collect(Collectors.toList());
         for(Surface i: surfaces){
-            Accounting temp = new Accounting(surfaces, i.getTiles().get(0).getMaterial());
-            account.add(temp);
+            if (i.getTiles().size() > 0) {
+                Accounting temp = new Accounting(surfaces, i.getTiles().get(0).getMaterial());
+                account.add(temp);
+            }
         }
         Maccount = account;
 

@@ -30,6 +30,11 @@ public class Project implements Serializable {
 
         List<Surface> baseSurfaces = new ArrayList<>();
         for (Surface s : surfaces) {
+
+            if (s.isHole() == HoleStatus.FILLED) {
+                s.setHole(HoleStatus.NONE);
+            }
+
             if (s.isFusionned()) {
                 baseSurfaces.addAll(((FusionnedSurface) s).getFusionnedSurfaces());
             } else {

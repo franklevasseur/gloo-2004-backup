@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -71,6 +72,7 @@ public class SnapGridUI {
         this.renderLines(viewBoxRectangle);
         this.renderColumn(viewBoxRectangle);
         this.parentNode.getChildren().addAll(displayedLines);
+        displayedLines.forEach(Node::toBack);
     }
 
     public Bounds getOriginBounds() {

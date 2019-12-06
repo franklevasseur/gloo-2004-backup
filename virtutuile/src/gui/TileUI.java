@@ -37,6 +37,7 @@ public class TileUI {
         shape.getPoints().addAll(flattedSummits);
 
         shape.setFill(ColorHelper.utilsColorToJavafx(dto.material.color));
+        shape.setStroke(Color.TRANSPARENT);
 
         shape.setOnMouseEntered(event -> select());
         shape.setOnMouseExited(event -> unselect());
@@ -64,21 +65,7 @@ public class TileUI {
     }
 
     private void unselect() {
-        if (material.color == utils.Color.BLACK) {
-            shape.setFill(Color.BLACK);
-        }else if(material.color == utils.Color.WHITE){
-            shape.setFill(Color.WHITE);
-        }else if(material.color == utils.Color.YELLOW){
-            shape.setFill(Color.YELLOW);
-        }else if(material.color == utils.Color.GREEN){
-            shape.setFill(Color.GREEN);
-        }else if(material.color == utils.Color.BLUE){
-            shape.setFill(Color.BLUE);
-        }else if(material.color == utils.Color.RED){
-            shape.setFill(Color.RED);
-        }else if(material.color == utils.Color.VIOLET){
-            shape.setFill(Color.VIOLET);
-        }
+        shape.setFill(ColorHelper.utilsColorToJavafx(material.color));
         tileInfoTextField.setText("");
     }
 

@@ -114,6 +114,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         double newHeight = rectangle.getHeight() + deltaHeight;
 
         hideTiles();
+        updateColor(true);
 
         if (newWidth >= 0) {
             rectangle.setWidth(newWidth);
@@ -125,6 +126,8 @@ public class RectangleSurfaceUI extends SurfaceUI {
     }
 
     public void commitIncreaseSize() {
+        updateColor(false);
+        selectionManager.selectSurface(this);
         if (this.isHole == HoleStatus.FILLED) {
             this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
             return;

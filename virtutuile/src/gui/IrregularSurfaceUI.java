@@ -4,6 +4,7 @@ import Domain.HoleStatus;
 import application.SurfaceDto;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import utils.AbstractShape;
@@ -16,7 +17,6 @@ import java.util.stream.Collectors;
 
 public class IrregularSurfaceUI extends SurfaceUI {
 
-    private Point lastPointOfContact = new Point(0, 0);
     private boolean currentlyBeingDragged = false;
 
     public IrregularSurfaceUI(SurfaceDto surfaceDto,
@@ -54,15 +54,13 @@ public class IrregularSurfaceUI extends SurfaceUI {
         this.updateColor(this.currentlyBeingDragged);
     }
 
-    private void initializeGroup() {
+    @Override
+    protected void initializeGroup() {
+        super.initializeGroup();
+
         surfaceGroup.setOnMouseClicked(t -> {
             selectionManager.selectSurface(this);
             t.consume();
-        });
-
-        surfaceGroup.setOnMousePressed(mouseEvent -> {
-            this.lastPointOfContact = new Point(mouseEvent.getX() - getPosition().x, mouseEvent.getY() - getPosition().y);
-//            System.out.println(String.format("(%f, %f)", mouseEvent.getX(), mouseEvent.getY()));
         });
 
         surfaceGroup.setOnMouseReleased(mouseEvent -> {
@@ -81,31 +79,33 @@ public class IrregularSurfaceUI extends SurfaceUI {
                 updateColor();
             }
         });
+    }
 
-        surfaceGroup.setOnMouseDragged(t -> {
-            hideAttachmentPoints();
-            hideTiles();
 
-            this.currentlyBeingDragged = true;
+    @Override
+    protected void handleSurfaceDrag(MouseEvent event) {
+        hideAttachmentPoints();
+        hideTiles();
 
-            double newX = t.getX() - this.lastPointOfContact.x;
-            double newY = t.getY() - this.lastPointOfContact.y;
+        this.currentlyBeingDragged = true;
+
+        double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
+        double newY = event.getY() - this.lastPointOfContactRelativeToSurface.y;
 
 //            System.out.println(String.format("(%f, %f)", getPosition().x, getPosition().y));
 
-            Point translation = Point.diff(new Point(newX, newY), getPosition());
-            this.translatePixelBy(translation);
+        Point translation = Point.diff(new Point(newX, newY), getPixelPosition());
+        this.translatePixelBy(translation);
 
-            t.consume();
-        });
+        event.consume();
     }
 
     private void snapToGrid() {
         if (super.snapGrid.isVisible()) {
-            Point currentRectanglePosition = new Point(getPosition().x, getPosition().y);
+            Point currentRectanglePosition = new Point(getPixelPosition().x, getPixelPosition().y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
 
-            Point position = getPosition();
+            Point position = getPixelPosition();
             Point translation = Point.diff(new Point(nearestGridPoint.x, nearestGridPoint.y), position);
 
 //            System.out.println(String.format("position: (%.1f, %.1f), translation: (%.1f, %.1f)", position.x, position.y, translation.x, translation.y));
@@ -134,7 +134,8 @@ public class IrregularSurfaceUI extends SurfaceUI {
         return returned;
     }
 
-    private Point getPosition() {
+    @Override
+    protected Point getPixelPosition() {
         AbstractShape shape = new AbstractShape(this.getSummits(), false);
         return ShapeHelper.getTopLeftCorner(shape);
     }
@@ -178,7 +179,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
     public void setPosition(Point position) {
         Point pixelPosition = zoomManager.metersToPixels(position);
 
-        Point translation = Point.diff(pixelPosition, getPosition());
+        Point translation = Point.diff(pixelPosition, getPixelPosition());
         translatePixelBy(translation);
     }
 

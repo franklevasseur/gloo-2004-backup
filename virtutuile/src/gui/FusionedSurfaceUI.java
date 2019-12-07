@@ -5,6 +5,7 @@ import application.SurfaceDto;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 import utils.*;
 
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 
 public class FusionedSurfaceUI extends SurfaceUI {
 
-    private Point lastPointOfContact = new Point(0,0);
     private Point position;
     private boolean currentlyBeingDragged = false;
 
@@ -91,14 +91,13 @@ public class FusionedSurfaceUI extends SurfaceUI {
 //        System.out.println(String.format("(%f, %f)", this.position.x, this.position.y));
     }
 
-    private void initializeGroup(){
+    @Override
+    protected void initializeGroup() {
+        super.initializeGroup();
+
        surfaceGroup.setOnMouseClicked(t -> {
            selectionManager.selectSurface(this);
            t.consume();
-       });
-
-       surfaceGroup.setOnMousePressed(mouseEvent -> {
-           this.lastPointOfContact = new Point(mouseEvent.getX() - this.position.x, mouseEvent.getY() - this.position.y);
        });
 
        surfaceGroup.setOnMouseReleased(mouseEvent -> {
@@ -114,21 +113,27 @@ public class FusionedSurfaceUI extends SurfaceUI {
                this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
            }
        });
+    }
 
-       surfaceGroup.setOnMouseDragged(mouseEvent -> {
-           hideAttachmentPoints();
-           hideTiles();
+    @Override
+    protected void handleSurfaceDrag(MouseEvent event) {
+        hideAttachmentPoints();
+        hideTiles();
 
-           this.currentlyBeingDragged = true;
+        this.currentlyBeingDragged = true;
 
-           double newX = mouseEvent.getX() - this.lastPointOfContact.x;
-           double newY = mouseEvent.getY() - this.lastPointOfContact.y;
-           Point newPoint = new Point(newX, newY);
+        double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
+        double newY = event.getY() - this.lastPointOfContactRelativeToSurface.y;
+        Point newPoint = new Point(newX, newY);
 
-           this.setPixelPosition(newPoint);
+        this.setPixelPosition(newPoint);
 
-           mouseEvent.consume();
-       });
+        event.consume();
+    }
+
+    @Override
+    protected Point getPixelPosition() {
+        return this.position;
     }
 
     private void snapToGrid() {

@@ -4,6 +4,7 @@ import Domain.HoleStatus;
 import application.*;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import utils.*;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 
 public class RectangleSurfaceUI extends SurfaceUI {
 
-    private Point lastPointOfContact = new Point(0, 0);
     private boolean currentlyBeingDragged = false;
 
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
@@ -44,16 +44,13 @@ public class RectangleSurfaceUI extends SurfaceUI {
         initializeGroup();
     }
 
-    private void initializeGroup() {
+    @Override
+    protected void initializeGroup() {
+        super.initializeGroup();
+
         surfaceGroup.setOnMouseClicked(t -> {
             selectionManager.selectSurface(this);
             t.consume();
-        });
-
-        surfaceGroup.setOnMousePressed(mouseEvent -> {
-            Rectangle rectangle = (Rectangle) shape;
-            this.lastPointOfContact = new Point(mouseEvent.getX() - rectangle.getX(), mouseEvent.getY() - rectangle.getY());
-//            System.out.println(String.format("(%f, %f)", mouseEvent.getX(), mouseEvent.getY()));
         });
 
         surfaceGroup.setOnMouseReleased(mouseEvent -> {
@@ -69,24 +66,31 @@ public class RectangleSurfaceUI extends SurfaceUI {
                 this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
             }
         });
+    }
 
-        surfaceGroup.setOnMouseDragged(t -> {
-            hideAttachmentPoints();
-            hideTiles();
-            this.shape.setFill(ColorHelper.utilsColorToJavafx(super.surfaceColor));
+    @Override
+    protected void handleSurfaceDrag(MouseEvent event) {
+        hideAttachmentPoints();
+        hideTiles();
+        this.shape.setFill(ColorHelper.utilsColorToJavafx(super.surfaceColor));
 
-            this.currentlyBeingDragged = true;
+        this.currentlyBeingDragged = true;
 
-            double newX = t.getX() - this.lastPointOfContact.x;
-            double newY = t.getY() - this.lastPointOfContact.y;
+        double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
+        double newY = event.getY() - this.lastPointOfContactRelativeToSurface.y;
 
-            Rectangle rectangle = (Rectangle) shape;
-            rectangle.setX(newX);
-            rectangle.setY(newY);
-            summits = this.getSummits();
+        Rectangle rectangle = (Rectangle) shape;
+        rectangle.setX(newX);
+        rectangle.setY(newY);
+        summits = this.getSummits();
 
-            t.consume();
-        });
+        event.consume();
+    }
+
+    @Override
+    protected Point getPixelPosition() {
+        Rectangle rectangle = (Rectangle) shape;
+        return new Point(rectangle.getX(), rectangle.getY());
     }
 
     private void snapToGrid() {

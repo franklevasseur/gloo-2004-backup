@@ -95,6 +95,7 @@ public class UiController implements Initializable {
     public ChoiceBox<String> tileMaterialChoiceBox;
 
     public CheckBox snapGridCheckBox;
+    public CheckBox mooveTilesCheckBox;
 
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
     private SelectionManager selectionManager;
@@ -651,6 +652,14 @@ public class UiController implements Initializable {
             this.snapGridUI.removeGrid();
             hideSnapgridInfo();
         }
+    }
+
+    public void moveTilesToggle() {
+        if (mooveTilesCheckBox.isSelected()) {
+            this.allSurfaces.forEach(s -> s.setCurrentlyMovingTiles(true));
+            return;
+        }
+        this.allSurfaces.forEach(s -> s.setCurrentlyMovingTiles(false));
     }
 
     private List<Point> getViewBoxSummits() {

@@ -9,10 +9,9 @@ import application.TileDto;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
-import utils.Color;
-import utils.Id;
-import utils.Point;
+import utils.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +48,11 @@ public abstract class SurfaceUI {
 
     protected Controller controller = Controller.getInstance();
 
+    protected boolean currentlyMovingTiles = false;
+
+    protected Point lastPointOfContactRelativeToSurface = new Point(0, 0);
+    protected Point lastPointOfContactRelativeToMasterTile = new Point(0, 0);
+
     public SurfaceUI(SurfaceDto surfaceDto,
                      ZoomManager zoomManager,
                      SelectionManager selectionManager,
@@ -77,6 +81,8 @@ public abstract class SurfaceUI {
     abstract public void setSize(double width, double height);
     abstract public void setPosition(Point position);
     abstract public void translatePixelBy(Point translation);
+    abstract protected void handleSurfaceDrag(MouseEvent event);
+    abstract protected Point getPixelPosition();
 
     public void setMasterTile(TileDto masterTile) {
         this.masterTile = masterTile;
@@ -215,5 +221,50 @@ public abstract class SurfaceUI {
 
     public void setSurfaceColor(Color surfaceColor) {
         this.surfaceColor = surfaceColor;
+    }
+
+    public void setCurrentlyMovingTiles(boolean currentlyMovingTiles) {
+        this.currentlyMovingTiles = currentlyMovingTiles;
+    }
+
+    protected void initializeGroup() {
+        surfaceGroup.setOnMouseDragged(e -> {
+            if (!currentlyMovingTiles) {
+                this.handleSurfaceDrag(e);
+                return;
+            }
+            handleTileDrag(e);
+        });
+
+        surfaceGroup.setOnMousePressed(mouseEvent -> {
+            this.lastPointOfContactRelativeToSurface = new Point(mouseEvent.getX() - getPixelPosition().x, mouseEvent.getY() - getPixelPosition().y);
+
+            if (masterTile == null) {
+                return;
+            }
+
+            Point masterTilePixelTopLeft = zoomManager.metersToPixels(ShapeHelper.getTopLeftCorner(new AbstractShape(masterTile.summits)));
+            this.lastPointOfContactRelativeToMasterTile = new Point(mouseEvent.getX() - masterTilePixelTopLeft.x, mouseEvent.getY() - masterTilePixelTopLeft.y);
+        });
+    }
+
+    private void handleTileDrag(MouseEvent event) {
+        if (this.masterTile == null || this.isHole != HoleStatus.FILLED) {
+            return;
+        }
+
+        double newX = event.getX() - this.lastPointOfContactRelativeToMasterTile.x;
+        double newY = event.getY() - this.lastPointOfContactRelativeToMasterTile.y;
+        Point currentEventPoint = new Point(newX, newY);
+
+        Point masterTilePixelTopLeft = zoomManager.metersToPixels(ShapeHelper.getTopLeftCorner(new AbstractShape(masterTile.summits)));
+        Point translation = zoomManager.pixelsToMeters(Point.diff(currentEventPoint, masterTilePixelTopLeft));
+
+        this.masterTile.summits = this.masterTile.summits.stream()
+                .map(s -> Point.translate(s, translation.x, translation.y))
+                .collect(Collectors.toList());
+        this.fill();
+
+        event.consume();
     }
 }

@@ -163,6 +163,15 @@ public class Controller {
     public void newProject(){
         this.vraiProject = new Project();
         this.undoRedoManager = new UndoRedoManager();
+        MaterialDto defaultNewMaterial = new MaterialDto();
+        defaultNewMaterial.materialType = MaterialType.tileMaterial;
+        defaultNewMaterial.name = "Melon d'eau";
+        defaultNewMaterial.color = Color.GREEN;
+        defaultNewMaterial.costPerBox = 50.0;
+        defaultNewMaterial.tileTypeHeight = 0.3;
+        defaultNewMaterial.tileTypeWidth = 0.6;
+        defaultNewMaterial.nbTilePerBox = 45;
+        this.createMaterial(defaultNewMaterial);
         undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 

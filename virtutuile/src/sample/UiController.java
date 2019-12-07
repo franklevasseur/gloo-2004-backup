@@ -15,6 +15,7 @@ import javafx.scene.input.*;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import utils.*;
@@ -995,15 +996,15 @@ public class UiController implements Initializable {
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point topLeft = ShapeHelper.getTopLeftCorner(firstSurface);
         double firstX = topLeft.x;
-        double firstY =topLeft.y;
 
         for(SurfaceUI s: selectedSurfaces){
             if(s == mainSurface){
                 continue;
             }
             AbstractShape surface = new AbstractShape(s.toDto().summits);
-            double surfaceWidth = ShapeHelper.getWidth(surface);
-            s.setPosition(new Point(firstX - surfaceWidth - 0.25, firstY));
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceY = surfaceTopLeft.y;
+            s.setPosition(new Point(firstX , surfaceY));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
@@ -1024,7 +1025,6 @@ public class UiController implements Initializable {
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point topLeft = ShapeHelper.getTopLeftCorner(firstSurface);
         double firstX = topLeft.x;
-        double firstY = topLeft.y;
         double firstWidth = ShapeHelper.getWidth(firstSurface);
 
         for(SurfaceUI s: selectedSurfaces){
@@ -1032,7 +1032,9 @@ public class UiController implements Initializable {
                 continue;
             }
             AbstractShape surface = new AbstractShape(s.toDto().summits);
-            s.setPosition(new Point(firstX + firstWidth + 0.25, firstY));
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceY = surfaceTopLeft.y;
+            s.setPosition(new Point(firstX + firstWidth, surfaceY));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
@@ -1052,7 +1054,6 @@ public class UiController implements Initializable {
 
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point topLeft = ShapeHelper.getTopLeftCorner(firstSurface);
-        double firstX = topLeft.x;
         double firstY = topLeft.y;
 
         for(SurfaceUI s: selectedSurfaces){
@@ -1060,8 +1061,9 @@ public class UiController implements Initializable {
                 continue;
             }
             AbstractShape surface = new AbstractShape(s.toDto().summits);
-            double surfaceHeight = ShapeHelper.getHeight(surface);
-            s.setPosition(new Point(firstX, firstY - surfaceHeight - 0.25));
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceX = surfaceTopLeft.x;
+            s.setPosition(new Point(surfaceX, firstY));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
@@ -1081,7 +1083,6 @@ public class UiController implements Initializable {
 
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point topLeft = ShapeHelper.getTopLeftCorner(firstSurface);
-        double firstX = topLeft.x;
         double firstY = topLeft.y;
         double firstHeight = ShapeHelper.getHeight(firstSurface);
 
@@ -1090,7 +1091,9 @@ public class UiController implements Initializable {
                 continue;
             }
             AbstractShape surface = new AbstractShape(s.toDto().summits);
-            s.setPosition(new Point(firstX, firstY + firstHeight + 0.25));
+            Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
+            double surfaceX = surfaceTopLeft.x;
+            s.setPosition(new Point(surfaceX, firstY + firstHeight));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());

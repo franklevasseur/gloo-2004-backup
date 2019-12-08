@@ -9,6 +9,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import utils.AbstractShape;
 import utils.Point;
+import utils.Segment;
 import utils.ShapeHelper;
 
 import java.util.ArrayList;
@@ -148,7 +149,21 @@ public class IrregularSurfaceUI extends SurfaceUI {
 
     @Override
     public void setSize(double width, double height) {
-        throw new RuntimeException("tabrnakkkkkkkk ok ????");
+
+        double pixelWidth = zoomManager.metersToPixels(width);
+
+        AbstractShape shape = new AbstractShape(this.getSummits());
+
+        double currentWidth = ShapeHelper.getWidth(shape);
+        double currentHeight = ShapeHelper.getHeight(shape);
+        double widthToHeightRatio = currentHeight / currentWidth;
+
+        double deltaWidth = pixelWidth - currentWidth;
+
+        double newHeight = pixelWidth * widthToHeightRatio;
+        double deltaHeight = newHeight - currentHeight;
+
+        increaseSizeBy(deltaWidth, deltaHeight);
     }
 
     @Override

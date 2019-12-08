@@ -363,7 +363,9 @@ public class UiController implements Initializable {
     public Void handleSelection(Void nothing) {
         displayRectangleInfo();
 
-        if (selectionManager.getSelectedSurfaces().stream().allMatch(s -> s.toDto().isHole  == HoleStatus.FILLED)) {
+        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
+
+        if (selectedSurfaces.stream().allMatch(s -> s.toDto().isHole  == HoleStatus.FILLED)) {
             stateCurrentlyFilling = false;
             fillTilesButton.setText("Unfill tiles");
         } else {
@@ -371,13 +373,20 @@ public class UiController implements Initializable {
             fillTilesButton.setText("Fill tiles");
         }
 
-        if (selectionManager.getSelectedSurfaces().stream().allMatch(s -> s.toDto().isFusionned)) {
+        if (selectedSurfaces.stream().allMatch(s -> s.toDto().isFusionned)) {
             stateCurrentlyFusionning = false;
             fusionButton.setText("UnFusion surfaces");
         } else {
             stateCurrentlyFusionning = true;
             fusionButton.setText("Fusion surfaces");
         }
+
+        if (selectedSurfaces.stream().anyMatch(s -> !s.toDto().isRectangular)) {
+            surfaceHeightInputBox.setDisable(true);
+        } else {
+            surfaceHeightInputBox.setDisable(false);
+        }
+
         return null;
     }
 

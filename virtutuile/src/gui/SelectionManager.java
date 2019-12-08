@@ -26,7 +26,10 @@ public class SelectionManager {
         } else {
             surface.select(false);
         }
-        selectedSurfaces.add(surface);
+
+        if (!selectedSurfaces.contains(surface)) {
+            selectedSurfaces.add(surface);
+        }
 
         handler.apply(null);
     }

@@ -687,7 +687,6 @@ public class UiController implements Initializable {
     }
 
     public void snapGridToggle() {
-        // TODO: ajouter un input box pour la taille des espaces snapgrid
         if (snapGridCheckBox.isSelected()) {
             this.snapGridUI.setVisibility(true);
             this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
@@ -1415,7 +1414,8 @@ public class UiController implements Initializable {
     }
 
     public void MetricToggle() {
-        // TODO: grosse conne imperial
+        //Converti le contenu de chaque input box en metric
+        // C'EST DES METRE!!
         NumberFormat formatter = new DecimalFormat("#0.000");
 
         //13
@@ -1506,29 +1506,15 @@ public class UiController implements Initializable {
     }
 
     public void ImperialToggle() {
-        // TODO: grosse conne imperial
-//        tileHeightMaterialInputBox; ok
-//        tileWidthMaterialInputBox; ok
-//        mNewHeightInputBox; ok
-//        mNewLenghtInputBox; ok
-//        tileHeightInputbox; ok
-//        tileWidthInputbox; ok
-//        sealWidthInputBox; ok
-//        surfaceHeightInputBox; ok
-//        surfaceWidthInputBox; ok
-//        masterTileX; ok
-//        masterTileY; ok
-//        surfacePositionXInputBox; ok
-//        surfacePositionYInputBox; ok
+        //Converti le contenu de chaque input box en imperial
+        // CEST DES POUCE!!!
         NumberFormat formatter = new DecimalFormat("#0.000");
 
-        CharSequence dummy;
         //13
         CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
         Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-            dummy = this.tileHeightInputbox.getCharacters();
         }
         //12
         temp = this.tileWidthMaterialInputBox.getCharacters();
@@ -1536,84 +1522,72 @@ public class UiController implements Initializable {
         if(tempDouble != null){
             this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //11
         temp = this.mNewHeightInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.mNewHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //10
         temp = this.mNewLenghtInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.mNewLenghtInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //9
         temp = this.tileHeightInputbox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.tileHeightInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //8
         temp = this.tileWidthInputbox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.tileWidthInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //7
         temp = this.sealWidthInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.sealWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //6
         temp = this.surfaceHeightInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.surfaceHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //5
         temp = this.surfaceWidthInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.surfaceWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //4
         temp = this.masterTileX.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.masterTileX.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //3
         temp = this.masterTileY.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.masterTileY.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //2
         temp = this.surfacePositionXInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.surfacePositionXInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         //1
         temp = this.surfacePositionYInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){
             this.surfacePositionYInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
         }
-        dummy = this.tileHeightInputbox.getCharacters();
         temp = this.tileShiftingInputBox.getCharacters();
         tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
         if(tempDouble != null){

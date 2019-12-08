@@ -92,6 +92,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
     @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
+        hideResizeIndicator();
         hideTiles();
 
         double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
@@ -155,7 +156,9 @@ public class FusionedSurfaceUI extends SurfaceUI {
     }
 
     @Override
-    public void setSize(double width, double height) {}
+    public void setSize(double width, double height) {
+        throw new RuntimeException("tabrnakkkkkkkk ok ????");
+    }
 
     @Override
     public void setPosition(Point position) {
@@ -174,6 +177,11 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
     public void translatePixelBy(Point translation) {
         this.setPixelPosition(new Point(this.position.x + translation.x, this.position.y + translation.y));
+    }
+
+    @Override
+    public void increaseSizeBy(double deltaWidth, double deltaHeight) {
+        throw new RuntimeException("tabrnakkkkkkkk ok ????");
     }
 
     @Override

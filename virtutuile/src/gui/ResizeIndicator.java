@@ -4,8 +4,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import utils.AbstractShape;
 import utils.Point;
 import utils.Segment;
+import utils.ShapeHelper;
 
 public class ResizeIndicator {
 
@@ -23,9 +25,11 @@ public class ResizeIndicator {
         node.setOnMouseDragged(t -> {
             currentlyBeingDragged = true;
 
+            Point boundingTopLeft = ShapeHelper.getTheoricalTopLeftCorner(new AbstractShape(parentSurface.summits));
+
             double newX = t.getX();
             double newY = proportional ?
-                    new Segment(initialCoord, new Point(initialCoord.x + 100, initialCoord.y + 100)).predictY(newX)
+                    new Segment(initialCoord, boundingTopLeft).predictY(newX)
                     : t.getY();
 
             double deltaX = newX - node.getCenterX();
@@ -34,9 +38,7 @@ public class ResizeIndicator {
             node.setCenterX(newX);
             node.setCenterY(newY);
 
-            if (parentSurface.toDto().isRectangular) {
-                ((RectangleSurfaceUI) parentSurface).increaseSizeBy(deltaX, deltaY);
-            }
+            parentSurface.increaseSizeBy(deltaX, deltaY);
 
             t.consume();
         });
@@ -45,9 +47,7 @@ public class ResizeIndicator {
             if (currentlyBeingDragged) {
                 currentlyBeingDragged = false;
                 initialCoord = new Point(node.getCenterX(), node.getCenterY());
-                if (parentSurface.toDto().isRectangular) {
-                    ((RectangleSurfaceUI) parentSurface).commitIncreaseSize();
-                }
+                parentSurface.commitIncreaseSize();
             }
         });
 

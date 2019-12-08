@@ -58,6 +58,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
     @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
+        hideResizeIndicator();
         hideTiles();
 
         this.currentlyBeingDragged = true;
@@ -147,7 +148,7 @@ public class IrregularSurfaceUI extends SurfaceUI {
 
     @Override
     public void setSize(double width, double height) {
-        // nothing...
+        throw new RuntimeException("tabrnakkkkkkkk ok ????");
     }
 
     @Override
@@ -162,5 +163,31 @@ public class IrregularSurfaceUI extends SurfaceUI {
     public void translatePixelBy(Point translation) {
         this.renderRectangleFromSummits(this.summits.stream().map(s -> s.translate(translation)).collect(Collectors.toList()));
         summits = this.getSummits();
+    }
+
+    @Override
+    public void increaseSizeBy(double deltaWidth, double deltaHeight) {
+        hideAttachmentPoints();
+        hideTiles();
+
+        List<Point> summits = getSummits();
+        AbstractShape shape = new AbstractShape(summits);
+        Point boundingTopLeft = ShapeHelper.getTheoricalTopLeftCorner(shape);
+        Point boundingBottomRight = ShapeHelper.getTheoricalBottomRightCorner(shape);
+
+        if (boundingBottomRight.x + deltaWidth <= boundingTopLeft.x
+            || boundingBottomRight.y + deltaHeight <= boundingTopLeft.y) {
+            return;
+        }
+
+        summits = summits.stream().map(s -> {
+            double xImpact = (s.x - boundingTopLeft.x) / (boundingBottomRight.x - boundingTopLeft.x);
+            double yImpact = (s.y - boundingTopLeft.y) / (boundingBottomRight.y - boundingTopLeft.y);
+
+            return s.translate(new Point(deltaWidth * xImpact, deltaHeight * yImpact));
+        }).collect(Collectors.toList());
+
+        renderRectangleFromSummits(summits);
+        this.summits = getSummits();
     }
 }

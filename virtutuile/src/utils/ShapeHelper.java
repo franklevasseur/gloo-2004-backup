@@ -28,7 +28,7 @@ public class ShapeHelper {
         return new Point(minX, minY);
     }
 
-    public static Point getTheoricalBottomDownCorner(AbstractShape shape) {
+    public static Point getTheoricalBottomRightCorner(AbstractShape shape) {
         double maxX = getMaxX(shape).x;
         double maxY = getMaxY(shape).y;
         return new Point(maxX, maxY);

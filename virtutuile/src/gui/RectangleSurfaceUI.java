@@ -45,6 +45,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
     @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
+        hideResizeIndicator();
         hideTiles();
 
         double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
@@ -90,6 +91,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         double newWidth = rectangle.getWidth() + deltaWidth;
         double newHeight = rectangle.getHeight() + deltaHeight;
 
+        hideAttachmentPoints();
         hideTiles();
         updateColor(true);
 
@@ -100,16 +102,6 @@ public class RectangleSurfaceUI extends SurfaceUI {
             rectangle.setHeight(newHeight);
         }
         summits = this.getSummits();
-    }
-
-    public void commitIncreaseSize() {
-        updateColor(false);
-        selectionManager.selectSurface(this);
-        if (this.isHole == HoleStatus.FILLED) {
-            this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-            return;
-        }
-        this.controller.updateSurface(this.toDto());
     }
 
     public SurfaceDto toDto() {

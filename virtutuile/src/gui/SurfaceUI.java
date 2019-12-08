@@ -85,6 +85,8 @@ public abstract class SurfaceUI {
     abstract public void setSize(double width, double height);
     abstract public void setPosition(Point position);
     abstract public void translatePixelBy(Point translation);
+    abstract public void increaseSizeBy(double deltaWidth, double deltaHeight);
+
     abstract protected void handleSurfaceDrag(MouseEvent event);
     abstract protected Point getPixelPosition();
     abstract protected void snapToGrid();
@@ -119,6 +121,7 @@ public abstract class SurfaceUI {
 
     public void unselect() {
         hideAttachmentPoints();
+        hideResizeIndicator();
     }
 
     public void select(boolean setToFront) {
@@ -139,7 +142,7 @@ public abstract class SurfaceUI {
             attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this));
         }
 
-        Point resizeCoordinate = ShapeHelper.getTheoricalBottomDownCorner(new AbstractShape(summits));
+        Point resizeCoordinate = ShapeHelper.getTheoricalBottomRightCorner(new AbstractShape(summits));
 
         resizeIndicator = new ResizeIndicator(resizeCoordinate, this, !this.toDto().isRectangular);
 
@@ -149,11 +152,13 @@ public abstract class SurfaceUI {
 
     protected void hideAttachmentPoints() {
         surfaceGroup.getChildren().removeAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
+        attachmentPoints.clear();
+    }
 
+    protected void hideResizeIndicator() {
         if (resizeIndicator != null) {
             surfaceGroup.getChildren().remove(resizeIndicator.getNode());
         }
-        attachmentPoints.clear();
     }
 
     protected void updateColor() {
@@ -313,5 +318,15 @@ public abstract class SurfaceUI {
         this.fill();
 
         event.consume();
+    }
+
+    public void commitIncreaseSize() {
+        updateColor(false);
+        selectionManager.selectSurface(this);
+        if (this.isHole == HoleStatus.FILLED) {
+            this.renderTiles(controller.updateAndRefill(this.toDto(), masterTile, pattern, sealsInfo, tileAngle, tileShifting));
+            return;
+        }
+        this.controller.updateSurface(this.toDto());
     }
 }

@@ -6,6 +6,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import utils.*;
 
@@ -57,6 +59,8 @@ public class FusionedSurfaceUI extends SurfaceUI {
     private void renderShapeFromChilds() {
         allSurfacesToFusion = sortList(allSurfacesToFusion);
         SurfaceUI firstSurface = allSurfacesToFusion.get(0);
+        super.surfaceGroup.getChildren().removeIf(node -> node == this.shape);
+
         this.shape = firstSurface.getMainShape();
 
         for (SurfaceUI s : allSurfacesToFusion) {
@@ -71,7 +75,6 @@ public class FusionedSurfaceUI extends SurfaceUI {
             }
             this.shape = Shape.union(this.shape, s.getMainShape());
         }
-
         super.surfaceGroup.getChildren().add(this.shape);
 
         List<AbstractShape> allSurfacesSummits = allSurfacesToFusion
@@ -157,7 +160,20 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
     @Override
     public void setSize(double width, double height) {
-        throw new RuntimeException("tabrnakkkkkkkk ok ????");
+        double pixelWidth = zoomManager.metersToPixels(width);
+
+        AbstractShape shape = new AbstractShape(this.summits);
+
+        double currentWidth = ShapeHelper.getWidth(shape);
+        double currentHeight = ShapeHelper.getHeight(shape);
+        double widthToHeightRatio = currentHeight / currentWidth;
+
+        double deltaWidth = pixelWidth - currentWidth;
+
+        double newHeight = pixelWidth * widthToHeightRatio;
+        double deltaHeight = newHeight - currentHeight;
+
+        increaseSizeBy(deltaWidth, deltaHeight);
     }
 
     @Override
@@ -171,7 +187,6 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
         allSurfacesToFusion.forEach(s -> s.translatePixelBy(translation));
 
-        super.surfaceGroup.getChildren().remove(this.shape);
         this.renderShapeFromChilds();
     }
 
@@ -181,7 +196,25 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
     @Override
     public void increaseSizeBy(double deltaWidth, double deltaHeight) {
-        throw new RuntimeException("tabrnakkkkkkkk ok ????");
+        hideAttachmentPoints();
+        hideTiles();
+
+        AbstractShape shape = new AbstractShape(summits);
+        Point boundingTopLeft = ShapeHelper.getTheoricalTopLeftCorner(shape);
+        Point boundingBottomRight = ShapeHelper.getTheoricalBottomRightCorner(shape);
+
+        if (boundingBottomRight.x + deltaWidth <= boundingTopLeft.x
+                || boundingBottomRight.y + deltaHeight <= boundingTopLeft.y) {
+            return;
+        }
+
+        allSurfacesToFusion.forEach(surface -> {
+            BoundingBoxResizable s = (BoundingBoxResizable) surface;
+            s.resizeRespectingBoundingBox(boundingTopLeft, boundingBottomRight, deltaWidth, deltaHeight);
+        });
+
+        renderShapeFromChilds();
+        updateColor(true);
     }
 
     @Override

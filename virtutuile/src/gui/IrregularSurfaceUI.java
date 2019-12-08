@@ -9,14 +9,13 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Shape;
 import utils.AbstractShape;
 import utils.Point;
-import utils.Segment;
 import utils.ShapeHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class IrregularSurfaceUI extends SurfaceUI {
+public class IrregularSurfaceUI extends SurfaceUI implements BoundingBoxResizable {
 
     private boolean currentlyBeingDragged = false;
 
@@ -195,9 +194,14 @@ public class IrregularSurfaceUI extends SurfaceUI {
             return;
         }
 
+        resizeRespectingBoundingBox(boundingTopLeft, boundingBottomRight, deltaWidth, deltaHeight);
+    }
+
+    @Override
+    public void resizeRespectingBoundingBox(Point topLeftBounding, Point bottomRightBounding, double deltaWidth, double deltaHeight) {
         summits = summits.stream().map(s -> {
-            double xImpact = (s.x - boundingTopLeft.x) / (boundingBottomRight.x - boundingTopLeft.x);
-            double yImpact = (s.y - boundingTopLeft.y) / (boundingBottomRight.y - boundingTopLeft.y);
+            double xImpact = (s.x - topLeftBounding.x) / (bottomRightBounding.x - topLeftBounding.x);
+            double yImpact = (s.y - topLeftBounding.y) / (bottomRightBounding.y - topLeftBounding.y);
 
             return s.translate(new Point(deltaWidth * xImpact, deltaHeight * yImpact));
         }).collect(Collectors.toList());

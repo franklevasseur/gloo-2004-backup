@@ -12,7 +12,7 @@ import utils.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RectangleSurfaceUI extends SurfaceUI {
+public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizable {
 
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
@@ -159,5 +159,28 @@ public class RectangleSurfaceUI extends SurfaceUI {
         rectangle.setX(rectangle.getX() + translation.x);
         rectangle.setY(rectangle.getY() + translation.y);
         summits = this.getSummits();
+    }
+
+    @Override
+    public void resizeRespectingBoundingBox(Point topLeftBounding, Point bottomRightBounding, double deltaWidth, double deltaHeight) {
+        List<Point> summits = this.summits.stream().map(s -> {
+            double xImpact = (s.x - topLeftBounding.x) / (bottomRightBounding.x - topLeftBounding.x);
+            double yImpact = (s.y - topLeftBounding.y) / (bottomRightBounding.y - topLeftBounding.y);
+
+            return s.translate(new Point(deltaWidth * xImpact, deltaHeight * yImpact));
+        }).collect(Collectors.toList());
+
+        AbstractShape shape = new AbstractShape(summits);
+        double width = ShapeHelper.getWidth(shape);
+        double Height = ShapeHelper.getHeight(shape);
+        Point topLeft = ShapeHelper.getTopLeftCorner(shape);
+
+        Rectangle rect = (Rectangle) this.shape;
+        rect.setX(topLeft.x);
+        rect.setY(topLeft.y);
+        rect.setWidth(width);
+        rect.setHeight(Height);
+
+        this.summits = this.getSummits();
     }
 }

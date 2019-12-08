@@ -21,40 +21,12 @@ public class AttachmentPointUI {
     public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface, Cursor cursor) {
         rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
 
-            if (cursor != null) {
-                rectangle.setCursor(cursor);
-            }
-            else if (cardinal == CardinalPoint.SE) {
-                rectangle.setCursor(Cursor.SE_RESIZE);
-            }
-
-        rectangle.setOnMouseDragged(t -> {
-            if (cardinal != CardinalPoint.SE) {
-                return;
-            }
-
-            currentlyBeingDragged = true;
-
-            double deltaX = t.getX() - (rectangle.getX() + pointWidth / 2);
-            double deltaY = t.getY() - (rectangle.getY() + pointWidth / 2);
-
-            rectangle.setX(t.getX() - (pointWidth / 2));
-            rectangle.setY(t.getY() - (pointWidth / 2));
-
-            if (parentSurface.toDto().isRectangular) {
-                ((RectangleSurfaceUI) parentSurface).increaseSizeBy(deltaX, deltaY);
-            }
-            t.consume();
-        });
-
-        rectangle.setOnMouseReleased(mouseEvent -> {
-            if (currentlyBeingDragged) {
-                currentlyBeingDragged = false;
-                if (parentSurface.toDto().isRectangular) {
-                    ((RectangleSurfaceUI) parentSurface).commitIncreaseSize();
-                }
-            }
-        });
+        if (cursor != null) {
+            rectangle.setCursor(cursor);
+        }
+        else if (cardinal == CardinalPoint.SE) {
+            rectangle.setCursor(Cursor.SE_RESIZE);
+        }
 
         rectangle.setOnMouseClicked(t -> {
             if (parentSurface != null) {

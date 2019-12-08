@@ -48,6 +48,7 @@ public abstract class SurfaceUI {
     protected Id id;
 
     private List<AttachmentPointUI> attachmentPoints = new ArrayList<>();
+    private ResizeIndicator resizeIndicator;
 
     protected Controller controller = Controller.getInstance();
 
@@ -137,11 +138,21 @@ public abstract class SurfaceUI {
         for(Point summit: summits) {
             attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this));
         }
+
+        Point resizeCoordinate = ShapeHelper.getTheoricalBottomDownCorner(new AbstractShape(summits));
+
+        resizeIndicator = new ResizeIndicator(resizeCoordinate, this, !this.toDto().isRectangular);
+
         surfaceGroup.getChildren().addAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
+        surfaceGroup.getChildren().add(resizeIndicator.getNode());
     }
 
     protected void hideAttachmentPoints() {
         surfaceGroup.getChildren().removeAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
+
+        if (resizeIndicator != null) {
+            surfaceGroup.getChildren().remove(resizeIndicator.getNode());
+        }
         attachmentPoints.clear();
     }
 

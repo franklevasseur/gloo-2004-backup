@@ -57,9 +57,9 @@
                 <Button layoutX="757.0" layoutY="14.0" mnemonicParsing="false" onAction="#centerSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Center horizontally" />
                 <Button layoutX="757.0" layoutY="37.0" mnemonicParsing="false" onAction="#centerSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Center vertically" />
                 <Button layoutX="927.0" layoutY="37.0" mnemonicParsing="false" onAction="#stickSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Stick vertically" />
-                <Button layoutX="927.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Sitck horizontally" />
+                <Button layoutX="927.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Stick horizontally" />
                 <CheckBox layoutX="1107.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
-                <CheckBox fx:id="mooveTilesCheckBox" layoutX="225.0" layoutY="41.0" mnemonicParsing="false" onAction="#moveTilesToggle" text="moove tiles" />
+                <CheckBox fx:id="mooveTilesCheckBox" layoutX="225.0" layoutY="41.0" mnemonicParsing="false" onAction="#moveTilesToggle" text="Move tiles" />
               </children>
             </AnchorPane>
           </content>

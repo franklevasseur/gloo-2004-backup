@@ -1046,7 +1046,8 @@ public class UiController implements Initializable {
             AbstractShape surface = new AbstractShape(s.toDto().summits);
             Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
             double surfaceY = surfaceTopLeft.y;
-            s.setPosition(new Point(firstX + firstWidth, surfaceY));
+            double surfaceWidth = ShapeHelper.getWidth(surface);
+            s.setPosition(new Point(firstX + firstWidth - surfaceWidth, surfaceY));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());
@@ -1105,7 +1106,8 @@ public class UiController implements Initializable {
             AbstractShape surface = new AbstractShape(s.toDto().summits);
             Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
             double surfaceX = surfaceTopLeft.x;
-            s.setPosition(new Point(surfaceX, firstY + firstHeight));
+            double surfaceHeight = ShapeHelper.getHeight(surface);
+            s.setPosition(new Point(surfaceX, firstY + firstHeight - surfaceHeight));
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
                 domainController.updateAndRefill(s.toDto(), s.getMasterTile(), s.getPattern(), s.getSealsInfo(), s.getTileAngle(), s.getTileShifting());

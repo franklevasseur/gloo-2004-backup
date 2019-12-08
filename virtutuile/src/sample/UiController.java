@@ -437,13 +437,15 @@ public class UiController implements Initializable {
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
 //                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
 
+                CharSequence tileMaterialInput = tileMaterialChoiceBox.getValue();
+
                 TileDto masterTile = null;
-                if (newMasterTileX != null && newMasterTileY != null) {
+                if (newMasterTileX != null && newMasterTileY != null && !tileMaterialInput.equals("")) {
                     MaterialDto chosenMaterial = domainController
                             .getProject()
                             .materials
                             .stream()
-                            .filter(m -> m.name.equals(tileMaterialChoiceBox.getValue()))
+                            .filter(m -> m.name.equals(tileMaterialInput.toString()))
                             .findFirst().get();
 
                     masterTile = new TileDto();
@@ -772,7 +774,6 @@ public class UiController implements Initializable {
     }
 
     private void renderFromProject() {
-        // TODO : Quand on aggrandit une surface le accounting update pas
         this.clearDrawings();
 
         this.undoButton.setDisable(!this.domainController.undoAvailable());
@@ -784,6 +785,8 @@ public class UiController implements Initializable {
                 this.displaySurface(surface);
             }
         }
+
+        allSurfaces.forEach(s -> s.setCurrentlyMovingTiles(this.mooveTilesCheckBox.isSelected()));
 
         if (project.materials != null) {
             this.tileMaterialChoiceBox.getItems().clear();

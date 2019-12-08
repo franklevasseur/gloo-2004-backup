@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class IrregularSurfaceUI extends SurfaceUI {
+public class IrregularSurfaceUI extends SurfaceUI implements BoundingBoxResizable {
 
     private boolean currentlyBeingDragged = false;
 
@@ -54,37 +54,11 @@ public class IrregularSurfaceUI extends SurfaceUI {
         this.updateColor(this.currentlyBeingDragged);
     }
 
-    @Override
-    protected void initializeGroup() {
-        super.initializeGroup();
-
-        surfaceGroup.setOnMouseClicked(t -> {
-            selectionManager.selectSurface(this);
-            t.consume();
-        });
-
-        surfaceGroup.setOnMouseReleased(mouseEvent -> {
-            if (this.currentlyBeingDragged) {
-
-                super.updateColor();
-
-                this.currentlyBeingDragged = false;
-                this.snapToGrid();
-
-                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
-                    controller.updateSurface(this.toDto());
-                    return;
-                }
-                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-                updateColor();
-            }
-        });
-    }
-
 
     @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
+        hideResizeIndicator();
         hideTiles();
 
         this.currentlyBeingDragged = true;
@@ -97,10 +71,12 @@ public class IrregularSurfaceUI extends SurfaceUI {
         Point translation = Point.diff(new Point(newX, newY), getPixelPosition());
         this.translatePixelBy(translation);
 
+        this.updateColor(true);
         event.consume();
     }
 
-    private void snapToGrid() {
+    @Override
+    protected void snapToGrid() {
         if (super.snapGrid.isVisible()) {
             Point currentRectanglePosition = new Point(getPixelPosition().x, getPixelPosition().y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);
@@ -172,7 +148,21 @@ public class IrregularSurfaceUI extends SurfaceUI {
 
     @Override
     public void setSize(double width, double height) {
-        // nothing...
+
+        double pixelWidth = zoomManager.metersToPixels(width);
+
+        AbstractShape shape = new AbstractShape(this.getSummits());
+
+        double currentWidth = ShapeHelper.getWidth(shape);
+        double currentHeight = ShapeHelper.getHeight(shape);
+        double widthToHeightRatio = currentHeight / currentWidth;
+
+        double deltaWidth = pixelWidth - currentWidth;
+
+        double newHeight = pixelWidth * widthToHeightRatio;
+        double deltaHeight = newHeight - currentHeight;
+
+        increaseSizeBy(deltaWidth, deltaHeight);
     }
 
     @Override
@@ -187,5 +177,36 @@ public class IrregularSurfaceUI extends SurfaceUI {
     public void translatePixelBy(Point translation) {
         this.renderRectangleFromSummits(this.summits.stream().map(s -> s.translate(translation)).collect(Collectors.toList()));
         summits = this.getSummits();
+    }
+
+    @Override
+    public void increaseSizeBy(double deltaWidth, double deltaHeight) {
+        hideAttachmentPoints();
+        hideTiles();
+
+        List<Point> summits = getSummits();
+        AbstractShape shape = new AbstractShape(summits);
+        Point boundingTopLeft = ShapeHelper.getTheoricalTopLeftCorner(shape);
+        Point boundingBottomRight = ShapeHelper.getTheoricalBottomRightCorner(shape);
+
+        if (boundingBottomRight.x + deltaWidth <= boundingTopLeft.x
+            || boundingBottomRight.y + deltaHeight <= boundingTopLeft.y) {
+            return;
+        }
+
+        resizeRespectingBoundingBox(boundingTopLeft, boundingBottomRight, deltaWidth, deltaHeight);
+    }
+
+    @Override
+    public void resizeRespectingBoundingBox(Point topLeftBounding, Point bottomRightBounding, double deltaWidth, double deltaHeight) {
+        summits = summits.stream().map(s -> {
+            double xImpact = (s.x - topLeftBounding.x) / (bottomRightBounding.x - topLeftBounding.x);
+            double yImpact = (s.y - topLeftBounding.y) / (bottomRightBounding.y - topLeftBounding.y);
+
+            return s.translate(new Point(deltaWidth * xImpact, deltaHeight * yImpact));
+        }).collect(Collectors.toList());
+
+        renderRectangleFromSummits(summits);
+        this.summits = getSummits();
     }
 }

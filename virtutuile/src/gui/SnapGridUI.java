@@ -72,6 +72,10 @@ public class SnapGridUI {
         this.renderLines(viewBoxRectangle);
         this.renderColumn(viewBoxRectangle);
         this.parentNode.getChildren().addAll(displayedLines);
+        toBack();
+    }
+
+    public void toBack() {
         displayedLines.forEach(Node::toBack);
     }
 

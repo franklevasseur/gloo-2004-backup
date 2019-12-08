@@ -6,6 +6,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import utils.*;
 
@@ -15,7 +17,6 @@ import java.util.stream.Collectors;
 public class FusionedSurfaceUI extends SurfaceUI {
 
     private Point position;
-    private boolean currentlyBeingDragged = false;
 
     private List<SurfaceUI> allSurfacesToFusion;
 
@@ -58,6 +59,8 @@ public class FusionedSurfaceUI extends SurfaceUI {
     private void renderShapeFromChilds() {
         allSurfacesToFusion = sortList(allSurfacesToFusion);
         SurfaceUI firstSurface = allSurfacesToFusion.get(0);
+        super.surfaceGroup.getChildren().removeIf(node -> node == this.shape);
+
         this.shape = firstSurface.getMainShape();
 
         for (SurfaceUI s : allSurfacesToFusion) {
@@ -72,9 +75,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
             }
             this.shape = Shape.union(this.shape, s.getMainShape());
         }
-
         super.surfaceGroup.getChildren().add(this.shape);
-        this.updateColor(this.currentlyBeingDragged);
 
         List<AbstractShape> allSurfacesSummits = allSurfacesToFusion
                 .stream()
@@ -92,35 +93,10 @@ public class FusionedSurfaceUI extends SurfaceUI {
     }
 
     @Override
-    protected void initializeGroup() {
-        super.initializeGroup();
-
-       surfaceGroup.setOnMouseClicked(t -> {
-           selectionManager.selectSurface(this);
-           t.consume();
-       });
-
-       surfaceGroup.setOnMouseReleased(mouseEvent -> {
-           if(this.currentlyBeingDragged){
-               this.currentlyBeingDragged = false;
-               this.snapToGrid();
-               super.updateColor();
-
-               if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
-                   controller.updateSurface(this.toDto());
-                   return;
-               }
-               this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
-           }
-       });
-    }
-
-    @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
+        hideResizeIndicator();
         hideTiles();
-
-        this.currentlyBeingDragged = true;
 
         double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
         double newY = event.getY() - this.lastPointOfContactRelativeToSurface.y;
@@ -128,6 +104,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
         this.setPixelPosition(newPoint);
 
+        this.updateColor(true);
         event.consume();
     }
 
@@ -136,7 +113,8 @@ public class FusionedSurfaceUI extends SurfaceUI {
         return this.position;
     }
 
-    private void snapToGrid() {
+    @Override
+    protected void snapToGrid() {
         if(this.snapGrid.isVisible()){
             Point currentFusionedSurfacePosition  = new Point(this.position.x, this.position.y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentFusionedSurfacePosition);
@@ -181,7 +159,22 @@ public class FusionedSurfaceUI extends SurfaceUI {
     }
 
     @Override
-    public void setSize(double width, double height) {}
+    public void setSize(double width, double height) {
+        double pixelWidth = zoomManager.metersToPixels(width);
+
+        AbstractShape shape = new AbstractShape(this.summits);
+
+        double currentWidth = ShapeHelper.getWidth(shape);
+        double currentHeight = ShapeHelper.getHeight(shape);
+        double widthToHeightRatio = currentHeight / currentWidth;
+
+        double deltaWidth = pixelWidth - currentWidth;
+
+        double newHeight = pixelWidth * widthToHeightRatio;
+        double deltaHeight = newHeight - currentHeight;
+
+        increaseSizeBy(deltaWidth, deltaHeight);
+    }
 
     @Override
     public void setPosition(Point position) {
@@ -194,12 +187,34 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
         allSurfacesToFusion.forEach(s -> s.translatePixelBy(translation));
 
-        super.surfaceGroup.getChildren().remove(this.shape);
         this.renderShapeFromChilds();
     }
 
     public void translatePixelBy(Point translation) {
         this.setPixelPosition(new Point(this.position.x + translation.x, this.position.y + translation.y));
+    }
+
+    @Override
+    public void increaseSizeBy(double deltaWidth, double deltaHeight) {
+        hideAttachmentPoints();
+        hideTiles();
+
+        AbstractShape shape = new AbstractShape(summits);
+        Point boundingTopLeft = ShapeHelper.getTheoricalTopLeftCorner(shape);
+        Point boundingBottomRight = ShapeHelper.getTheoricalBottomRightCorner(shape);
+
+        if (boundingBottomRight.x + deltaWidth <= boundingTopLeft.x
+                || boundingBottomRight.y + deltaHeight <= boundingTopLeft.y) {
+            return;
+        }
+
+        allSurfacesToFusion.forEach(surface -> {
+            BoundingBoxResizable s = (BoundingBoxResizable) surface;
+            s.resizeRespectingBoundingBox(boundingTopLeft, boundingBottomRight, deltaWidth, deltaHeight);
+        });
+
+        renderShapeFromChilds();
+        updateColor(true);
     }
 
     @Override

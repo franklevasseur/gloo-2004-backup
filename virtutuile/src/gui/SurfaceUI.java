@@ -9,6 +9,7 @@ import application.TileDto;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 import utils.*;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public abstract class SurfaceUI {
 
     protected Shape shape;
+
+    private boolean currentlyBeingDragged = false;
 
     protected TileDto masterTile;
     protected PatternType pattern;
@@ -45,6 +48,7 @@ public abstract class SurfaceUI {
     protected Id id;
 
     private List<AttachmentPointUI> attachmentPoints = new ArrayList<>();
+    private ResizeIndicator resizeIndicator;
 
     protected Controller controller = Controller.getInstance();
 
@@ -81,8 +85,11 @@ public abstract class SurfaceUI {
     abstract public void setSize(double width, double height);
     abstract public void setPosition(Point position);
     abstract public void translatePixelBy(Point translation);
+    abstract public void increaseSizeBy(double deltaWidth, double deltaHeight);
+
     abstract protected void handleSurfaceDrag(MouseEvent event);
     abstract protected Point getPixelPosition();
+    abstract protected void snapToGrid();
 
     public void setMasterTile(TileDto masterTile) {
         this.masterTile = masterTile;
@@ -114,6 +121,7 @@ public abstract class SurfaceUI {
 
     public void unselect() {
         hideAttachmentPoints();
+        hideResizeIndicator();
     }
 
     public void select(boolean setToFront) {
@@ -133,12 +141,24 @@ public abstract class SurfaceUI {
         for(Point summit: summits) {
             attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this));
         }
+
+        Point resizeCoordinate = ShapeHelper.getTheoricalBottomRightCorner(new AbstractShape(summits));
+
+        resizeIndicator = new ResizeIndicator(resizeCoordinate, this, !this.toDto().isRectangular);
+
         surfaceGroup.getChildren().addAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
+        surfaceGroup.getChildren().add(resizeIndicator.getNode());
     }
 
     protected void hideAttachmentPoints() {
         surfaceGroup.getChildren().removeAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
         attachmentPoints.clear();
+    }
+
+    protected void hideResizeIndicator() {
+        if (resizeIndicator != null) {
+            surfaceGroup.getChildren().remove(resizeIndicator.getNode());
+        }
     }
 
     protected void updateColor() {
@@ -233,8 +253,21 @@ public abstract class SurfaceUI {
     }
 
     protected void initializeGroup() {
+
+        surfaceGroup.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                selectionManager.selectSurface(this);
+                e.consume();
+                return;
+            }
+
+            this.getNode().toBack();
+            snapGrid.toBack();
+        });
+
         surfaceGroup.setOnMouseDragged(e -> {
             if (!currentlyMovingTiles) {
+                this.currentlyBeingDragged = true;
                 this.handleSurfaceDrag(e);
                 return;
             }
@@ -250,6 +283,20 @@ public abstract class SurfaceUI {
 
             Point masterTilePixelTopLeft = zoomManager.metersToPixels(ShapeHelper.getTopLeftCorner(new AbstractShape(masterTile.summits)));
             this.lastPointOfContactRelativeToMasterTile = new Point(mouseEvent.getX() - masterTilePixelTopLeft.x, mouseEvent.getY() - masterTilePixelTopLeft.y);
+        });
+
+        surfaceGroup.setOnMouseReleased(mouseEvent -> {
+            if (this.currentlyBeingDragged) {
+                this.currentlyBeingDragged = false;
+                this.snapToGrid();
+                this.updateColor();
+
+                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
+                    controller.updateSurface(this.toDto());
+                    return;
+                }
+                this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, this.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
+            }
         });
     }
 
@@ -271,5 +318,15 @@ public abstract class SurfaceUI {
         this.fill();
 
         event.consume();
+    }
+
+    public void commitIncreaseSize() {
+        updateColor(false);
+        selectionManager.selectSurface(this);
+        if (this.isHole == HoleStatus.FILLED) {
+            this.renderTiles(controller.updateAndRefill(this.toDto(), masterTile, pattern, sealsInfo, tileAngle, tileShifting));
+            return;
+        }
+        this.controller.updateSurface(this.toDto());
     }
 }

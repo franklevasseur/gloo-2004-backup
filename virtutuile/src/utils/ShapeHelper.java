@@ -28,6 +28,12 @@ public class ShapeHelper {
         return new Point(minX, minY);
     }
 
+    public static Point getTheoricalBottomRightCorner(AbstractShape shape) {
+        double maxX = getMaxX(shape).x;
+        double maxY = getMaxY(shape).y;
+        return new Point(maxX, maxY);
+    }
+
     public static boolean isAllInside(AbstractShape small, AbstractShape big) {
         return small.summits.stream().allMatch(s -> s.isInside(big.summits, true));
     }

@@ -12,9 +12,7 @@ import utils.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RectangleSurfaceUI extends SurfaceUI {
-
-    private boolean currentlyBeingDragged = false;
+public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizable {
 
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
@@ -45,36 +43,10 @@ public class RectangleSurfaceUI extends SurfaceUI {
     }
 
     @Override
-    protected void initializeGroup() {
-        super.initializeGroup();
-
-        surfaceGroup.setOnMouseClicked(t -> {
-            selectionManager.selectSurface(this);
-            t.consume();
-        });
-
-        surfaceGroup.setOnMouseReleased(mouseEvent -> {
-            if (this.currentlyBeingDragged) {
-                this.currentlyBeingDragged = false;
-                this.snapToGrid();
-                super.updateColor();
-
-                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
-                    controller.updateSurface(this.toDto());
-                    return;
-                }
-                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-            }
-        });
-    }
-
-    @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
+        hideResizeIndicator();
         hideTiles();
-        this.shape.setFill(ColorHelper.utilsColorToJavafx(super.surfaceColor));
-
-        this.currentlyBeingDragged = true;
 
         double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
         double newY = event.getY() - this.lastPointOfContactRelativeToSurface.y;
@@ -84,6 +56,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         rectangle.setY(newY);
         summits = this.getSummits();
 
+        this.updateColor(true);
         event.consume();
     }
 
@@ -93,7 +66,8 @@ public class RectangleSurfaceUI extends SurfaceUI {
         return new Point(rectangle.getX(), rectangle.getY());
     }
 
-    private void snapToGrid() {
+    @Override
+    protected void snapToGrid() {
         if (this.snapGrid.isVisible()) {
 
             Rectangle rectangle = (Rectangle) shape;
@@ -117,6 +91,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         double newWidth = rectangle.getWidth() + deltaWidth;
         double newHeight = rectangle.getHeight() + deltaHeight;
 
+        hideAttachmentPoints();
         hideTiles();
         updateColor(true);
 
@@ -127,16 +102,6 @@ public class RectangleSurfaceUI extends SurfaceUI {
             rectangle.setHeight(newHeight);
         }
         summits = this.getSummits();
-    }
-
-    public void commitIncreaseSize() {
-        updateColor(false);
-        selectionManager.selectSurface(this);
-        if (this.isHole == HoleStatus.FILLED) {
-            this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-            return;
-        }
-        this.controller.updateSurface(this.toDto());
     }
 
     public SurfaceDto toDto() {
@@ -183,6 +148,8 @@ public class RectangleSurfaceUI extends SurfaceUI {
         summits = this.getSummits();
     }
 
+
+
     public Shape getMainShape() {
         return this.shape;
     }
@@ -192,5 +159,28 @@ public class RectangleSurfaceUI extends SurfaceUI {
         rectangle.setX(rectangle.getX() + translation.x);
         rectangle.setY(rectangle.getY() + translation.y);
         summits = this.getSummits();
+    }
+
+    @Override
+    public void resizeRespectingBoundingBox(Point topLeftBounding, Point bottomRightBounding, double deltaWidth, double deltaHeight) {
+        List<Point> summits = this.summits.stream().map(s -> {
+            double xImpact = (s.x - topLeftBounding.x) / (bottomRightBounding.x - topLeftBounding.x);
+            double yImpact = (s.y - topLeftBounding.y) / (bottomRightBounding.y - topLeftBounding.y);
+
+            return s.translate(new Point(deltaWidth * xImpact, deltaHeight * yImpact));
+        }).collect(Collectors.toList());
+
+        AbstractShape shape = new AbstractShape(summits);
+        double width = ShapeHelper.getWidth(shape);
+        double Height = ShapeHelper.getHeight(shape);
+        Point topLeft = ShapeHelper.getTopLeftCorner(shape);
+
+        Rectangle rect = (Rectangle) this.shape;
+        rect.setX(topLeft.x);
+        rect.setY(topLeft.y);
+        rect.setWidth(width);
+        rect.setHeight(Height);
+
+        this.summits = this.getSummits();
     }
 }

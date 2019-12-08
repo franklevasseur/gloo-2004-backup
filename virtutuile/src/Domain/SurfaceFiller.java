@@ -43,7 +43,7 @@ class SurfaceFiller implements Serializable {
 
     private  List<Tile> fillSurfaceWithMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
-        utils.Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
+        Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
         double surfaceWidth = ShapeHelper.getWidth(surfaceShape);
         double surfaceHeight = ShapeHelper.getHeight(surfaceShape);
 
@@ -67,21 +67,23 @@ class SurfaceFiller implements Serializable {
         Point masterTileRelativeCorner = info.topLeftCorner;
         Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
 
-        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
-        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / unitOfWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / unitOfHeight);
 
-        double xTranslation = -(masterTileColumnIndex * tileWidth);
-        double yTranslation = -(masterTileLineIndex * tileHeight);
+        double xTranslation = -(masterTileColumnIndex * unitOfWidth);
+        double yTranslation = -(masterTileLineIndex * unitOfHeight);
 
         Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
 
         for (int line = -1; line < amountOfLines; line++) {
-            for (int column = 0; column < amountOfColumns; column++) {
+            for (int column = -1; column < amountOfColumns; column++) {
                 Point verticalTileTopLeft = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
                 Point horizontalTileTopLeft = verticalTileTopLeft.translate(new Point(tileWidth + sealing.getWidth(), (tileHeight - tileWidth + sealing.getWidth())));
 
                 double horizontalShift = tileWidth + sealing.getWidth();
-                int nShift = line % 4;
+
+                int nShift = (line - masterTileLineIndex) % 4;
+
                 verticalTileTopLeft = verticalTileTopLeft.translate(new Point(-nShift * horizontalShift, 0));
                 horizontalTileTopLeft = horizontalTileTopLeft.translate(new Point(-nShift * horizontalShift, 0));
 
@@ -122,8 +124,8 @@ class SurfaceFiller implements Serializable {
         Point masterTileRelativeCorner = info.topLeftCorner;
         Point masterTileAbsoluteCorner = Point.translate(surfaceTopLeftCorner, masterTileRelativeCorner.x, masterTileRelativeCorner.y);
 
-        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / tileWidth);
-        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / unitOfWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / unitOfHeight);
 
         double xTranslation = -(masterTileColumnIndex * tileWidth);
         double yTranslation = -(masterTileLineIndex * tileHeight);
@@ -240,8 +242,8 @@ class SurfaceFiller implements Serializable {
         int amountOfLines = (int) Math.ceil(surfaceHeight / unitOfHeight) + 2; // 2 is for security...
         int amountOfColumns = (int) Math.ceil(surfaceWidth / unitOfWidth) + 2;
 
-        long masterTileColumnIndex = (long) Math.ceil(masterTileRelativeCorner.x / tileWidth);
-        long masterTileLineIndex = (long) Math.ceil(masterTileRelativeCorner.y / tileHeight);
+        int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / unitOfWidth);
+        int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / unitOfHeight);
 
         double xTranslation = -(masterTileColumnIndex * unitOfWidth);
         double yTranslation = -(masterTileLineIndex * unitOfHeight);

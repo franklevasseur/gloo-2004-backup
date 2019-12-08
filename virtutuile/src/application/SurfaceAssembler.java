@@ -92,7 +92,7 @@ public class SurfaceAssembler {
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits();
         tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
-        tileDto.isCut = tile.isCut();
+        tileDto.isMasterTile = tile.isMasterTile();
         return tileDto;
     }
 
@@ -104,7 +104,7 @@ public class SurfaceAssembler {
         List<Point> points = tDto.summits;
 
         Material material = MaterialAssembler.fromDto(tDto.material);
-        return new Tile(points, material, tDto.isCut);
+        return new Tile(points, material, tDto.isMasterTile);
     }
 
     public static SealsInfoDto toDto(SealsInfo sealsInfo) {

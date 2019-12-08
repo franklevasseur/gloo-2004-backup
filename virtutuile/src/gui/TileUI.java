@@ -20,23 +20,32 @@ public class TileUI {
     private Label tileInfoTextField;
     private ZoomManager zoomManager;
     private MaterialDto material;
-    private boolean isCut;
+    private boolean isMasterTile;
+
+    private boolean highligthIfMasterTile;
 
     private List<Point> pixelSummits;
 
     public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface) {
+        this(dto, tileInfoTextField, zoomManager, parentSurface, false);
+    }
+
+    public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface, boolean highligthIfMasterTile) {
+        this.highligthIfMasterTile = highligthIfMasterTile;
+
         this.tileInfoTextField = tileInfoTextField;
         this.zoomManager = zoomManager;
         this.material = dto.material;
 
-        isCut = dto.isCut;
+        this.isMasterTile = dto.isMasterTile;
+
         pixelSummits = dto.summits.stream().map(s -> zoomManager.metersToPixels(s)).collect(Collectors.toList());
 
         List<Double> flattedSummits = pixelSummits.stream().flatMap(p -> Arrays.asList(p.x, p.y).stream()).collect(Collectors.toList());
         shape = new Polygon();
         shape.getPoints().addAll(flattedSummits);
 
-        shape.setFill(ColorHelper.utilsColorToJavafx(dto.material.color));
+        updateColor(false);
         shape.setStroke(Color.TRANSPARENT);
 
         shape.setOnMouseEntered(event -> select());
@@ -55,17 +64,33 @@ public class TileUI {
         TileDto tile = new TileDto();
         tile.summits = pixelSummits.stream().map(s -> zoomManager.pixelsToMeters(s)).collect(Collectors.toList());
         tile.material = this.material;
-        tile.isCut = this.isCut;
+        tile.isMasterTile = this.isMasterTile;
         return tile;
     }
 
+    private void updateColor(boolean isSelected) {
+        if (isSelected) {
+            shape.setFill(Color.PALEGOLDENROD);
+        }
+        else if (highligthIfMasterTile && isMasterTile) {
+            shape.setFill(Color.CORNFLOWERBLUE);
+        } else {
+            shape.setFill(ColorHelper.utilsColorToJavafx(material.color));
+        }
+    }
+
+    public void setHighligthIfMasterTile(boolean highligthIfMasterTile) {
+        this.highligthIfMasterTile = highligthIfMasterTile;
+        updateColor(false);
+    }
+
     private void select() {
-        shape.setFill(Color.PALEGOLDENROD);
+        updateColor(true);
         tileInfoTextField.setText(formatInfoString());
     }
 
     private void unselect() {
-        shape.setFill(ColorHelper.utilsColorToJavafx(material.color));
+        updateColor(false);
         tileInfoTextField.setText("");
     }
 

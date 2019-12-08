@@ -9,27 +9,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Tile implements Serializable {
     private List<Point> summits = new ArrayList<>();
     private Material material;
 
-    private boolean isCut = false;
+    private boolean isMasterTile = false;
 
-    public Tile() {
-        System.out.println("WARING, ce constructeur est deprecated, on veut le tuer");
+    public Tile(List<Point> pSummit, Material pMaterial, boolean isMasterTile) {
+        this(pSummit, pMaterial);
+        this.isMasterTile = isMasterTile;
     }
 
     public Tile(List<Point> pSummit, Material pMaterial) {
         summits = pSummit;
         material = pMaterial;
-    }
-
-    public Tile(List<Point> pSummit, Material pMaterial, boolean isCut) {
-        summits = pSummit;
-        material = pMaterial;
-        this.isCut = isCut;
+        isMasterTile = false;
     }
 
     public double getHeight() {
@@ -64,10 +59,6 @@ public class Tile implements Serializable {
         this.summits = summits;
     }
 
-    public boolean isCut() {
-        return isCut;
-    }
-
     public List<Tile> cutSideToSide(Segment cuttingSegment) {
         return this.cutSideToSide(cuttingSegment, false);
     }
@@ -77,7 +68,7 @@ public class Tile implements Serializable {
         for (Point summit: summits) {
             summitsCpy.add(summit.deepCpy());
         }
-        return new Tile(summitsCpy, this.material, this.isCut);
+        return new Tile(summitsCpy, this.material, this.isMasterTile);
     }
 
     List<Tile> cutSideToSide(Segment cuttingSegment, boolean extendCuttingEdge) {
@@ -136,7 +127,7 @@ public class Tile implements Serializable {
             return Arrays.asList(this);
         }
 
-        return Arrays.asList(new Tile(firstHalfSummits, this.material, true), new Tile(secondHalfSummits, this.material, true));
+        return Arrays.asList(new Tile(firstHalfSummits, this.material, this.isMasterTile), new Tile(secondHalfSummits, this.material, this.isMasterTile));
     }
 
     public List<Tile> doOneCut(Segment cuttingSegment) {
@@ -160,5 +151,9 @@ public class Tile implements Serializable {
             }
         }
         return currentIntersections;
+    }
+
+    public boolean isMasterTile() {
+        return isMasterTile;
     }
 }

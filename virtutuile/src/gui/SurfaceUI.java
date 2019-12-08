@@ -195,7 +195,7 @@ public abstract class SurfaceUI {
 
         hideTiles();
 
-        this.tiles = tiles.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager, this)).collect(Collectors.toList());
+        this.tiles = tiles.stream().map(t -> new TileUI(t, tileInfoTextField, this.zoomManager, this, this.currentlyMovingTiles)).collect(Collectors.toList());
         this.surfaceGroup.getChildren().addAll(this.tiles.stream().map(t -> t.getNode()).collect(Collectors.toList()));
     }
 
@@ -225,6 +225,11 @@ public abstract class SurfaceUI {
 
     public void setCurrentlyMovingTiles(boolean currentlyMovingTiles) {
         this.currentlyMovingTiles = currentlyMovingTiles;
+        if (this.tiles == null) {
+            return;
+        }
+
+        this.tiles.forEach(t -> t.setHighligthIfMasterTile(currentlyMovingTiles));
     }
 
     protected void initializeGroup() {

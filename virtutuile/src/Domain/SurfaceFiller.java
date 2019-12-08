@@ -87,7 +87,8 @@ class SurfaceFiller implements Serializable {
                 verticalTileTopLeft = verticalTileTopLeft.translate(new Point(-nShift * horizontalShift, 0));
                 horizontalTileTopLeft = horizontalTileTopLeft.translate(new Point(-nShift * horizontalShift, 0));
 
-                Tile horizontalTile = new Tile(RectangleHelper.rectangleInfoToSummits(verticalTileTopLeft, tileWidth, tileHeight), masterTile.getMaterial());
+                boolean isMasterTile = column == masterTileColumnIndex && line == masterTileLineIndex;
+                Tile horizontalTile = new Tile(RectangleHelper.rectangleInfoToSummits(verticalTileTopLeft, tileWidth, tileHeight), masterTile.getMaterial(), isMasterTile);
                 Tile verticalTile = new Tile(RectangleHelper.rectangleInfoToSummits(horizontalTileTopLeft, (tileHeight + sealing.getWidth()), (tileWidth - sealing.getWidth())), masterTile.getMaterial());
 
                 tiles.add(horizontalTile);
@@ -264,7 +265,8 @@ class SurfaceFiller implements Serializable {
                 RectangleInfo rectangleInfo = new RectangleInfo(topLeftCorner, tileWidth, tileHeight);
                 List<Point> summits = RectangleHelper.rectangleInfoToSummits(rectangleInfo);
 
-                tiles.add(new Tile(summits, material));
+                boolean isMasterTile = column == masterTileColumnIndex && line == masterTileLineIndex;
+                tiles.add(new Tile(summits, material, isMasterTile));
             }
         }
 

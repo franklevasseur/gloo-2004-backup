@@ -128,8 +128,8 @@ class SurfaceFiller implements Serializable {
         int masterTileColumnIndex = (int) Math.ceil(masterTileRelativeCorner.x / unitOfWidth);
         int masterTileLineIndex = (int) Math.ceil(masterTileRelativeCorner.y / unitOfHeight);
 
-        double xTranslation = -(masterTileColumnIndex * tileWidth);
-        double yTranslation = -(masterTileLineIndex * tileHeight);
+        double xTranslation = -(masterTileColumnIndex * unitOfWidth);
+        double yTranslation = -(masterTileLineIndex * unitOfHeight);
 
         Point firstCorner = Point.translate(masterTileAbsoluteCorner, xTranslation, yTranslation);
 
@@ -138,7 +138,7 @@ class SurfaceFiller implements Serializable {
 
                 Point firstTileTopLeft = Point.translate(firstCorner, column * unitOfWidth, line * unitOfHeight);
                 List<Tile> twoTilesToAdd = new ArrayList<>(2);
-                if (column % 2 == 1) {
+                if (column % 2 != masterTileColumnIndex % 2) {
                     Point secondTileTopLeft = firstTileTopLeft.translate(new Point(tileWidth + sealing.getWidth(), 0));
 
                     List<Point> firstTileSummits = RectangleHelper.rectangleInfoToSummits(firstTileTopLeft, tileWidth, tileHeight);
@@ -153,7 +153,9 @@ class SurfaceFiller implements Serializable {
 
                     List<Point> firstTileSummits = RectangleHelper.rectangleInfoToSummits(firstTileTopLeft, cheatWidth, cheatHeight);
                     List<Point> secondTileSummits = RectangleHelper.rectangleInfoToSummits(secondTileTopLeft, cheatWidth, cheatHeight);
-                    twoTilesToAdd.add(new Tile(firstTileSummits, masterTile.getMaterial()));
+
+                    boolean isMaserTile = line == masterTileLineIndex && column == masterTileColumnIndex;
+                    twoTilesToAdd.add(new Tile(firstTileSummits, masterTile.getMaterial(), isMaserTile));
                     twoTilesToAdd.add(new Tile(secondTileSummits, masterTile.getMaterial()));
                 }
 

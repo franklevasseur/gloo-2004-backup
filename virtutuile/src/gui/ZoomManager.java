@@ -39,4 +39,12 @@ public class ZoomManager {
     public double getCurrentScale() {
         return this.currentScale;
     }
+
+    public double metersToInch(double pMeters){
+        return pMeters*39.3701;
+    }
+
+    public double inchToMeters(double pInch){
+        return pInch/39.3701;
+    }
 }

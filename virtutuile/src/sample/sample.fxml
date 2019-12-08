@@ -47,7 +47,7 @@
                 <Button layoutX="14.0" layoutY="37.0" mnemonicParsing="false" onAction="#onCreateIrregularSurfaceSelected" prefHeight="25.0" prefWidth="101.0" text="Create irregular surface" />
                 <Button fx:id="fillTilesButton" layoutX="122.0" layoutY="14.0" mnemonicParsing="false" onAction="#toggleFill" prefHeight="25.0" prefWidth="96.0" text="Fill tiles" />
                 <Button layoutX="122.0" layoutY="36.0" mnemonicParsing="false" onAction="#setHole" prefHeight="25.0" prefWidth="96.0" text="Set hole" />
-                <CheckBox layoutX="1107.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
+                <CheckBox fx:id="metricCheckBox" layoutX="1107.0" layoutY="18.0" mnemonicParsing="false" text="Metric" />
                 <CheckBox fx:id="snapGridCheckBox" layoutX="1200.0" layoutY="28.0" mnemonicParsing="false" onAction="#snapGridToggle" text="Snap grid" />
                 <Button layoutX="502.0" layoutY="14.0" mnemonicParsing="false" onAction="#alignLeftSurfaces" prefHeight="25.0" prefWidth="118.0" text="Align left" />
                 <Button layoutX="502.0" layoutY="37.0" mnemonicParsing="false" onAction="#alignTopSurfaces" prefHeight="25.0" prefWidth="118.0" text="Align top" />
@@ -57,8 +57,8 @@
                 <Button layoutX="757.0" layoutY="14.0" mnemonicParsing="false" onAction="#centerSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Center horizontally" />
                 <Button layoutX="757.0" layoutY="37.0" mnemonicParsing="false" onAction="#centerSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Center vertically" />
                 <Button layoutX="927.0" layoutY="37.0" mnemonicParsing="false" onAction="#stickSurfacesVertically" prefHeight="25.0" prefWidth="154.0" text="Stick vertically" />
-                <Button layoutX="927.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesHorizontally" prefHeight="25.0" prefWidth="154.0" text="Stick horizontally" />
-                <CheckBox layoutX="1107.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
+                <Button layoutX="927.0" layoutY="14.0" mnemonicParsing="false" onAction="#stickSurfacesHorizontally" prefHeight="25" prefWidth="154.0" text="Stick horizontally" />
+                <CheckBox fx:id="imperialCheckBox" layoutX="1107.0" layoutY="41.0" mnemonicParsing="false" text="Imperial" />
                 <CheckBox fx:id="mooveTilesCheckBox" layoutX="225.0" layoutY="41.0" mnemonicParsing="false" onAction="#moveTilesToggle" text="Move tiles" />
               </children>
             </AnchorPane>

@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 public class RectangleSurfaceUI extends SurfaceUI {
 
-    private boolean currentlyBeingDragged = false;
-
     public RectangleSurfaceUI(SurfaceDto surfaceDto,
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
@@ -45,36 +43,9 @@ public class RectangleSurfaceUI extends SurfaceUI {
     }
 
     @Override
-    protected void initializeGroup() {
-        super.initializeGroup();
-
-        surfaceGroup.setOnMouseClicked(t -> {
-            selectionManager.selectSurface(this);
-            t.consume();
-        });
-
-        surfaceGroup.setOnMouseReleased(mouseEvent -> {
-            if (this.currentlyBeingDragged) {
-                this.currentlyBeingDragged = false;
-                this.snapToGrid();
-                super.updateColor();
-
-                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
-                    controller.updateSurface(this.toDto());
-                    return;
-                }
-                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-            }
-        });
-    }
-
-    @Override
     protected void handleSurfaceDrag(MouseEvent event) {
         hideAttachmentPoints();
         hideTiles();
-        this.shape.setFill(ColorHelper.utilsColorToJavafx(super.surfaceColor));
-
-        this.currentlyBeingDragged = true;
 
         double newX = event.getX() - this.lastPointOfContactRelativeToSurface.x;
         double newY = event.getY() - this.lastPointOfContactRelativeToSurface.y;
@@ -84,6 +55,7 @@ public class RectangleSurfaceUI extends SurfaceUI {
         rectangle.setY(newY);
         summits = this.getSummits();
 
+        this.updateColor(true);
         event.consume();
     }
 
@@ -93,7 +65,8 @@ public class RectangleSurfaceUI extends SurfaceUI {
         return new Point(rectangle.getX(), rectangle.getY());
     }
 
-    private void snapToGrid() {
+    @Override
+    protected void snapToGrid() {
         if (this.snapGrid.isVisible()) {
 
             Rectangle rectangle = (Rectangle) shape;
@@ -182,6 +155,8 @@ public class RectangleSurfaceUI extends SurfaceUI {
         rectangle.setY(topLeftCorner.y);
         summits = this.getSummits();
     }
+
+
 
     public Shape getMainShape() {
         return this.shape;

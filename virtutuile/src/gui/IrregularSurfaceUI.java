@@ -54,33 +54,6 @@ public class IrregularSurfaceUI extends SurfaceUI {
         this.updateColor(this.currentlyBeingDragged);
     }
 
-    @Override
-    protected void initializeGroup() {
-        super.initializeGroup();
-
-        surfaceGroup.setOnMouseClicked(t -> {
-            selectionManager.selectSurface(this);
-            t.consume();
-        });
-
-        surfaceGroup.setOnMouseReleased(mouseEvent -> {
-            if (this.currentlyBeingDragged) {
-
-                super.updateColor();
-
-                this.currentlyBeingDragged = false;
-                this.snapToGrid();
-
-                if (this.isHole != HoleStatus.FILLED || this.tiles == null) {
-                    controller.updateSurface(this.toDto());
-                    return;
-                }
-                this.renderTiles(controller.updateAndRefill(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-                updateColor();
-            }
-        });
-    }
-
 
     @Override
     protected void handleSurfaceDrag(MouseEvent event) {
@@ -97,10 +70,12 @@ public class IrregularSurfaceUI extends SurfaceUI {
         Point translation = Point.diff(new Point(newX, newY), getPixelPosition());
         this.translatePixelBy(translation);
 
+        this.updateColor(true);
         event.consume();
     }
 
-    private void snapToGrid() {
+    @Override
+    protected void snapToGrid() {
         if (super.snapGrid.isVisible()) {
             Point currentRectanglePosition = new Point(getPixelPosition().x, getPixelPosition().y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentRectanglePosition);

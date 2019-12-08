@@ -182,7 +182,7 @@ public class UiController implements Initializable {
             try {
                 CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
                 minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : format.parse(minInspectionLengthInput.toString()).doubleValue();
-                minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : Double.valueOf(minInspectionLengthInput.toString()).doubleValue();
+//                minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : Double.valueOf(minInspectionLengthInput.toString()).doubleValue();
 
             } catch (ParseException e) {
                 parseSucess = false;
@@ -323,7 +323,6 @@ public class UiController implements Initializable {
         List<SurfaceUI> temp = new ArrayList<>();
         this.getAccountingForSelectedSurface(temp);
         hideRectangleInfo();
-
     }
 
     private void handleRectangularSurfaceCreation(Point click) {
@@ -441,11 +440,11 @@ public class UiController implements Initializable {
                 //new master Tile position
                 CharSequence masterTileXInput = this.masterTileX.getCharacters();
                 Double newMasterTileX = masterTileXInput.toString().equals("") ? null : format.parse(masterTileXInput.toString()).doubleValue();
-                newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
+//                newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
 
                 CharSequence masterTileYInput = this.masterTileY.getCharacters();
                 Double newMasterTileY = masterTileYInput.toString().equals("") ? null : format.parse(masterTileYInput.toString()).doubleValue();
-                newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
+//                newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
 
                 CharSequence tileAngleInput = this.tileAngleInputBox.getCharacters();
                 Double tileAngle = tileAngleInput.toString().equals("") ? null : format.parse(tileAngleInput.toString()).doubleValue();
@@ -456,7 +455,7 @@ public class UiController implements Initializable {
                 //new Seal Width
                 CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
                 Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
-                newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
+//                newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
 
                 CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
 
@@ -468,12 +467,12 @@ public class UiController implements Initializable {
                 //new surface height
                 CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
                 double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
-                newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
+//                newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
 
                 //new surface width
                 CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
                 double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
-                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
+//                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
 
                 CharSequence tileMaterialInput = tileMaterialChoiceBox.getValue();
 
@@ -533,7 +532,6 @@ public class UiController implements Initializable {
             catch (NumberFormatException e) {
                 displayRectangleInfo();
             }
-
         }
 
     }
@@ -935,15 +933,15 @@ public class UiController implements Initializable {
 
             CharSequence tilePerBox = this.tilePerBoxInputBox.getCharacters();
             dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
-            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
+//            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
 
             CharSequence tileHeight = this.tileHeightMaterialInputBox.getCharacters();
             dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tileHeight.toString()).doubleValue();
-            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
+//            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
 
             CharSequence tileWidth = this.tileWidthMaterialInputBox.getCharacters();
             dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tileWidth.toString()).doubleValue();
-            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
+//            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
 
             domainController.createMaterial(dto);
 
@@ -1418,91 +1416,120 @@ public class UiController implements Initializable {
         // C'EST DES METRE!!
         NumberFormat formatter = new DecimalFormat("#0.000");
 
-        //13
-        CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
-        Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //12
-        temp = this.tileWidthMaterialInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //11
-        temp = this.mNewHeightInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.mNewHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //10
-        temp = this.mNewLenghtInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.mNewLenghtInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //9
-        temp = this.tileHeightInputbox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileHeightInputbox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //8
-        temp = this.tileWidthInputbox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileWidthInputbox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //7
-        temp = this.sealWidthInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.sealWidthInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //6
-        temp = this.surfaceHeightInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfaceHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //5
-        temp = this.surfaceWidthInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfaceWidthInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //4
-        temp = this.masterTileX.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.masterTileX.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //3
-        temp = this.masterTileY.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.masterTileY.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //2
-        temp = this.surfacePositionXInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfacePositionXInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //1
-        temp = this.surfacePositionYInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfacePositionYInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
+        try {
+            //13
+            CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
+            Double tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //12
+            temp = this.tileWidthMaterialInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 
-        temp = this.tileShiftingInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileShiftingInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //11
+            temp = this.mNewHeightInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.mNewHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //10
+            temp = this.mNewLenghtInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.mNewLenghtInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //9
+            temp = this.tileHeightInputbox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileHeightInputbox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //8
+            temp = this.tileWidthInputbox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileWidthInputbox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //7
+            temp = this.sealWidthInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.sealWidthInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //6
+            temp = this.surfaceHeightInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfaceHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //5
+            temp = this.surfaceWidthInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfaceWidthInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //4
+            temp = this.masterTileX.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.masterTileX.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //3
+            temp = this.masterTileY.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.masterTileY.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //2
+            temp = this.surfacePositionXInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfacePositionXInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+            //1
+            temp = this.surfacePositionYInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfacePositionYInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+
+            temp = this.tileShiftingInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileShiftingInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+            }
+        } catch(ParseException e) {
+            displayRectangleInfo();
+        }
     }
 
     public void ImperialToggle() {
@@ -1510,89 +1537,112 @@ public class UiController implements Initializable {
         // CEST DES POUCE!!!
         NumberFormat formatter = new DecimalFormat("#0.000");
 
-        //13
-        CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
-        Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //12
-        temp = this.tileWidthMaterialInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //11
-        temp = this.mNewHeightInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.mNewHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //10
-        temp = this.mNewLenghtInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.mNewLenghtInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //9
-        temp = this.tileHeightInputbox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileHeightInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //8
-        temp = this.tileWidthInputbox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileWidthInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //7
-        temp = this.sealWidthInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.sealWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //6
-        temp = this.surfaceHeightInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfaceHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //5
-        temp = this.surfaceWidthInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfaceWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //4
-        temp = this.masterTileX.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.masterTileX.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //3
-        temp = this.masterTileY.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.masterTileY.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //2
-        temp = this.surfacePositionXInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfacePositionXInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        //1
-        temp = this.surfacePositionYInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.surfacePositionYInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
-        temp = this.tileShiftingInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if(tempDouble != null){
-            this.tileShiftingInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
-        }
+        try {
+            //13
+            CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
+            Double tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //12
+            temp = this.tileWidthMaterialInputBox.getCharacters();
 
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //11
+            temp = this.mNewHeightInputBox.getCharacters();
+
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.mNewHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //10
+            temp = this.mNewLenghtInputBox.getCharacters();
+
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.mNewLenghtInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+
+            //9
+            temp = this.tileHeightInputbox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileHeightInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+
+            //8
+            temp = this.tileWidthInputbox.getCharacters();
+
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileWidthInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //7
+            temp = this.sealWidthInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.sealWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //6
+            temp = this.surfaceHeightInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfaceHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //5
+            temp = this.surfaceWidthInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfaceWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //4
+            temp = this.masterTileX.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.masterTileX.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //3
+            temp = this.masterTileY.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.masterTileY.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //2
+            temp = this.surfacePositionXInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfacePositionXInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            //1
+            temp = this.surfacePositionYInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.surfacePositionYInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+            temp = this.tileShiftingInputBox.getCharacters();
+            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+            if(tempDouble != null){
+                this.tileShiftingInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+            }
+        } catch(ParseException e) {
+            displayRectangleInfo();
+        }
     }
 }

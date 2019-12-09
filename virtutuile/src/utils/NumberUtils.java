@@ -46,9 +46,14 @@ public class NumberUtils {
         ImperialFormatParse(pValue);
         piedD = fractionToDouble(Pied);
         if(isFraction(Pouce)){
-            pouceD = fractionToDouble(Pouce) * 12;
+            pouceD = fractionToDouble(Pouce);
         }else {
-            pouceD = Double.parseDouble(Pouce);
+            if(Pouce.length() == 0){
+                pouceD = 0;
+            }else {
+                pouceD = Double.parseDouble(Pouce);
+            }
+
         }
 
         fractionFinD = fractionToDouble(fractionFin);
@@ -125,10 +130,13 @@ public class NumberUtils {
             float g = getGCD(num, denom);
             num = num / g;
             denom = denom /g;
+            int a = (int)num;
+            int b = (int)denom;
             String[] tempNum = (Float.toString(num)).split("\\.",2);
             String[] tempDenum = (Float.toString(denom)).split("\\.",2);
 
-            return tempNum[0] + "/" + tempDenum[0];
+            return Integer.toString(a) + "/" + Integer.toString(b);
+            //return tempNum[0] + "/" + tempDenum[0];
         }
         return "";
 

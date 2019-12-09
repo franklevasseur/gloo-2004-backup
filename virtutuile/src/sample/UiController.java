@@ -127,6 +127,7 @@ public class UiController implements Initializable {
     private Double minInspectionLength;
 
     private boolean metricDisplay = true;
+    private NumberUtils numberUtils = new NumberUtils();
 
     private Controller domainController = Controller.getInstance();
 
@@ -354,7 +355,9 @@ public class UiController implements Initializable {
     }
 
     private void handleIrregularSurfaceCreation(Point clickCoord) {
-
+        //TODO : BUG
+        // Si on click sur create surface irreguliere pis apres on clicke sur un autre boutton exemple create rectangle
+        // le create irregular reste active meme si on fait new project
         Point pointToAdd = clickCoord;
         if (this.snapGridUI.isVisible()) {
             pointToAdd = this.snapGridUI.getNearestGridPoint(clickCoord);
@@ -1425,17 +1428,16 @@ public class UiController implements Initializable {
         // C'EST DES METRE!!
         NumberFormat formatter = new DecimalFormat("#0.000");
 
-        try {
             //13
             CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
-            Double tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            Double tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 //            Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
                 this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
             }
             //12
             temp = this.tileWidthMaterialInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1443,14 +1445,15 @@ public class UiController implements Initializable {
             }
             //11
             temp = this.mNewHeightInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = numberUtils.ImperialToDecimal(temp.toString());
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 //        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
                 this.mNewHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
             }
             //10
             temp = this.mNewLenghtInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1458,7 +1461,7 @@ public class UiController implements Initializable {
             }
             //9
             temp = this.tileHeightInputbox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1466,7 +1469,7 @@ public class UiController implements Initializable {
             }
             //8
             temp = this.tileWidthInputbox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1474,7 +1477,7 @@ public class UiController implements Initializable {
             }
             //7
             temp = this.sealWidthInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1482,7 +1485,7 @@ public class UiController implements Initializable {
             }
             //6
             temp = this.surfaceHeightInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1490,7 +1493,7 @@ public class UiController implements Initializable {
             }
             //5
             temp = this.surfaceWidthInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1498,7 +1501,7 @@ public class UiController implements Initializable {
             }
             //4
             temp = this.masterTileX.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1506,7 +1509,7 @@ public class UiController implements Initializable {
             }
             //3
             temp = this.masterTileY.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1514,7 +1517,7 @@ public class UiController implements Initializable {
             }
             //2
             temp = this.surfacePositionXInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1522,7 +1525,7 @@ public class UiController implements Initializable {
             }
             //1
             temp = this.surfacePositionYInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
@@ -1530,15 +1533,12 @@ public class UiController implements Initializable {
             }
 
             temp = this.tileShiftingInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+            tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
 
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
                 this.tileShiftingInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
             }
-        } catch(ParseException e) {
-            displayRectangleInfo();
-        }
     }
 
     public void ImperialToggle() {
@@ -1552,7 +1552,7 @@ public class UiController implements Initializable {
             Double tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.tileHeightMaterialInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //12
             temp = this.tileWidthMaterialInputBox.getCharacters();
@@ -1560,7 +1560,7 @@ public class UiController implements Initializable {
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.tileWidthMaterialInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //11
             temp = this.mNewHeightInputBox.getCharacters();
@@ -1568,7 +1568,7 @@ public class UiController implements Initializable {
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.mNewHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.mNewHeightInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //10
             temp = this.mNewLenghtInputBox.getCharacters();
@@ -1576,7 +1576,7 @@ public class UiController implements Initializable {
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.mNewLenghtInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.mNewLenghtInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
 
             //9
@@ -1584,7 +1584,7 @@ public class UiController implements Initializable {
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.tileHeightInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.tileHeightInputbox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
 
             //8
@@ -1593,62 +1593,62 @@ public class UiController implements Initializable {
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.tileWidthInputbox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.tileWidthInputbox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //7
             temp = this.sealWidthInputBox.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.sealWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.sealWidthInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //6
             temp = this.surfaceHeightInputBox.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.surfaceHeightInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.surfaceHeightInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //5
             temp = this.surfaceWidthInputBox.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.surfaceWidthInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.surfaceWidthInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //4
             temp = this.masterTileX.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.masterTileX.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.masterTileX.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //3
             temp = this.masterTileY.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.masterTileY.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.masterTileY.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //2
             temp = this.surfacePositionXInputBox.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.surfacePositionXInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.surfacePositionXInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             //1
             temp = this.surfacePositionYInputBox.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.surfacePositionYInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.surfacePositionYInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
             temp = this.tileShiftingInputBox.getCharacters();
             tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
 //            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
             if(tempDouble != null){
-                this.tileShiftingInputBox.setText(formatter.format(zoomManager.metersToInch(tempDouble)));
+                this.tileShiftingInputBox.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
             }
         } catch(ParseException e) {
             displayRectangleInfo();

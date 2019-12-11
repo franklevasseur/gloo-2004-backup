@@ -81,6 +81,7 @@ public class UiController implements Initializable {
     public TextField tileShiftingInputBox;
     public TextField surfacePositionXInputBox;
     public TextField surfacePositionYInputBox;
+    public Label distanceBetweenSurfacesLabel;
 
     public Button fillTilesButton;
     public boolean stateCurrentlyFilling = true;
@@ -105,6 +106,7 @@ public class UiController implements Initializable {
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
     private SelectionManager selectionManager;
     private ZoomManager zoomManager = new ZoomManager();
+    private DistanceSurfaceLabelUI distanceSurfaceLabelUI = new DistanceSurfaceLabelUI();
     private SnapGridUI snapGridUI;
 
     public Button undoButton;
@@ -210,6 +212,7 @@ public class UiController implements Initializable {
                 if(t1){
                     metricDisplay = false;
                     ImperialToggle();
+                    toggleImperialMetriqueDistance();
                 }
             }
         });
@@ -223,10 +226,13 @@ public class UiController implements Initializable {
                 if (t1){
                     metricDisplay = true;
                     MetricToggle();
+                    toggleImperialMetriqueDistance();
                 }
 
             }
         });
+
+        distanceBetweenSurfacesLabel.setText("");
 
         alert.setTitle("WARNING");
         hideSnapgridInfo();
@@ -324,6 +330,7 @@ public class UiController implements Initializable {
         List<SurfaceUI> temp = new ArrayList<>();
         this.getAccountingForSelectedSurface(temp);
         hideRectangleInfo();
+        distanceBetweenSurfacesLabel.setText("");
     }
 
     private void handleRectangularSurfaceCreation(Point click) {
@@ -422,6 +429,9 @@ public class UiController implements Initializable {
             surfaceHeightInputBox.setDisable(false);
         }
 
+        String distance = distanceSurfaceLabelUI.distanceSurface(selectedSurfaces.stream().map(sUI -> sUI.toDto()).collect(Collectors.toList()));
+        distanceBetweenSurfacesLabel.setText(distance);
+        toggleImperialMetriqueDistance();
         return null;
     }
 
@@ -1652,6 +1662,29 @@ public class UiController implements Initializable {
             }
         } catch(ParseException e) {
             displayRectangleInfo();
+        }
+    }
+    private void toggleImperialMetriqueDistance(){
+        try{
+            if(metricDisplay){
+                NumberFormat formatter = new DecimalFormat("#0.000");
+                CharSequence temp = this.distanceBetweenSurfacesLabel.getText();
+                Double tempDouble = temp.toString().equals("") ? null : numberUtils.ImperialToDecimal(temp.toString());
+//            Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+                if(tempDouble != null){
+                    this.distanceBetweenSurfacesLabel.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
+                }
+            }else if(!metricDisplay){
+                NumberFormat formatter = new DecimalFormat("#0.000");
+                CharSequence temp = this.distanceBetweenSurfacesLabel.getText();
+                Double tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
+//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
+                if(tempDouble != null){
+                    this.distanceBetweenSurfacesLabel.setText(numberUtils.DecimalToImperialFormat(zoomManager.metersToInch(tempDouble)));
+                }
+            }
+        }catch (ParseException e){
+            distanceBetweenSurfacesLabel.setText("");
         }
     }
 }

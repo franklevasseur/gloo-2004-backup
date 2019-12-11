@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
@@ -13,16 +12,16 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+
 <!--<?import javafx.scene.control.TreeTableColumn?>-->
 <!--<?import javafx.scene.control.TreeTableView?>-->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="920.0" prefWidth="1300.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="sample.UiController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressed" onKeyReleased="#handleKeyReleased" prefHeight="920.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.UiController">
   <children>
     <TabPane prefHeight="102.0" prefWidth="876.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
       <tabs>
@@ -139,6 +138,11 @@
                         <TextField fx:id="tileShiftingInputBox" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Label text="Surface color" GridPane.columnIndex="0" GridPane.rowIndex="8" />
                         <ChoiceBox fx:id="surfaceColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                    <Label text="Distance entre deux surfaces" GridPane.rowIndex="22" />
+                                    <Label fx:id="distanceBetweenSurfacesLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="22">
+                                       <GridPane.margin>
+                                          <Insets left="10.0" />
+                                       </GridPane.margin></Label>
                       </children>
                       <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -192,13 +196,13 @@
                           <children>
                             <TableView fx:id="materialTableView" prefHeight="304.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                               <columns>
-                                <TableColumn prefWidth="87.0" text="Material name" fx:id="materialNameColumn" />
-                                <TableColumn minWidth="2.0" prefWidth="30.0" text="Box" fx:id="materialNumberOfBoxInputColumn" />
-                                <TableColumn prefWidth="75.0" text="number of tiles" fx:id="nbTileColumn" />
-                                <TableColumn prefWidth="56.0" text="Tile/box" fx:id="materialTilePerBoxColumn" />
-                                <TableColumn prefWidth="62.0" text="color" fx:id="materialColorColumn" />
-                                <TableColumn prefWidth="64.0" text="Price/box" fx:id="materialPricePerBoxColumn" />
-                                <TableColumn prefWidth="69.0" text="total price" fx:id="materialTotalPriceColumn" />
+                                <TableColumn fx:id="materialNameColumn" prefWidth="87.0" text="Material name" />
+                                <TableColumn fx:id="materialNumberOfBoxInputColumn" minWidth="2.0" prefWidth="30.0" text="Box" />
+                                <TableColumn fx:id="nbTileColumn" prefWidth="75.0" text="number of tiles" />
+                                <TableColumn fx:id="materialTilePerBoxColumn" prefWidth="56.0" text="Tile/box" />
+                                <TableColumn fx:id="materialColorColumn" prefWidth="62.0" text="color" />
+                                <TableColumn fx:id="materialPricePerBoxColumn" prefWidth="64.0" text="Price/box" />
+                                <TableColumn fx:id="materialTotalPriceColumn" prefWidth="69.0" text="total price" />
                               </columns>
                             </TableView>
                           </children>

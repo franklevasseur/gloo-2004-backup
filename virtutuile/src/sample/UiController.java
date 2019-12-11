@@ -431,7 +431,10 @@ public class UiController implements Initializable {
 
         String distance = distanceSurfaceLabelUI.distanceSurface(selectedSurfaces.stream().map(sUI -> sUI.toDto()).collect(Collectors.toList()));
         distanceBetweenSurfacesLabel.setText(distance);
-        toggleImperialMetriqueDistance();
+        if(!metricDisplay){
+            this.toggleImperialMetriqueDistance();
+        }
+
         return null;
     }
 

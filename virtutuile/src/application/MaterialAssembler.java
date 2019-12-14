@@ -4,7 +4,7 @@ import Domain.Material;
 
 public class MaterialAssembler {
 
-    public MaterialDto toDto (Material material){
+    public MaterialDto toDto(Material material) {
         MaterialDto dto = new MaterialDto();
 
         dto.color = material.getColor();

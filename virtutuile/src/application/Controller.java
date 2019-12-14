@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 public class Controller {
 
     private static Controller instance = new Controller();
+
     public static Controller getInstance() {
         return instance;
     }
+
     private UndoRedoManager undoRedoManager = new UndoRedoManager();
 
     public List<Accounting> Maccount = new ArrayList<>();
@@ -77,7 +79,7 @@ public class Controller {
     }
 
     // atomic move and fill or resize and fill
-    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing, double angle, double shift)  {
+    public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing, double angle, double shift) {
         internalUpdateSurface(dto);
         List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing, angle, shift);
         undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
@@ -142,7 +144,7 @@ public class Controller {
     }
 
     public void loadProject(String projectPath) {
-        try(FileInputStream fi = new FileInputStream(projectPath)){
+        try (FileInputStream fi = new FileInputStream(projectPath)) {
             ObjectInputStream os = new ObjectInputStream(fi);
             this.projectRepository.setProject((Project) os.readObject());
 
@@ -157,7 +159,7 @@ public class Controller {
     }
 
     public void saveProject(String projectPath) {
-        try(FileOutputStream fs = new FileOutputStream(projectPath)){
+        try (FileOutputStream fs = new FileOutputStream(projectPath)) {
             ObjectOutputStream os = new ObjectOutputStream(fs);
 
             os.writeObject(this.projectRepository.getProject());
@@ -203,7 +205,7 @@ public class Controller {
 
     public void getAccounting() {
         List<Accounting> account = new ArrayList<>();
-        for (Material i: this.projectRepository.getProject().getMaterials()) {
+        for (Material i : this.projectRepository.getProject().getMaterials()) {
             Accounting temp = new Accounting(this.projectRepository.getProject().getSurfaces(), i);
             account.add(temp);
         }
@@ -215,7 +217,7 @@ public class Controller {
         List<Surface> surfaces = pSurface.stream().map(dto -> {
             return this.projectRepository.getProject().getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
         }).collect(Collectors.toList());
-        for(Surface i: surfaces){
+        for (Surface i : surfaces) {
             if (i.getTiles().size() > 0) {
                 Accounting temp = new Accounting(surfaces, i.getTiles().get(0).getMaterial());
                 account.add(temp);

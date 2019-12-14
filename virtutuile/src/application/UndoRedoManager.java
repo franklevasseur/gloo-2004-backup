@@ -12,6 +12,7 @@ public class UndoRedoManager {
     private CircularStack<Integer> debugRedoStack = new CircularStack<Integer>(allowedUndo);
 
     private static int num = 0;
+
     public void justDoIt(ProjectDto project) {
 //        System.out.println("debug #" + num);
         debugUndoStack.add(num++);

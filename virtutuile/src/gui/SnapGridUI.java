@@ -144,12 +144,12 @@ public class SnapGridUI {
         this.displayedLines.clear();
     }
 
-    public void setSnapGridGap(double pGap){
+    public void setSnapGridGap(double pGap) {
         gridGap = pGap;
         renderForViewBox(currentViewBox);
     }
 
-    public double getSnapGripGap(){
+    public double getSnapGripGap() {
         return this.gridGap;
     }
 }

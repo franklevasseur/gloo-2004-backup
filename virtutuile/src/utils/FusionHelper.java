@@ -33,13 +33,13 @@ public class FusionHelper {
 
         Polygon polygon1 = new Polygon();
         Polygon polygon2 = new Polygon();
-        List<Point> combinedPoly= new ArrayList<>();
+        List<Point> combinedPoly = new ArrayList<>();
 
-        for(Point p : ShapeHelper.getFlattedSummits(accumulator)) {
+        for (Point p : ShapeHelper.getFlattedSummits(accumulator)) {
             polygon1.getPoints().addAll(p.x, p.y);
         }
 
-        for(Point p : shape2.summits) {
+        for (Point p : shape2.summits) {
             polygon2.getPoints().addAll(p.x, p.y);
         }
 
@@ -47,8 +47,8 @@ public class FusionHelper {
 
         List<AbstractShape> shapes = new ArrayList<>();
 
-        for(PathElement el : p3.getElements()) {
-            if(el instanceof MoveTo) {
+        for (PathElement el : p3.getElements()) {
+            if (el instanceof MoveTo) {
 
                 if (combinedPoly.size() > 3) {
                     shapes.add(new AbstractShape(combinedPoly));
@@ -60,7 +60,7 @@ public class FusionHelper {
                 Point abstractPoint = new Point(mt.getX(), mt.getY());
                 combinedPoly.add(abstractPoint);
             }
-            if(el instanceof LineTo) {
+            if (el instanceof LineTo) {
                 LineTo lt = (LineTo) el;
                 Point abstractPoint = new Point(lt.getX(), lt.getY());
                 combinedPoly.add(abstractPoint);

@@ -75,7 +75,7 @@ public class Segment {
     }
 
     public boolean contains(Point p) {
-        return this.contains(p,0);
+        return this.contains(p, 0);
     }
 
     public boolean contains(Point p, double tolerance) {
@@ -98,10 +98,10 @@ public class Segment {
         }
 
         return isInLine(p, tolerance)
-            && p.x <= Math.max(pt1.x, pt2.x) + tolerance
-            && p.x >= Math.min(pt1.x, pt2.x) - tolerance
-            && p.y <= Math.max(pt1.y, pt2.y) + tolerance
-            && p.y >= Math.min(pt1.y, pt2.y) - tolerance;
+                && p.x <= Math.max(pt1.x, pt2.x) + tolerance
+                && p.x >= Math.min(pt1.x, pt2.x) - tolerance
+                && p.y <= Math.max(pt1.y, pt2.y) + tolerance
+                && p.y >= Math.min(pt1.y, pt2.y) - tolerance;
     }
 
     private boolean isInLine(Point p, double tolerance) {
@@ -116,7 +116,7 @@ public class Segment {
     }
 
     private double getSlope() {
-        return  deltaY() / deltaX();
+        return deltaY() / deltaX();
     }
 
     private double deltaX() {

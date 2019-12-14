@@ -2,7 +2,6 @@ package application;
 
 import Domain.Material;
 
-import java.util.List;
 import java.util.Optional;
 
 public class MaterialService {
@@ -14,8 +13,8 @@ public class MaterialService {
     }
 
     public Optional<Material> getMaterialByName(String name) {
-        for(Material m : projectRepository.getProject().getMaterials()) {
-            if(m.getMaterialName().equals(name)) {
+        for (Material m : projectRepository.getProject().getMaterials()) {
+            if (m.getMaterialName().equals(name)) {
                 return Optional.of(m);
             }
         }

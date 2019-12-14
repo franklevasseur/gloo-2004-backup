@@ -19,7 +19,7 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
                               SelectionManager selectionManager,
                               SnapGridUI snapGrid,
                               Label tileInfoTextField
-                              ) {
+    ) {
 
         super(surfaceDto, zoomManager, selectionManager, snapGrid, tileInfoTextField);
 
@@ -128,7 +128,7 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
         return RectangleHelper.rectangleInfoToSummits(topLeft, rectangle.getWidth(), rectangle.getHeight());
     }
 
-    public void setSize(double width, double height){
+    public void setSize(double width, double height) {
         double pixelWidth = zoomManager.metersToPixels(width);
         double pixelHeight = zoomManager.metersToPixels(height);
 
@@ -147,7 +147,6 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
         rectangle.setY(topLeftCorner.y);
         summits = this.getSummits();
     }
-
 
 
     public Shape getMainShape() {

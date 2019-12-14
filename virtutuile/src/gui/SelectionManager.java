@@ -10,7 +10,7 @@ public class SelectionManager {
     private boolean multipleSelectionAllowed = false;
     private Function<Void, Void> handler;
 
-    public SelectionManager(Function<Void, Void> handler){
+    public SelectionManager(Function<Void, Void> handler) {
         this.handler = handler;
     }
 

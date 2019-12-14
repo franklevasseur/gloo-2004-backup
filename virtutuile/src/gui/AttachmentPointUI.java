@@ -12,8 +12,6 @@ public class AttachmentPointUI {
     private static final double pointWidth = 10;
     private Rectangle rectangle;
 
-    private boolean currentlyBeingDragged = false;
-
     public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface) {
         this(coord, cardinal, parentSurface, null);
     }
@@ -23,8 +21,7 @@ public class AttachmentPointUI {
 
         if (cursor != null) {
             rectangle.setCursor(cursor);
-        }
-        else if (cardinal == CardinalPoint.SE) {
+        } else if (cardinal == CardinalPoint.SE) {
             rectangle.setCursor(Cursor.SE_RESIZE);
         }
 

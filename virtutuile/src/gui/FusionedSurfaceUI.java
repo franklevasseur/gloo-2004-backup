@@ -6,8 +6,6 @@ import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import utils.*;
 
@@ -25,7 +23,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
                              SelectionManager selectionManager,
                              SnapGridUI snapGrid,
                              Label tileInfoLabel
-                             ) {
+    ) {
 
         super(surfaceDto, zoomManager, selectionManager, snapGrid, tileInfoLabel);
 
@@ -115,8 +113,8 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
     @Override
     protected void snapToGrid() {
-        if(this.snapGrid.isVisible()){
-            Point currentFusionedSurfacePosition  = new Point(this.position.x, this.position.y);
+        if (this.snapGrid.isVisible()) {
+            Point currentFusionedSurfacePosition = new Point(this.position.x, this.position.y);
             Point nearestGridPoint = this.snapGrid.getNearestGridPoint(currentFusionedSurfacePosition);
             this.setPixelPosition(nearestGridPoint);
 

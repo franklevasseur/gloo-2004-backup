@@ -9,7 +9,7 @@ public class SealsInfo implements Serializable {
     private double width;
     private Color color;
 
-    public SealsInfo(double pWidth, Color color){
+    public SealsInfo(double pWidth, Color color) {
         width = pWidth;
         this.color = color;
     }

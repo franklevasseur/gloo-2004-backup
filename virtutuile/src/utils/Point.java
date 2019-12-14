@@ -49,7 +49,7 @@ public class Point implements Serializable {
 
     public static List<Point> removeDuplicatedSummits(List<Point> points, double tolerance) {
         List<Point> uniqSummits = new ArrayList<>();
-        for (Point point: points) {
+        for (Point point : points) {
             if (uniqSummits.stream().noneMatch(p -> p.isInRange(point, tolerance))) {
                 uniqSummits.add(point);
             }
@@ -101,7 +101,7 @@ public class Point implements Serializable {
         Segment currentPointExtendedToInfinity = new Segment(this, new Point(Double.POSITIVE_INFINITY, this.y));
 
         List<Point> intersections = new ArrayList<>();
-        for (Segment segment: outlineSegments) {
+        for (Segment segment : outlineSegments) {
             if (segment.contains(this, DOUBLE_TOLERANCE)
                     || segment.pt1.isInRange(this, DOUBLE_TOLERANCE)
                     || segment.pt2.isInRange(this, DOUBLE_TOLERANCE)) {

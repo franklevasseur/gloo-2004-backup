@@ -1,9 +1,6 @@
 package gui;
 
-
-import application.Controller;
 import application.SurfaceDto;
-import javafx.scene.control.Label;
 import utils.AbstractShape;
 import utils.Point;
 import utils.ShapeHelper;
@@ -14,25 +11,21 @@ import static java.lang.Math.sqrt;
 
 public class DistanceSurfaceLabelUI {
     private String distanceTwoSurfaces;
-//    private Label tileInfoTextField;
 
-    private Controller domainController;
+    public String distanceSurface(List<SurfaceDto> selectedSurfaces) {
 
-    public String distanceSurface(List<SurfaceDto> selectedSurfaces){
+        if (selectedSurfaces.size() == 2) {
+            SurfaceDto firstSurface = selectedSurfaces.get(0);
+            SurfaceDto secondSurface = selectedSurfaces.get(1);
 
-            if (selectedSurfaces.size() == 2){
-                SurfaceDto firstSurface = selectedSurfaces.get(0);
-                SurfaceDto secondSurface = selectedSurfaces.get(1);
-
-                Double distance = this.calculateDistance(firstSurface,secondSurface);
-                this.distanceTwoSurfaces = distance.toString();
-                return distanceTwoSurfaces;
-            }else{
-                return "";
-
-            }
+            Double distance = this.calculateDistance(firstSurface, secondSurface);
+            this.distanceTwoSurfaces = distance.toString();
+            return distanceTwoSurfaces;
         }
-    private Double calculateDistance(SurfaceDto firstSurface, SurfaceDto secondSurface){
+        return "";
+    }
+
+    private Double calculateDistance(SurfaceDto firstSurface, SurfaceDto secondSurface) {
 
         Point firstTopLeft = ShapeHelper.getTopLeftCorner(new AbstractShape(firstSurface.summits, false));
         Point secondTopLeft = ShapeHelper.getTopLeftCorner(new AbstractShape(secondSurface.summits, false));
@@ -42,10 +35,7 @@ public class DistanceSurfaceLabelUI {
         double xS = secondTopLeft.x;
         double yS = secondTopLeft.y;
 
-        Double distance = sqrt(((xF-xS)*(xF-xS)+(yF-yS)*(yF-yS)));
+        Double distance = sqrt(((xF - xS) * (xF - xS) + (yF - yS) * (yF - yS)));
         return distance;
     }
-
-
-
 }

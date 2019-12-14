@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 
 public class PatternHelperUI {
 
-    private static ObservableList<String> possibleTilePatterns = FXCollections.observableArrayList("", "Default","Horizontal shift","Vertical shift", "Mix", "Group mix");
+    private static ObservableList<String> possibleTilePatterns = FXCollections.observableArrayList("", "Default", "Horizontal shift", "Vertical shift", "Mix", "Group mix");
 
     public static String patternToDisplayString(PatternType pattern) {
         String tilePatternString;

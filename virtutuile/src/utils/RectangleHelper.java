@@ -1,8 +1,5 @@
 package utils;
 
-import Domain.Material;
-import javafx.scene.shape.Rectangle;
-
 import java.util.*;
 
 public class RectangleHelper {

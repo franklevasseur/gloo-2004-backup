@@ -65,7 +65,7 @@ public class Tile implements Serializable {
 
     public Tile deepCopy() {
         List<Point> summitsCpy = new ArrayList<>(summits.size());
-        for (Point summit: summits) {
+        for (Point summit : summits) {
             summitsCpy.add(summit.deepCpy());
         }
         return new Tile(summitsCpy, this.material, this.isMasterTile);
@@ -144,7 +144,7 @@ public class Tile implements Serializable {
     List<Point> findIntersections(Segment segment, boolean extendSegment) {
         List<Segment> tileSegments = Segment.fromPoints(this.summits);
         List<Point> currentIntersections = new ArrayList<>();
-        for (Segment seg: tileSegments) {
+        for (Segment seg : tileSegments) {
             Point intersection = extendSegment ? segment.extendAndIntersect(seg, Point.DOUBLE_TOLERANCE) : segment.intersect(seg, Point.DOUBLE_TOLERANCE);
             if (intersection != null && currentIntersections.stream().noneMatch(i -> i.isInRange(intersection, Point.DOUBLE_TOLERANCE))) {
                 currentIntersections.add(intersection);

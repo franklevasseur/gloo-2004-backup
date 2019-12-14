@@ -17,7 +17,7 @@ public class SurfaceAssembler {
         this.sealingAssembler = sealingAssembler;
     }
 
-    public SurfaceDto toDto (Surface surface) {
+    public SurfaceDto toDto(Surface surface) {
         if (surface == null) {
             return null;
         }
@@ -50,7 +50,7 @@ public class SurfaceAssembler {
         return dto;
     }
 
-    public Surface fromDto (SurfaceDto dto, Surface destinationSurface) {
+    public Surface fromDto(SurfaceDto dto, Surface destinationSurface) {
 
         List<Point> summits = dto.summits;
 
@@ -84,7 +84,7 @@ public class SurfaceAssembler {
         return destinationSurface;
     }
 
-    public Surface fromDto (SurfaceDto dto) {
+    public Surface fromDto(SurfaceDto dto) {
         if (dto == null) {
             return null;
         }

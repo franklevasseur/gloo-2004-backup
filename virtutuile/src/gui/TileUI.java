@@ -1,6 +1,5 @@
 package gui;
 
-import application.Controller;
 import application.MaterialDto;
 import application.TileDto;
 import javafx.scene.Node;
@@ -71,8 +70,7 @@ public class TileUI {
     private void updateColor(boolean isSelected) {
         if (isSelected) {
             shape.setFill(Color.PALEGOLDENROD);
-        }
-        else if (highligthIfMasterTile && isMasterTile) {
+        } else if (highligthIfMasterTile && isMasterTile) {
             shape.setFill(Color.CORNFLOWERBLUE);
         } else {
             shape.setFill(ColorHelper.utilsColorToJavafx(material.color));

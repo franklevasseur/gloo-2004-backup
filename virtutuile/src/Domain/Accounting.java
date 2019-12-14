@@ -13,7 +13,7 @@ public class Accounting {
     private double totalCost;
     private double nbBoxes;
 
-    public Accounting(List<Surface> pSurfaces, Material pMaterials){
+    public Accounting(List<Surface> pSurfaces, Material pMaterials) {
         this.material = pMaterials;
         this.surfaces = pSurfaces;
         usedTiles = 0;
@@ -22,11 +22,12 @@ public class Accounting {
     }
 
 
-    public Material getMaterial(){
+    public Material getMaterial() {
         return this.material;
     }
+
     public double getNbBoxes() {
-        nbBoxes = Math.ceil(usedTiles/ Double.valueOf(material.getNbTilePerBox()));
+        nbBoxes = Math.ceil(usedTiles / Double.valueOf(material.getNbTilePerBox()));
         return nbBoxes;
     }
 
@@ -39,13 +40,12 @@ public class Accounting {
         return F_usedTiles();
     }
 
-    private double F_usedTiles(){
+    private double F_usedTiles() {
 
-        for (Surface var : surfaces)
-        {
+        for (Surface var : surfaces) {
             List<Tile> tiles = var.getTiles();
-            if (!(tiles.size() <= 0)){
-                if (tiles.get(0).getMaterial().getMaterialName() == material.getMaterialName()){
+            if (!(tiles.size() <= 0)) {
+                if (tiles.get(0).getMaterial().getMaterialName() == material.getMaterialName()) {
                     usedTiles += tiles.size();
                 }
             }
@@ -55,49 +55,49 @@ public class Accounting {
     }
 
 
-    private double TotalArea(){
-        for ( Surface i: surfaces){
+    private double TotalArea() {
+        for (Surface i : surfaces) {
             //check si la surface est une surface fusionne
-            if(i.isFusionned()){
+            if (i.isFusionned()) {
 
-            }else {
+            } else {
 
             }
         }
         return 2.0;
     }
 
-    private double areaOfSurface(Surface pSurface){
+    private double areaOfSurface(Surface pSurface) {
 
         return 2.0;
     }
 
-    private Surface surfaceSansTrou(FusionnedSurface pSurface){
+    private Surface surfaceSansTrou(FusionnedSurface pSurface) {
         Surface trou = null;
-        for ( Surface i: pSurface.getFusionnedSurfaces()){
-            if (i.isHole() == HoleStatus.HOLE){
+        for (Surface i : pSurface.getFusionnedSurfaces()) {
+            if (i.isHole() == HoleStatus.HOLE) {
                 trou = i;
             }
         }
-        if(trou == null){
+        if (trou == null) {
             //return pSurface;
-        }else {
+        } else {
 /**
-            for(Point j: trou){
-                for (Point k: pSurface.getFusionnedSurfaces() ) {
+ for(Point j: trou){
+ for (Point k: pSurface.getFusionnedSurfaces() ) {
 
-                    if (...) {
-                        iter.remove();
-                    }
-                }
+ if (...) {
+ iter.remove();
+ }
+ }
 
-            }
+ }
  */
         }
         return pSurface;
     }
 
-    private Surface surfaceTrou(Surface pSurface){
+    private Surface surfaceTrou(Surface pSurface) {
 
         return pSurface;
     }

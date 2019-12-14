@@ -22,6 +22,6 @@ public class SealingAssembler {
 
         double width = sDto.sealWidth;
         SealsInfo sealsInfo = new SealsInfo(width, sDto.color);
-        return  sealsInfo;
+        return sealsInfo;
     }
 }

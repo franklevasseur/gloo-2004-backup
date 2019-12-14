@@ -67,8 +67,8 @@ public abstract class SurfaceUI {
         this.selectionManager = selectionManager;
         this.snapGrid = snapGrid;
         this.tileInfoTextField = tileInfoLabel;
-        this.tileAngle  = surfaceDto.tileAngle;
-        this.tileShifting  = surfaceDto.tileShifting;
+        this.tileAngle = surfaceDto.tileAngle;
+        this.tileShifting = surfaceDto.tileShifting;
 
         this.surfaceGroup = new Group();
         this.id = surfaceDto.id;
@@ -80,15 +80,23 @@ public abstract class SurfaceUI {
     }
 
     abstract public Shape getMainShape(); // gives the rectangle without the tiles and anchor points
+
     abstract public SurfaceDto toDto();
+
     abstract public void fill();
+
     abstract public void setSize(double width, double height);
+
     abstract public void setPosition(Point position);
+
     abstract public void translatePixelBy(Point translation);
+
     abstract public void increaseSizeBy(double deltaWidth, double deltaHeight);
 
     abstract protected void handleSurfaceDrag(MouseEvent event);
+
     abstract protected Point getPixelPosition();
+
     abstract protected void snapToGrid();
 
     public void setMasterTile(TileDto masterTile) {
@@ -125,7 +133,7 @@ public abstract class SurfaceUI {
     }
 
     public void select(boolean setToFront) {
-        if(attachmentPoints.isEmpty()) {
+        if (attachmentPoints.isEmpty()) {
             displayAttachmentPoints();
             if (setToFront) {
                 this.surfaceGroup.toFront();
@@ -138,7 +146,7 @@ public abstract class SurfaceUI {
     }
 
     protected void displayAttachmentPoints() {
-        for(Point summit: summits) {
+        for (Point summit : summits) {
             attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this));
         }
 
@@ -172,8 +180,7 @@ public abstract class SurfaceUI {
         } else if (this.isHole == HoleStatus.NONE || isCurrentlyMoving) {
             shape.setFill(ColorHelper.utilsColorToJavafx(this.surfaceColor));
             shape.setStroke(javafx.scene.paint.Color.BLACK);
-        }
-        else if (sealsInfo != null) {
+        } else if (sealsInfo != null) {
             shape.setFill(ColorHelper.utilsColorToJavafx(sealsInfo.color));
             shape.setStroke(javafx.scene.paint.Color.BLACK);
         } else {

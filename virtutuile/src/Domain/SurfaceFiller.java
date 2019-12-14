@@ -41,7 +41,7 @@ class SurfaceFiller implements Serializable {
         return fillSurfaceWithOneOrientation(surface, masterTile, sealing, 0, 0, angle);
     }
 
-    private  List<Tile> fillSurfaceWithMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {
+    private List<Tile> fillSurfaceWithMix(Surface surface, Tile pMasterTile, SealsInfo sealing) {
         AbstractShape surfaceShape = new AbstractShape(surface.getSummits(), false);
         Point surfaceTopLeftCorner = ShapeHelper.getTheoricalTopLeftCorner(surfaceShape);
         double surfaceWidth = ShapeHelper.getWidth(surfaceShape);

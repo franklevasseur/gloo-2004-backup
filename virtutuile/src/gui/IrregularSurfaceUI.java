@@ -190,7 +190,7 @@ public class IrregularSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
         Point boundingBottomRight = ShapeHelper.getTheoricalBottomRightCorner(shape);
 
         if (boundingBottomRight.x + deltaWidth <= boundingTopLeft.x
-            || boundingBottomRight.y + deltaHeight <= boundingTopLeft.y) {
+                || boundingBottomRight.y + deltaHeight <= boundingTopLeft.y) {
             return;
         }
 

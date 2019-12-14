@@ -13,7 +13,7 @@ public class Material implements Serializable {
     private double tileTypeWidth = 0.2;
     private double tileTypeHeight = 0.4;
 
-    public Material(Color pColor, String pName, int pNbTiles, double pCostBox, double pTileWidth, double pTileHeight){
+    public Material(Color pColor, String pName, int pNbTiles, double pCostBox, double pTileWidth, double pTileHeight) {
         this.color = pColor;
         this.materialName = pName;
         this.nbTilePerBox = pNbTiles;
@@ -22,7 +22,7 @@ public class Material implements Serializable {
         this.tileTypeWidth = pTileWidth;
     }
 
-    public Material(Color pColor, String pName){
+    public Material(Color pColor, String pName) {
         this.color = pColor;
         this.materialName = pName;
     }

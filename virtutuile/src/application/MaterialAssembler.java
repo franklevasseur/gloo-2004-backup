@@ -1,8 +1,6 @@
 package application;
 
 import Domain.Material;
-import Domain.MaterialType;
-import utils.Color;
 
 public class MaterialAssembler {
 
@@ -10,7 +8,6 @@ public class MaterialAssembler {
         MaterialDto dto = new MaterialDto();
 
         dto.color = material.getColor();
-        dto.materialType = material.getMaterialType();
         dto.name = material.getMaterialName();
         dto.costPerBox = material.getCostPerBox();
         dto.nbTilePerBox = material.getNbTilePerBox();
@@ -19,25 +16,9 @@ public class MaterialAssembler {
 
         return dto;
     }
-/**
-    public static MaterialDto toDto (Material material){
-
-        MaterialDto dto = new MaterialDto();
-
-        dto.color = material.getColor();
-        dto.materialType = material.getMaterialType();
-        dto.name = material.getMaterialName();
-
-        return dto;
-    }
-    /**
-    public static Material fromDto (MaterialDto dto){
-        Material material = new Material(dto.color, dto.materialType,dto.name);
-        return material;
-    }*/
 
     public static Material fromDto (MaterialDto dto){
-        Material material = new Material(dto.color, dto.materialType, dto.name, dto.nbTilePerBox, dto.costPerBox, dto.tileTypeWidth, dto.tileTypeHeight);
+        Material material = new Material(dto.color, dto.name, dto.nbTilePerBox, dto.costPerBox, dto.tileTypeWidth, dto.tileTypeHeight);
         return material;
     }
 }

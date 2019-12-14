@@ -6,14 +6,13 @@ import utils.Point;
 import utils.Segment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TileTest {
 
-    Material testMaterial = new Material(Color.RED, MaterialType.tileMaterial, "test");
+    Material testMaterial = new Material(Color.RED, "test");
 
     @Test
     void cutSideToSide() {
@@ -22,7 +21,7 @@ class TileTest {
         summits.add(new Point(3.90,2.84));
         summits.add(new Point(3.70,2.84));
         summits.add(new Point(3.70,2.54));
-        Tile tile = new Tile(summits, new Material(Color.RED, MaterialType.tileMaterial, "test"));
+        Tile tile = new Tile(summits, new Material(Color.RED, "test"));
 
         Segment cuttingSegment = new Segment(new Point(3.82, 0.94), new Point(3.82, 2.77));
 

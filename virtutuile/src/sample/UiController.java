@@ -948,7 +948,6 @@ public class UiController implements Initializable {
             NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
 
             MaterialDto dto = new MaterialDto();
-            dto.materialType = MaterialType.tileMaterial;
             dto.name = materialNameInputBox.getText();
             dto.color = ColorHelper.stringToUtils(materialColorChoiceBox.getValue());
 
@@ -999,7 +998,6 @@ public class UiController implements Initializable {
         MaterialDto dto = new MaterialDto();
         dto.color = Color.GREEN;
         dto.name = "Melon d'eau";
-        dto.materialType = MaterialType.tileMaterial;
         dto.nbTilePerBox = 45;
         dto.costPerBox = 50;
         dto.tileTypeHeight = 0.3;
@@ -1397,9 +1395,8 @@ public class UiController implements Initializable {
                 mDTO.name = editTileMaterialChoiceBox.getValue();
                 mDTO.tileTypeHeight = newMaterialHeight;
                 mDTO.tileTypeWidth = newMaterialWidth;
-                mDTO.nbTilePerBox =newNbTilePerBox;
-                mDTO.costPerBox =newCostPerBox;
-                mDTO.materialType = MaterialType.tileMaterial;
+                mDTO.nbTilePerBox = newNbTilePerBox;
+                mDTO.costPerBox = newCostPerBox;
                 mDTO.color = ColorHelper.stringToUtils(mNewColorInputBox.getValue());
                 domainController.updateMaterial(mDTO);
 
@@ -1411,13 +1408,12 @@ public class UiController implements Initializable {
 
     }
 
-    private void displayMaterialInfo(){
+    private void displayMaterialInfo() {
         NumberFormat formatter = new DecimalFormat("#0.000");
 
         MaterialDto mDTO = new MaterialDto();
         mDTO.name = editTileMaterialChoiceBox.getValue();
-        // TODO : checke ca...
-        //stupide ? je dois lui donner une couleur temporairement pour constructeur dans getSelected material
+
         mDTO.color = Color.GREEN;
         Material displayedMaterial = this.domainController.getSelectedMaterial(mDTO);
 
@@ -1426,8 +1422,8 @@ public class UiController implements Initializable {
         mNewTilePerBoxInput.setText(formatter.format(displayedMaterial.getNbTilePerBox()));
         mNewPricePerBoxInputBox.setText(formatter.format(displayedMaterial.getCostPerBox()));
         mNewColorInputBox.setValue(ColorHelper.utilsColorToString(displayedMaterial.getColor()));
-
     }
+
     private void hideMaterialInfo(){
         mNewHeightInputBox.clear();
         mNewLenghtInputBox.clear();

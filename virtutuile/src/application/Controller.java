@@ -162,11 +162,10 @@ public class Controller {
         }
     }
 
-    public void newProject(){
+    public void newProject() {
         this.vraiProject = new Project();
         this.undoRedoManager = new UndoRedoManager();
         MaterialDto defaultNewMaterial = new MaterialDto();
-        defaultNewMaterial.materialType = MaterialType.tileMaterial;
         defaultNewMaterial.name = "Melon d'eau";
         defaultNewMaterial.color = Color.GREEN;
         defaultNewMaterial.costPerBox = 50.0;
@@ -229,7 +228,7 @@ public class Controller {
     }
 
     public Material getSelectedMaterial(MaterialDto materialDto){
-        Material material = new Material(materialDto.color,MaterialType.tileMaterial,materialDto.name);
+        Material material = new Material(materialDto.color, materialDto.name);
         for(Material m:vraiProject.getMaterials()){
             if(m.getMaterialName().equals(material.getMaterialName())){
                 material = m;

@@ -1365,7 +1365,6 @@ public class UiController implements Initializable {
     }
 
     public void editMaterialButton() {
-        //TODO : Si on edit material et que celui-ci est utilise les surface update pas
         NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
         try {
             MaterialDto mDTO = new MaterialDto();

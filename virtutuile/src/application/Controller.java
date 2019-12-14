@@ -76,6 +76,7 @@ public class Controller {
     public void updateMaterial(MaterialDto materialDto) {
         Material material = materialService.getMaterialByName(materialDto.name).get();
         materialAssembler.fromDto(materialDto, material);
+        surfaceService.updateMaterial(material);
     }
 
     // atomic move and fill or resize and fill
@@ -116,8 +117,10 @@ public class Controller {
 
     public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto, Double tileAngle, Double tileShifting) {
 
-        Surface desiredSurface = this.projectRepository.getProject().getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
+        Surface desiredSurface = surfaceService.getSurfaceById(dto.id).get();
+
         Tile masterTile = masterTileDto != null ? tileAssembler.fromDto(masterTileDto) : getDefaultTile();
+
         SealsInfo sealing = sealingDto != null ? sealingAssembler.fromDto(sealingDto) : getDefaultSealing();
         double angle = tileAngle != null ? tileAngle : 0;
         double shift = tileShifting != null ? tileShifting : 0;
@@ -126,9 +129,9 @@ public class Controller {
         desiredSurface.fillSurface(masterTile, sealing, pattern, angle, shift);
 
         SurfaceDto newDto = surfaceAssembler.toDto(desiredSurface);
-
         this.internalUpdateSurface(newDto); // important
-        undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+
+        justDoIt();
 
         return newDto.tiles;
     }

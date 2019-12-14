@@ -66,17 +66,21 @@ public class Surface implements Serializable {
         this.tiles = tiles;
     }
 
+    public void refillFromCurrentInfo() {
+        this.fillSurface(masterTile, sealsInfo, pattern, tileAngle, tileShifting);
+    }
+
     public void fillSurface(Tile masterTile, SealsInfo pSealsInfo, PatternType pType, double angle, double tileShifting) {
         this.sealsInfo = pSealsInfo;
         this.tileAngle = angle;
         this.tileShifting = tileShifting;
+        this.pattern = pType;
 
         tiles = surfaceFiller.fillSurface(this, masterTile, pSealsInfo, pType, angle, tileShifting);
 
         // très important !!
         isHole = HoleStatus.FILLED;
         this.masterTile = masterTile;
-        this.pattern = pattern;
     }
 
     public void setSummits(List<Point> summits) {

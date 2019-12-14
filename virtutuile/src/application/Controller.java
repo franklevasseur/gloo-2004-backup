@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.sqrt;
-
 public class Controller {
 
     private static Controller instance = new Controller();
@@ -46,15 +44,10 @@ public class Controller {
 
         List<Material> allMaterials = vraiProject.getMaterials();
         for (Material material : allMaterials) {
-            if(material.getMaterialName().equals(materialDto.name)){
-                material.setColor(materialDto.color);
-                material.setCostPerBox(materialDto.costPerBox);
-                material.setNbTilePerBox(materialDto.nbTilePerBox);
-                material.setTileTypeHeight(materialDto.tileTypeHeight);
-                material.setTileTypeWidth(materialDto.tileTypeWidth);
+            if(material.getMaterialName().equals(materialDto.name)) {
+                MaterialAssembler.fromDto(materialDto, material);
             }
         }
-
 
         //TODO undo/redo manager ?
     }

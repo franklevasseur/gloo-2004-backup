@@ -17,8 +17,15 @@ public class MaterialAssembler {
         return dto;
     }
 
-    public static Material fromDto (MaterialDto dto){
-        Material material = new Material(dto.color, dto.name, dto.nbTilePerBox, dto.costPerBox, dto.tileTypeWidth, dto.tileTypeHeight);
-        return material;
+    public static void fromDto(MaterialDto dto, Material material) {
+        material.setColor(dto.color);
+        material.setCostPerBox(dto.costPerBox);
+        material.setNbTilePerBox(dto.nbTilePerBox);
+        material.setTileTypeHeight(dto.tileTypeHeight);
+        material.setTileTypeWidth(dto.tileTypeWidth);
+    }
+
+    public static Material fromDto(MaterialDto dto) {
+        return new Material(dto.color, dto.name, dto.nbTilePerBox, dto.costPerBox, dto.tileTypeWidth, dto.tileTypeHeight);
     }
 }

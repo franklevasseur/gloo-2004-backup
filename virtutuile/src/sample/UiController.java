@@ -363,9 +363,6 @@ public class UiController implements Initializable {
     }
 
     private void handleIrregularSurfaceCreation(Point clickCoord) {
-        //TODO : BUG
-        // Si on click sur create surface irreguliere pis apres on clicke sur un autre boutton exemple create rectangle
-        // le create irregular reste active meme si on fait new project
         Point pointToAdd = clickCoord;
         if (this.snapGridUI.isVisible()) {
             pointToAdd = this.snapGridUI.getNearestGridPoint(clickCoord);

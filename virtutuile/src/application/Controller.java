@@ -7,6 +7,7 @@ import utils.Point;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.sqrt;
@@ -44,14 +45,13 @@ public class Controller {
     public void updateMaterial(MaterialDto materialDto){
 
         List<Material> allMaterials = vraiProject.getMaterials();
-        for (Material material : allMaterials){
-            if(material.getMaterialName() == materialDto.name){
+        for (Material material : allMaterials) {
+            if(material.getMaterialName().equals(materialDto.name)){
                 material.setColor(materialDto.color);
                 material.setCostPerBox(materialDto.costPerBox);
                 material.setNbTilePerBox(materialDto.nbTilePerBox);
                 material.setTileTypeHeight(materialDto.tileTypeHeight);
                 material.setTileTypeWidth(materialDto.tileTypeWidth);
-//                MaterialAssembler.fromDto(materialDto);
             }
         }
 
@@ -208,7 +208,7 @@ public class Controller {
         Maccount = account;
     }
 
-    public void getSurfaceAccount(List<SurfaceDto> pSurface){
+    public void getSurfaceAccount(List<SurfaceDto> pSurface) {
         List<Accounting> account = new ArrayList<>();
         List<Surface> surfaces = pSurface.stream().map(dto -> {
             return this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
@@ -227,14 +227,13 @@ public class Controller {
         return inspector.inspect(this.vraiProject, pWidth, pHeight);
     }
 
-    public Material getSelectedMaterial(MaterialDto materialDto){
-        Material material = new Material(materialDto.color, materialDto.name);
-        for(Material m:vraiProject.getMaterials()){
-            if(m.getMaterialName().equals(material.getMaterialName())){
-                material = m;
+    public Optional<MaterialDto> getMaterialByName(String materialName){
+        for(Material m : vraiProject.getMaterials()) {
+            if(m.getMaterialName().equals(m.getMaterialName())) {
+                return Optional.of(MaterialAssembler.toDto(m));
             }
         }
-        return material;
+        return Optional.empty();
     }
 
 //    public void debugTileCutting(SurfaceDto surfaceDto, TileDto tileDto) {

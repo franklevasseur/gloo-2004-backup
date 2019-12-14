@@ -1,6 +1,8 @@
 package sample;
 
-import Domain.*;
+import Domain.Accounting;
+import Domain.HoleStatus;
+import Domain.PatternType;
 import application.*;
 import gui.*;
 
@@ -17,7 +19,6 @@ import javafx.scene.input.*;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Scale;
 import javafx.stage.FileChooser;
 import utils.*;
@@ -1377,54 +1378,51 @@ public class UiController implements Initializable {
     public void editMaterialButton(){
         //TODO : Si on edit material et que celui-ci est utilise les surface update pas
         NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-            try{
-                MaterialDto mDTO = new MaterialDto();
+        try{
+            MaterialDto mDTO = new MaterialDto();
 
-                CharSequence mNewHeight = this.mNewHeightInputBox.getCharacters();
-                Double newMaterialHeight = mNewHeight.toString().equals("") ? null : format.parse(mNewHeight.toString()).doubleValue();
+            CharSequence mNewHeight = this.mNewHeightInputBox.getCharacters();
+            Double newMaterialHeight = mNewHeight.toString().equals("") ? null : format.parse(mNewHeight.toString()).doubleValue();
 
-                CharSequence mNewWidth = this.mNewLenghtInputBox.getCharacters();
-                Double newMaterialWidth = mNewWidth.toString().equals("") ? null : format.parse(mNewWidth.toString()).doubleValue();
+            CharSequence mNewWidth = this.mNewLenghtInputBox.getCharacters();
+            Double newMaterialWidth = mNewWidth.toString().equals("") ? null : format.parse(mNewWidth.toString()).doubleValue();
 
-                CharSequence mNbTilePerBox = this.mNewTilePerBoxInput.getCharacters();
-                Integer newNbTilePerBox = mNbTilePerBox.toString().equals("") ? null : format.parse(mNbTilePerBox.toString()).intValue();
+            CharSequence mNbTilePerBox = this.mNewTilePerBoxInput.getCharacters();
+            Integer newNbTilePerBox = mNbTilePerBox.toString().equals("") ? null : format.parse(mNbTilePerBox.toString()).intValue();
 
-                CharSequence mCostPerBox = this.mNewPricePerBoxInputBox.getCharacters();
-                Integer newCostPerBox = mCostPerBox.toString().equals("") ? null : format.parse(mCostPerBox.toString()).intValue();
+            CharSequence mCostPerBox = this.mNewPricePerBoxInputBox.getCharacters();
+            Integer newCostPerBox = mCostPerBox.toString().equals("") ? null : format.parse(mCostPerBox.toString()).intValue();
 
-                mDTO.name = editTileMaterialChoiceBox.getValue();
-                mDTO.tileTypeHeight = newMaterialHeight;
-                mDTO.tileTypeWidth = newMaterialWidth;
-                mDTO.nbTilePerBox = newNbTilePerBox;
-                mDTO.costPerBox = newCostPerBox;
-                mDTO.color = ColorHelper.stringToUtils(mNewColorInputBox.getValue());
-                domainController.updateMaterial(mDTO);
+            mDTO.name = editTileMaterialChoiceBox.getValue();
+            mDTO.tileTypeHeight = newMaterialHeight;
+            mDTO.tileTypeWidth = newMaterialWidth;
+            mDTO.nbTilePerBox = newNbTilePerBox;
+            mDTO.costPerBox = newCostPerBox;
+            mDTO.color = ColorHelper.stringToUtils(mNewColorInputBox.getValue());
+            domainController.updateMaterial(mDTO);
 
-            }catch (ParseException e){
-                displayMaterialInfo();
-            }
-            renderFromProject();
+        } catch (ParseException e) {
+            displayMaterialInfo();
+        }
+
+        renderFromProject();
         hideMaterialInfo();
-
     }
 
     private void displayMaterialInfo() {
         NumberFormat formatter = new DecimalFormat("#0.000");
 
-        MaterialDto mDTO = new MaterialDto();
-        mDTO.name = editTileMaterialChoiceBox.getValue();
+        String materialName = editTileMaterialChoiceBox.getValue();
+        MaterialDto material = domainController.getMaterialByName(materialName).get();
 
-        mDTO.color = Color.GREEN;
-        Material displayedMaterial = this.domainController.getSelectedMaterial(mDTO);
-
-        mNewHeightInputBox.setText(formatter.format(displayedMaterial.getTileTypeHeight()));
-        mNewLenghtInputBox.setText(formatter.format(displayedMaterial.getTileTypeWidth()));
-        mNewTilePerBoxInput.setText(formatter.format(displayedMaterial.getNbTilePerBox()));
-        mNewPricePerBoxInputBox.setText(formatter.format(displayedMaterial.getCostPerBox()));
-        mNewColorInputBox.setValue(ColorHelper.utilsColorToString(displayedMaterial.getColor()));
+        mNewHeightInputBox.setText(formatter.format(material.tileTypeHeight));
+        mNewLenghtInputBox.setText(formatter.format(material.tileTypeWidth));
+        mNewTilePerBoxInput.setText(formatter.format(material.nbTilePerBox));
+        mNewPricePerBoxInputBox.setText(formatter.format(material.costPerBox));
+        mNewColorInputBox.setValue(ColorHelper.utilsColorToString(material.color));
     }
 
-    private void hideMaterialInfo(){
+    private void hideMaterialInfo() {
         mNewHeightInputBox.clear();
         mNewLenghtInputBox.clear();
         mNewTilePerBoxInput.clear();
@@ -1663,6 +1661,7 @@ public class UiController implements Initializable {
             displayRectangleInfo();
         }
     }
+
     private void toggleImperialMetriqueDistance(){
         try{
             if(metricDisplay){

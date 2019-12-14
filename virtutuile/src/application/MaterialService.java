@@ -15,7 +15,7 @@ public class MaterialService {
 
     public Optional<Material> getMaterialByName(String name) {
         for(Material m : projectRepository.getProject().getMaterials()) {
-            if(m.getMaterialName().equals(m.getMaterialName())) {
+            if(m.getMaterialName().equals(name)) {
                 return Optional.of(m);
             }
         }

@@ -88,8 +88,9 @@ public class SurfaceAssembler {
         if (dto == null) {
             return null;
         }
-        Surface surface = new Surface(dto.id, dto.isHole, new ArrayList<Point>(), dto.isRectangular);
-        this.fromDto(dto, surface);
-        return surface;
+        Surface surface = dto.isFusionned ?
+                new FusionnedSurface(dto.fusionnedSurface.stream().map(fs -> fromDto(fs)).collect(Collectors.toList()))
+                : new Surface(dto.id, dto.isHole, new ArrayList<Point>(), dto.isRectangular);
+        return this.fromDto(dto, surface);
     }
 }

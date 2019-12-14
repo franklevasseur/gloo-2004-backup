@@ -1408,13 +1408,16 @@ public class UiController implements Initializable {
         NumberFormat formatter = new DecimalFormat("#0.000");
 
         String materialName = editTileMaterialChoiceBox.getValue();
-        MaterialDto material = domainController.getMaterialByName(materialName).get();
+        Optional<MaterialDto> optionalMaterial = domainController.getMaterialByName(materialName);
 
-        mNewHeightInputBox.setText(formatter.format(material.tileTypeHeight));
-        mNewLenghtInputBox.setText(formatter.format(material.tileTypeWidth));
-        mNewTilePerBoxInput.setText(formatter.format(material.nbTilePerBox));
-        mNewPricePerBoxInputBox.setText(formatter.format(material.costPerBox));
-        mNewColorInputBox.setValue(ColorHelper.utilsColorToString(material.color));
+        if (optionalMaterial.isPresent()) {
+            MaterialDto material = optionalMaterial.get();
+            mNewHeightInputBox.setText(formatter.format(material.tileTypeHeight));
+            mNewLenghtInputBox.setText(formatter.format(material.tileTypeWidth));
+            mNewTilePerBoxInput.setText(formatter.format(material.nbTilePerBox));
+            mNewPricePerBoxInputBox.setText(formatter.format(material.costPerBox));
+            mNewColorInputBox.setValue(ColorHelper.utilsColorToString(material.color));
+        }
     }
 
     private void hideMaterialInfo() {

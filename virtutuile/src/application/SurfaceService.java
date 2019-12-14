@@ -31,14 +31,13 @@ public class SurfaceService {
             }
 
             RectangleInfo masterTileInfo = RectangleHelper.summitsToRectangleInfo(masterTile.getSummits());
-            double materialWidth = masterTile.getMaterial().getTileTypeWidth();
-            double materialHeight = masterTile.getMaterial().getTileTypeHeight();
-            if (masterTileInfo.width != materialWidth || masterTileInfo.height != materialHeight) {
-                masterTileInfo.width = materialWidth;
-                masterTileInfo.height = materialHeight;
-                masterTile.setSummits(RectangleHelper.rectangleInfoToSummits(masterTileInfo));
-                s.refillFromCurrentInfo();
-            }
+            double materialWidth = material.getTileTypeWidth();
+            double materialHeight = material.getTileTypeHeight();
+            masterTileInfo.width = materialWidth;
+            masterTileInfo.height = materialHeight;
+            masterTile.setSummits(RectangleHelper.rectangleInfoToSummits(masterTileInfo));
+            masterTile.setMaterial(material);
+            s.refillFromCurrentInfo();
         }
     }
 }

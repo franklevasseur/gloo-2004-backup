@@ -498,6 +498,7 @@ public class UiController implements Initializable {
 //                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
 
                 CharSequence tileMaterialInput = tileMaterialChoiceBox.getValue();
+                tileMaterialInput = tileAngleInput == null ? "" : tileAngleInput;
 
                 TileDto masterTile = null;
                 if (newMasterTileX != null && newMasterTileY != null && !tileMaterialInput.equals("")) {

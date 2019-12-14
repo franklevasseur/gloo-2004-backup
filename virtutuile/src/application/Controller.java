@@ -48,24 +48,28 @@ public class Controller {
 
     public void removeSurface(SurfaceDto surface) {
         this.projectRepository.getProject().getSurfaces().removeIf(s -> s.getId().isSame(surface.id));
-        undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+
+        justDoIt();
     }
 
     public void createSurface(SurfaceDto newSurfaceDto) {
         Surface newSurface = surfaceAssembler.fromDto(newSurfaceDto);
         projectRepository.getProject().getSurfaces().add(newSurface);
-        undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+
+        justDoIt();
     }
 
     public void createMaterial(MaterialDto dto) {
         Material material = materialAssembler.fromDto(dto);
         projectRepository.getProject().getMaterials().add(material);
-        undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+
+        justDoIt();
     }
 
     public void updateSurface(SurfaceDto surfaceDto) {
         this.internalUpdateSurface(surfaceDto);
-        undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+
+        justDoIt();
     }
 
     private void internalUpdateSurface(SurfaceDto surfaceDto) {
@@ -77,6 +81,8 @@ public class Controller {
         Material material = materialService.getMaterialByName(materialDto.name).get();
         materialAssembler.fromDto(materialDto, material);
         surfaceService.updateMaterial(material);
+
+        justDoIt();
     }
 
     // atomic move and fill or resize and fill
@@ -185,8 +191,6 @@ public class Controller {
         defaultNewMaterial.tileTypeWidth = 0.6;
         defaultNewMaterial.nbTilePerBox = 45;
         this.createMaterial(defaultNewMaterial);
-
-        justDoIt();
     }
 
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {

@@ -197,7 +197,7 @@ public class Controller {
     public void createMaterial(MaterialDto dto) {
         Material material = MaterialAssembler.fromDto(dto);
         vraiProject.getMaterials().add(material);
-        // TODO: avertir undo/redo que ca vient de se passer (Philippe ne pas enlever ce todo, c'est pour Frank)
+        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
     }
 
     public void getAccounting(){
@@ -225,17 +225,9 @@ public class Controller {
     }
 
     public String inspectProject(double pWidth, double pHeight) {
-        pairResult temp = inspector.inspect(this.vraiProject, pWidth, pHeight);
-        vraiProject = temp.project;
-        undoRedoManager.justDoIt(ProjectAssembler.toDto(vraiProject));
-        return temp.message;
+        return inspector.inspect(this.vraiProject, pWidth, pHeight);
     }
 
-    public String inspectSurface(SurfaceDto dto, double pWidth, double pHeight) {
-        // TODO: Cette methode n'est pas linké avec le ui
-        Surface desiredSurface = this.vraiProject.getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
-        return inspector.inspect(desiredSurface, pWidth, pHeight);
-    }
     public Material getSelectedMaterial(MaterialDto materialDto){
         Material material = new Material(materialDto.color,MaterialType.tileMaterial,materialDto.name);
         for(Material m:vraiProject.getMaterials()){

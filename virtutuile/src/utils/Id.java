@@ -1,23 +1,17 @@
 package utils;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class Id implements Serializable {
 
-    private static int instanceCount = 0;
-    private int id;
+    private UUID id;
 
     public Id() {
-        // TODO: this logic won't work if a file database is used. Need a to generate uniq ids...
-        id = instanceCount;
-        instanceCount++;
+        id = UUID.randomUUID();
     }
 
     public boolean isSame(Id other) {
-        return this.id == other.id;
-    }
-
-    public String getValue() {
-        return String.valueOf(this.id);
+        return this.id.equals(other.id);
     }
 }

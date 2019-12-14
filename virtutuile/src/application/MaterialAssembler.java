@@ -17,12 +17,13 @@ public class MaterialAssembler {
         return dto;
     }
 
-    public void fromDto(MaterialDto dto, Material material) {
+    public Material fromDto(MaterialDto dto, Material material) {
         material.setColor(dto.color);
         material.setCostPerBox(dto.costPerBox);
         material.setNbTilePerBox(dto.nbTilePerBox);
         material.setTileTypeHeight(dto.tileTypeHeight);
         material.setTileTypeWidth(dto.tileTypeWidth);
+        return material;
     }
 
     public Material fromDto(MaterialDto dto) {

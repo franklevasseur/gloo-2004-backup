@@ -27,6 +27,8 @@ public class Controller {
     private SurfaceAssembler surfaceAssembler;
     private MaterialAssembler materialAssembler;
     private ProjectAssembler projectAssembler;
+    private TileAssembler tileAssembler;
+    private SealingAssembler sealingAssembler;
 
     private Controller() {
         Project vraiProject = new Project();
@@ -35,7 +37,10 @@ public class Controller {
         this.surfaceService = new SurfaceService(projectRepository);
 
         this.materialAssembler = new MaterialAssembler();
-        this.surfaceAssembler = new SurfaceAssembler(materialAssembler);
+        this.sealingAssembler = new SealingAssembler();
+        this.tileAssembler = new TileAssembler(materialAssembler, materialService);
+
+        this.surfaceAssembler = new SurfaceAssembler(tileAssembler, sealingAssembler);
         this.projectAssembler = new ProjectAssembler(surfaceAssembler, materialAssembler);
 
         undoRedoManager.justDoIt(projectAssembler.toDto(vraiProject));
@@ -105,8 +110,8 @@ public class Controller {
     public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto, Double tileAngle, Double tileShifting) {
 
         Surface desiredSurface = this.projectRepository.getProject().getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
-        Tile masterTile = masterTileDto != null ? surfaceAssembler.fromDto(masterTileDto) : getDefaultTile();
-        SealsInfo sealing = sealingDto != null ? surfaceAssembler.fromDto(sealingDto) : getDefaultSealing();
+        Tile masterTile = masterTileDto != null ? tileAssembler.fromDto(masterTileDto) : getDefaultTile();
+        SealsInfo sealing = sealingDto != null ? sealingAssembler.fromDto(sealingDto) : getDefaultSealing();
         double angle = tileAngle != null ? tileAngle : 0;
         double shift = tileShifting != null ? tileShifting : 0;
         PatternType pattern = patternType != null ? patternType : PatternType.DEFAULT;

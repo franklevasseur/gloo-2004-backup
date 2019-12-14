@@ -24,9 +24,13 @@ public class Surface implements Serializable {
     private double tileShifting;
 
     public Surface(HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular) {
+        this(new Id(), pIsHole, pSummits, isRectangular);
+    }
+
+    public Surface(Id id, HoleStatus pIsHole, List<Point> pSummits, boolean isRectangular) {
         this.isHole = pIsHole;
         this.summits = pSummits;
-        this.id = new Id();
+        this.id = id == null ? new Id() : id;
         this.isRectangular = isRectangular;
     }
 

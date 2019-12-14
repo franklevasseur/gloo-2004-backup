@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 
 public class SurfaceAssembler {
 
-    private MaterialAssembler materialAssembler;
+    private TileAssembler tileAssembler;
+    private SealingAssembler sealingAssembler;
 
-    public SurfaceAssembler(MaterialAssembler materialAssembler) {
-        this.materialAssembler = materialAssembler;
+    public SurfaceAssembler(TileAssembler tileAssembler, SealingAssembler sealingAssembler) {
+        this.tileAssembler = tileAssembler;
+        this.sealingAssembler = sealingAssembler;
     }
 
     public SurfaceDto toDto (Surface surface) {
@@ -27,7 +29,7 @@ public class SurfaceAssembler {
         dto.id = surface.getId();
         dto.isRectangular = surface.getIsRectangular();
         dto.isFusionned = surface.isFusionned();
-        dto.tiles = surface.getTiles().stream().map(t -> toDto(t)).collect(Collectors.toList());
+        dto.tiles = surface.getTiles().stream().map(t -> tileAssembler.toDto(t)).collect(Collectors.toList());
         dto.pattern = surface.getPattern();
         dto.surfaceColor = surface.getSurfaceColor();
 
@@ -35,10 +37,10 @@ public class SurfaceAssembler {
         dto.tileShifting = surface.getTileShifting();
 
         if (surface.getMasterTile() != null) {
-            dto.masterTile = toDto(surface.getMasterTile());
+            dto.masterTile = tileAssembler.toDto(surface.getMasterTile());
         }
         if (surface.getSealsInfo() != null) {
-            dto.sealsInfoDto = toDto(surface.getSealsInfo());
+            dto.sealsInfoDto = sealingAssembler.toDto(surface.getSealsInfo());
         }
 
         if (surface.isFusionned()) {
@@ -48,12 +50,12 @@ public class SurfaceAssembler {
         return dto;
     }
 
-    public void fromDto (SurfaceDto dto, Surface destinationSurface) {
+    public Surface fromDto (SurfaceDto dto, Surface destinationSurface) {
 
         List<Point> summits = dto.summits;
 
         if (dto.tiles != null) {
-            List<Tile> tiles = dto.tiles.stream().map(tDto -> fromDto(tDto)).collect(Collectors.toList());
+            List<Tile> tiles = dto.tiles.stream().map(tDto -> tileAssembler.fromDto(tDto)).collect(Collectors.toList());
             destinationSurface.setTiles(tiles);
         }
 
@@ -64,10 +66,10 @@ public class SurfaceAssembler {
         destinationSurface.setTileShifting(dto.tileShifting);
         destinationSurface.setSurfaceColor(dto.surfaceColor);
         if (dto.masterTile != null) {
-            destinationSurface.setMasterTile(fromDto(dto.masterTile));
+            destinationSurface.setMasterTile(tileAssembler.fromDto(dto.masterTile));
         }
         if (dto.sealsInfoDto != null) {
-            destinationSurface.setSealsInfo(fromDto(dto.sealsInfoDto));
+            destinationSurface.setSealsInfo(sealingAssembler.fromDto(dto.sealsInfoDto));
         }
         if (dto.pattern != null) {
             destinationSurface.setPattern(dto.pattern);
@@ -78,59 +80,16 @@ public class SurfaceAssembler {
             List<Surface> innerSurfaces = dto.fusionnedSurface.stream().map(s -> fromDto(s)).collect(Collectors.toList());
             fusionnedSurface.setFusionnedSurfaces(innerSurfaces);
         }
+
+        return destinationSurface;
     }
 
     public Surface fromDto (SurfaceDto dto) {
         if (dto == null) {
             return null;
         }
-        Surface surface = new Surface(dto.isHole, new ArrayList<Point>(), dto.isRectangular);
+        Surface surface = new Surface(dto.id, dto.isHole, new ArrayList<Point>(), dto.isRectangular);
         this.fromDto(dto, surface);
         return surface;
-    }
-
-    public TileDto toDto(Tile tile) {
-        if (tile == null) {
-            return null;
-        }
-
-        TileDto tileDto = new TileDto();
-        tileDto.summits = tile.getSummits();
-        tileDto.material = materialAssembler.toDto(tile.getMaterial());
-        tileDto.isMasterTile = tile.isMasterTile();
-        return tileDto;
-    }
-
-    public Tile fromDto(TileDto tDto) {
-        if (tDto == null) {
-            return null;
-        }
-
-        List<Point> points = tDto.summits;
-
-        // TODO : This is weird, we create a new material instance for each tiles...
-        Material material = materialAssembler.fromDto(tDto.material);
-        return new Tile(points, material, tDto.isMasterTile);
-    }
-
-    public SealsInfoDto toDto(SealsInfo sealsInfo) {
-        if (sealsInfo == null) {
-            return null;
-        }
-
-        SealsInfoDto dto = new SealsInfoDto();
-        dto.sealWidth = sealsInfo.getWidth();
-        dto.color = sealsInfo.getColor();
-        return dto;
-    }
-
-    public SealsInfo fromDto(SealsInfoDto sDto) {
-        if (sDto == null) {
-            return null;
-        }
-
-        double width = sDto.sealWidth;
-        SealsInfo sealsInfo = new SealsInfo(width, sDto.color);
-        return  sealsInfo;
     }
 }

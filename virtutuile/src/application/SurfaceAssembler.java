@@ -9,7 +9,13 @@ import java.util.stream.Collectors;
 
 public class SurfaceAssembler {
 
-    public static SurfaceDto toDto (Surface surface) {
+    private MaterialAssembler materialAssembler;
+
+    public SurfaceAssembler(MaterialAssembler materialAssembler) {
+        this.materialAssembler = materialAssembler;
+    }
+
+    public SurfaceDto toDto (Surface surface) {
         if (surface == null) {
             return null;
         }
@@ -42,7 +48,7 @@ public class SurfaceAssembler {
         return dto;
     }
 
-    public static void fromDto (SurfaceDto dto, Surface destinationSurface) {
+    public void fromDto (SurfaceDto dto, Surface destinationSurface) {
 
         List<Point> summits = dto.summits;
 
@@ -74,28 +80,28 @@ public class SurfaceAssembler {
         }
     }
 
-    public static Surface fromDto (SurfaceDto dto) {
+    public Surface fromDto (SurfaceDto dto) {
         if (dto == null) {
             return null;
         }
         Surface surface = new Surface(dto.isHole, new ArrayList<Point>(), dto.isRectangular);
-        SurfaceAssembler.fromDto(dto, surface);
+        this.fromDto(dto, surface);
         return surface;
     }
 
-    public static TileDto toDto(Tile tile) {
+    public TileDto toDto(Tile tile) {
         if (tile == null) {
             return null;
         }
 
         TileDto tileDto = new TileDto();
         tileDto.summits = tile.getSummits();
-        tileDto.material = MaterialAssembler.toDto(tile.getMaterial());
+        tileDto.material = materialAssembler.toDto(tile.getMaterial());
         tileDto.isMasterTile = tile.isMasterTile();
         return tileDto;
     }
 
-    public static Tile fromDto(TileDto tDto) {
+    public Tile fromDto(TileDto tDto) {
         if (tDto == null) {
             return null;
         }
@@ -103,11 +109,11 @@ public class SurfaceAssembler {
         List<Point> points = tDto.summits;
 
         // TODO : This is weird, we create a new material instance for each tiles...
-        Material material = MaterialAssembler.fromDto(tDto.material);
+        Material material = materialAssembler.fromDto(tDto.material);
         return new Tile(points, material, tDto.isMasterTile);
     }
 
-    public static SealsInfoDto toDto(SealsInfo sealsInfo) {
+    public SealsInfoDto toDto(SealsInfo sealsInfo) {
         if (sealsInfo == null) {
             return null;
         }
@@ -118,7 +124,7 @@ public class SurfaceAssembler {
         return dto;
     }
 
-    public static SealsInfo fromDto(SealsInfoDto sDto) {
+    public SealsInfo fromDto(SealsInfoDto sDto) {
         if (sDto == null) {
             return null;
         }

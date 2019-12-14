@@ -4,7 +4,7 @@ import Domain.Material;
 
 public class MaterialAssembler {
 
-    public static MaterialDto toDto (Material material){
+    public MaterialDto toDto (Material material){
         MaterialDto dto = new MaterialDto();
 
         dto.color = material.getColor();
@@ -17,7 +17,7 @@ public class MaterialAssembler {
         return dto;
     }
 
-    public static void fromDto(MaterialDto dto, Material material) {
+    public void fromDto(MaterialDto dto, Material material) {
         material.setColor(dto.color);
         material.setCostPerBox(dto.costPerBox);
         material.setNbTilePerBox(dto.nbTilePerBox);
@@ -25,7 +25,7 @@ public class MaterialAssembler {
         material.setTileTypeWidth(dto.tileTypeWidth);
     }
 
-    public static Material fromDto(MaterialDto dto) {
+    public Material fromDto(MaterialDto dto) {
         return new Material(dto.color, dto.name, dto.nbTilePerBox, dto.costPerBox, dto.tileTypeWidth, dto.tileTypeHeight);
     }
 }

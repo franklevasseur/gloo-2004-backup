@@ -23,11 +23,12 @@ public class MaterialService {
     }
 
     public void updateMaterial(MaterialDto materialDto) {
-        List<Material> allMaterials = projectRepository.getProject().getMaterials();
-        for (Material material : allMaterials) {
-            if(material.getMaterialName().equals(materialDto.name)) {
-                MaterialAssembler.fromDto(materialDto, material);
-            }
-        }
+        // TODO: patch this
+//        List<Material> allMaterials = projectRepository.getProject().getMaterials();
+//        for (Material material : allMaterials) {
+//            if(material.getMaterialName().equals(materialDto.name)) {
+//                MaterialAssembler.fromDto(materialDto, material);
+//            }
+//        }
     }
 }

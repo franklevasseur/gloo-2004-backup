@@ -21,14 +21,4 @@ public class MaterialService {
         }
         return Optional.empty();
     }
-
-    public void updateMaterial(MaterialDto materialDto) {
-        // TODO: patch this
-//        List<Material> allMaterials = projectRepository.getProject().getMaterials();
-//        for (Material material : allMaterials) {
-//            if(material.getMaterialName().equals(materialDto.name)) {
-//                MaterialAssembler.fromDto(materialDto, material);
-//            }
-//        }
-    }
 }

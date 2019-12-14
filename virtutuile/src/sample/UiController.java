@@ -504,12 +504,7 @@ public class UiController implements Initializable {
 
                 TileDto masterTile = null;
                 if (newMasterTileX != null && newMasterTileY != null && !tileMaterialInput.equals("")) {
-                    MaterialDto chosenMaterial = domainController
-                            .getProject()
-                            .materials
-                            .stream()
-                            .filter(m -> m.name.equals(tileMaterialInput.toString()))
-                            .findFirst().get();
+                    MaterialDto chosenMaterial = domainController.getMaterialByName(tileMaterialInput.toString()).get();
 
                     masterTile = new TileDto();
                     masterTile.material = chosenMaterial;

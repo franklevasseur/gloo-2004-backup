@@ -4,11 +4,6 @@ import utils.Color;
 
 public class InspectionService {
 
-    private static InspectionService instance = new InspectionService();
-    public static InspectionService getInstance() {
-        return instance;
-    }
-
     public String inspect(Project project, double pWidth, double pHeight) {
         int count = 0;
         for(Surface surface: project.getSurfaces()) {

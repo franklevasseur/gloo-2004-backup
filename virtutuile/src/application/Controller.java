@@ -164,6 +164,7 @@ public class Controller {
             this.projectRepository.setProject((Project) os.readObject());
             os.close();
 
+            undoRedoManager = new UndoRedoManager();
             justDoIt();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

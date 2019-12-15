@@ -44,4 +44,8 @@ public class CircularStack<T> {
     public boolean isEmpty() {
         return array.size() == 0;
     }
+
+    public int size() {
+        return array.size();
+    }
 }

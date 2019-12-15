@@ -240,7 +240,6 @@ public class UiController implements Initializable {
 
         editTileMaterialChoiceBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> displayMaterialInfo()));
 
-        defaultMaterial();
         renderFromProject();
     }
 

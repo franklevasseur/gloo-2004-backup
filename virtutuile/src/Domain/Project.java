@@ -1,5 +1,7 @@
 package Domain;
 
+import utils.Color;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,10 @@ public class Project implements Serializable {
     private static final long serialVersionUID = 420L;
     private List<Surface> surfaces = new ArrayList<>();
     private List<Material> materials = new ArrayList<>();
+
+    public Project() {
+        createDefaultMaterial();
+    }
 
     public List<Material> getMaterials() {
         return materials;
@@ -49,5 +55,10 @@ public class Project implements Serializable {
     public void unfusionSurfaces(FusionnedSurface fusionnedSurface) {
         this.surfaces.removeIf(s -> s == fusionnedSurface);
         this.surfaces.addAll(fusionnedSurface.getFusionnedSurfaces());
+    }
+
+    private void createDefaultMaterial() {
+        Material material = new Material(Color.GREEN, "Melon d'eau", 45, 50, 0.6, 0.3);
+        this.materials.add(material);
     }
 }

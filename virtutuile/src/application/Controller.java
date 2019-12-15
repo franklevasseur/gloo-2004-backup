@@ -43,7 +43,7 @@ public class Controller {
         this.surfaceAssembler = new SurfaceAssembler(tileAssembler, sealingAssembler);
         this.projectAssembler = new ProjectAssembler(surfaceAssembler, materialAssembler);
 
-        undoRedoManager.justDoIt(projectAssembler.toDto(vraiProject));
+        justDoIt();
     }
 
     public void removeSurface(SurfaceDto surface) {
@@ -189,14 +189,6 @@ public class Controller {
     public void newProject() {
         this.projectRepository.setProject(new Project());
         this.undoRedoManager = new UndoRedoManager();
-        MaterialDto defaultNewMaterial = new MaterialDto();
-        defaultNewMaterial.name = "Melon d'eau";
-        defaultNewMaterial.color = Color.GREEN;
-        defaultNewMaterial.costPerBox = 50.0;
-        defaultNewMaterial.tileTypeHeight = 0.3;
-        defaultNewMaterial.tileTypeWidth = 0.6;
-        defaultNewMaterial.nbTilePerBox = 45;
-        this.createMaterial(defaultNewMaterial);
     }
 
     public void fusionSurfaces(List<SurfaceDto> surfacesDto) {

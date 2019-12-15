@@ -81,11 +81,6 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
         }
     }
 
-    public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-        updateColor();
-    }
-
     public void increaseSizeBy(double deltaWidth, double deltaHeight) {
         Rectangle rectangle = (Rectangle) shape;
         double newWidth = rectangle.getWidth() + deltaWidth;
@@ -114,6 +109,8 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
         dto.masterTile = super.masterTile;
         dto.pattern = super.pattern;
         dto.surfaceColor = super.surfaceColor;
+        dto.tileAngle = super.tileAngle;
+        dto.tileShifting = super.tileShifting;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());

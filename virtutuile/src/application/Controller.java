@@ -123,6 +123,14 @@ public class Controller {
 
     public List<TileDto> fillSurface(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto, Double tileAngle, Double tileShifting) {
 
+        List<TileDto> tiles = fillWithoutSaving(dto, masterTileDto, patternType, sealingDto, tileAngle, tileShifting);
+
+        justDoIt();
+        return tiles;
+    }
+
+    public List<TileDto> fillWithoutSaving(SurfaceDto dto, TileDto masterTileDto, PatternType patternType, SealsInfoDto sealingDto, Double tileAngle, Double tileShifting) {
+
         Surface desiredSurface = surfaceService.getSurfaceById(dto.id).get();
 
         Tile masterTile = masterTileDto != null ? tileAssembler.fromDto(masterTileDto) : getDefaultTile();
@@ -136,8 +144,6 @@ public class Controller {
 
         SurfaceDto newDto = surfaceAssembler.toDto(desiredSurface);
         this.internalUpdateSurface(newDto); // important
-
-        justDoIt();
 
         return newDto.tiles;
     }

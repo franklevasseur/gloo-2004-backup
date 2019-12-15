@@ -83,8 +83,6 @@ public abstract class SurfaceUI {
 
     abstract public SurfaceDto toDto();
 
-    abstract public void fill();
-
     abstract public void setSize(double width, double height);
 
     abstract public void setPosition(Point position);
@@ -125,6 +123,16 @@ public abstract class SurfaceUI {
 
     public Node getNode() {
         return surfaceGroup;
+    }
+
+    public void fill() {
+        this.renderTiles(controller.fillSurface(this.toDto(), masterTile, pattern, sealsInfo, tileAngle, tileShifting));
+        updateColor();
+    }
+
+    private void fillWithoutSaving() {
+        this.renderTiles(controller.fillWithoutSaving(this.toDto(), masterTile, pattern, sealsInfo, tileAngle, tileShifting));
+        updateColor();
     }
 
     public void unselect() {
@@ -303,6 +311,8 @@ public abstract class SurfaceUI {
                     return;
                 }
                 this.renderTiles(controller.updateAndRefill(this.toDto(), this.masterTile, this.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
+            } else if (this.currentlyMovingTiles) {
+                controller.updateSurface(this.toDto());
             }
         });
     }
@@ -322,7 +332,7 @@ public abstract class SurfaceUI {
         this.masterTile.summits = this.masterTile.summits.stream()
                 .map(s -> Point.translate(s, translation.x, translation.y))
                 .collect(Collectors.toList());
-        this.fill();
+        this.fillWithoutSaving();
 
         event.consume();
     }

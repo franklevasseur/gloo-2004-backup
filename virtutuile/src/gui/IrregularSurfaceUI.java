@@ -132,18 +132,14 @@ public class IrregularSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
         dto.masterTile = super.masterTile;
         dto.pattern = super.pattern;
         dto.surfaceColor = super.surfaceColor;
+        dto.tileAngle = super.tileAngle;
+        dto.tileShifting = super.tileShifting;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());
         }
 
         return dto;
-    }
-
-    @Override
-    public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), super.masterTile, super.pattern, super.sealsInfo, super.tileAngle, super.tileShifting));
-        updateColor();
     }
 
     @Override

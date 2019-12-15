@@ -141,19 +141,14 @@ public class FusionedSurfaceUI extends SurfaceUI {
 
         dto.masterTile = this.masterTile;
         dto.pattern = super.pattern;
+        dto.tileAngle = super.tileAngle;
+        dto.tileShifting = super.tileShifting;
 
         if (this.isHole == HoleStatus.FILLED && this.tiles != null && this.tiles.size() != 0) {
             dto.tiles = this.tiles.stream().map(r -> r.toDto()).collect(Collectors.toList());
         }
 
         return dto;
-    }
-
-
-    @Override
-    public void fill() {
-        this.renderTiles(controller.fillSurface(this.toDto(), this.masterTile, super.pattern, this.sealsInfo, this.tileAngle, this.tileShifting));
-        updateColor();
     }
 
     @Override

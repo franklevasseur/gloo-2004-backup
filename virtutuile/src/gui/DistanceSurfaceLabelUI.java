@@ -1,6 +1,7 @@
 package gui;
 
 import application.SurfaceDto;
+import javafx.scene.control.Label;
 import utils.AbstractShape;
 import utils.Point;
 import utils.ShapeHelper;
@@ -10,22 +11,40 @@ import java.util.List;
 import static java.lang.Math.sqrt;
 
 public class DistanceSurfaceLabelUI {
-    private String distanceTwoSurfaces;
 
-    public String distanceSurface(List<SurfaceDto> selectedSurfaces) {
+    private Label presentationLabel;
+    private Label distanceLabel;
+    private ZoomManager zoomManager;
+
+    public DistanceSurfaceLabelUI(Label presentationLabel, Label distanceLabel, ZoomManager zoomManager) {
+        this.presentationLabel = presentationLabel;
+        this.distanceLabel = distanceLabel;
+        this.zoomManager = zoomManager;
+    }
+
+    public void updateDistanceSurface(List<SurfaceDto> selectedSurfaces, boolean metric) {
 
         if (selectedSurfaces.size() == 2) {
             SurfaceDto firstSurface = selectedSurfaces.get(0);
             SurfaceDto secondSurface = selectedSurfaces.get(1);
 
-            Double distance = this.calculateDistance(firstSurface, secondSurface);
-            this.distanceTwoSurfaces = distance.toString();
-            return distanceTwoSurfaces;
+            Double distance = this.calculateDistance(firstSurface, secondSurface, metric);
+            String distanceTwoSurfaces = distance.toString();
+
+            distanceLabel.setText(distanceTwoSurfaces);
+            presentationLabel.setText("Distance between two surfaces: ");
+            return;
         }
-        return "";
+
+        eraseDistance();
     }
 
-    private Double calculateDistance(SurfaceDto firstSurface, SurfaceDto secondSurface) {
+    public void eraseDistance() {
+        presentationLabel.setText("");
+        distanceLabel.setText("");
+    }
+
+    private Double calculateDistance(SurfaceDto firstSurface, SurfaceDto secondSurface, boolean metric) {
 
         Point firstTopLeft = ShapeHelper.getTopLeftCorner(new AbstractShape(firstSurface.summits, false));
         Point secondTopLeft = ShapeHelper.getTopLeftCorner(new AbstractShape(secondSurface.summits, false));
@@ -35,7 +54,11 @@ public class DistanceSurfaceLabelUI {
         double xS = secondTopLeft.x;
         double yS = secondTopLeft.y;
 
-        Double distance = sqrt(((xF - xS) * (xF - xS) + (yF - yS) * (yF - yS)));
-        return distance;
+        double distance = sqrt(((xF - xS) * (xF - xS) + (yF - yS) * (yF - yS)));
+
+        if (metric) {
+            return distance;
+        }
+        return zoomManager.metersToInch(distance);
     }
 }

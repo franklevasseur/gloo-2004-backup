@@ -138,8 +138,8 @@
                         <TextField fx:id="tileShiftingInputBox" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Label text="Surface color" GridPane.columnIndex="0" GridPane.rowIndex="8" />
                         <ChoiceBox fx:id="surfaceColorChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                    <Label text="Distance entre deux surfaces" GridPane.rowIndex="22" />
-                                    <Label fx:id="distanceBetweenSurfacesLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="22">
+                                    <Label fx:id="distanceBetweenSurfacesLabelText" GridPane.rowIndex="22" />
+                                    <Label fx:id="distanceBetweenSurfacesLabel" GridPane.columnIndex="1" GridPane.rowIndex="22">
                                        <GridPane.margin>
                                           <Insets left="10.0" />
                                        </GridPane.margin></Label>

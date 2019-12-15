@@ -162,8 +162,9 @@ public class Controller {
         try (FileInputStream fi = new FileInputStream(projectPath)) {
             ObjectInputStream os = new ObjectInputStream(fi);
             this.projectRepository.setProject((Project) os.readObject());
-
             os.close();
+
+            justDoIt();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

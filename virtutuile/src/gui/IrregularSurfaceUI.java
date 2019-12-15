@@ -89,8 +89,6 @@ public class IrregularSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
             this.renderRectangleFromSummits(this.summits.stream().map(s -> s.translate(translation)).collect(Collectors.toList()));
 
             summits = this.getSummits();
-
-            this.controller.updateSurface(this.toDto());
         }
     }
 

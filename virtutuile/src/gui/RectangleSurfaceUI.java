@@ -76,8 +76,6 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
             rectangle.setX(nearestGridPoint.x);
             rectangle.setY(nearestGridPoint.y);
             summits = this.getSummits();
-
-            this.controller.updateSurface(this.toDto());
         }
     }
 

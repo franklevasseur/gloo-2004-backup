@@ -71,7 +71,6 @@ public class Controller {
 
     public void updateSurface(SurfaceDto surfaceDto) {
         this.internalUpdateSurface(surfaceDto);
-
         justDoIt();
     }
 
@@ -91,10 +90,7 @@ public class Controller {
     // atomic move and fill or resize and fill
     public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing, double angle, double shift) {
         internalUpdateSurface(dto);
-        List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing, angle, shift);
-
-        justDoIt();
-        return tiles;
+        return fillSurface(dto, masterTile, patternDto, sealing, angle, shift);
     }
 
     public ProjectDto getProject() {

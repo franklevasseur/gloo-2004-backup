@@ -1341,7 +1341,7 @@ public class UiController implements Initializable {
             NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
             CharSequence newSnapgridSize = this.resizeSG.getCharacters();
             Double snapGridSize = format.parse(newSnapgridSize.toString()).doubleValue();
-            snapGridSize = Double.parseDouble(newSnapgridSize.toString());
+//            snapGridSize = Double.parseDouble(newSnapgridSize.toString());
             snapGridUI.setSnapGridGap(zoomManager.metersToPixels(snapGridSize));
         } catch (ParseException e) {
             displayRectangleInfo();

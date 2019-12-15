@@ -165,6 +165,8 @@ public class UiController implements Initializable {
         this.snapGridUI = new SnapGridUI(this.drawingSection);
         this.selectionManager = new SelectionManager(this::handleSelection);
 
+        domainController.setUndoRedoListener(this::listenForUndoRedo);
+
         this.undoButton.setDisable(!this.domainController.undoAvailable());
         this.redoButton.setDisable(!this.domainController.redoAvailable());
 
@@ -433,6 +435,12 @@ public class UiController implements Initializable {
         }
 
         return null;
+    }
+
+    public Void listenForUndoRedo(Void nothing) {
+        this.undoButton.setDisable(!this.domainController.undoAvailable());
+        this.redoButton.setDisable(!this.domainController.redoAvailable());
+        return nothing;
     }
 
     public void editSurface() {
@@ -832,8 +840,7 @@ public class UiController implements Initializable {
     private void renderFromProject() {
         this.clearDrawings();
 
-        this.undoButton.setDisable(!this.domainController.undoAvailable());
-        this.redoButton.setDisable(!this.domainController.redoAvailable());
+        this.listenForUndoRedo(null);
 
         ProjectDto project = this.domainController.getProject();
         if (project.surfaces != null) {

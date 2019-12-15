@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Controller {
@@ -31,6 +32,8 @@ public class Controller {
     private ProjectAssembler projectAssembler;
     private TileAssembler tileAssembler;
     private SealingAssembler sealingAssembler = new SealingAssembler();
+
+    private Function<Void, Void> undoRedoListener;
 
     private Controller() {
         Project vraiProject = new Project();
@@ -89,7 +92,8 @@ public class Controller {
     public List<TileDto> updateAndRefill(SurfaceDto dto, application.TileDto masterTile, PatternType patternDto, SealsInfoDto sealing, double angle, double shift) {
         internalUpdateSurface(dto);
         List<TileDto> tiles = fillSurface(dto, masterTile, patternDto, sealing, angle, shift);
-        undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+
+        justDoIt();
         return tiles;
     }
 
@@ -111,6 +115,10 @@ public class Controller {
             return;
         }
         this.projectRepository.setProject(projectAssembler.fromDto(dto));
+    }
+
+    public void setUndoRedoListener(Function<Void, Void> handler) {
+        this.undoRedoListener = handler;
     }
 
     public boolean redoAvailable() {
@@ -247,6 +255,9 @@ public class Controller {
 
     private void justDoIt() {
         undoRedoManager.justDoIt(projectAssembler.toDto(projectRepository.getProject()));
+        if (undoRedoListener != null) {
+            undoRedoListener.apply(null);
+        }
     }
 
 //    public void debugTileCutting(SurfaceDto surfaceDto, TileDto tileDto) {

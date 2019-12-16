@@ -109,28 +109,22 @@ public class ImperialFractionHelper {
         return value;
     }
 
-    private Fraction decimalToFraction(double pValue) {
-        if (pValue > 0) {
-            String s = String.valueOf(pValue);
-            int digitsDec = s.length() - 1 - s.indexOf('.');
-            float denom = 1;
-            for (int i = 0; i < digitsDec; i++) {
-                pValue *= 10;
-                denom *= 10;
-            }
-
-            float num = (float) Math.round(pValue);
-            float g = getGCD(num, denom);
-            num = num / g;
-            denom = denom / g;
-            int a = (int) num;
-            int b = (int) denom;
-            return new Fraction(a, b);
+    private Fraction decimalToFraction(double decimal) {
+        if (decimal < 0) {
+            Fraction positiveFraction = decimalToFraction((-1) * decimal);
+            return positiveFraction.times(-1);
         }
 
-        // TODO: handle this case better
-        return new Fraction(0, 0);
+        String s = String.valueOf(decimal);
+        int digitsDec = s.length() - 1 - s.indexOf('.');
 
+        float unsimplifiedDenominator = (float) Math.pow(10, digitsDec);
+        float unsimplifiedNumerator = (float) Math.round(decimal * unsimplifiedDenominator);
+
+        float gcd = getGCD(unsimplifiedNumerator, unsimplifiedDenominator);
+        float numerator = unsimplifiedNumerator / gcd;
+        float denominator = unsimplifiedDenominator / gcd;
+        return new Fraction((int) numerator, (int) denominator);
     }
 
     private float getGCD(float n1, float n2) {

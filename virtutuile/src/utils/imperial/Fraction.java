@@ -17,4 +17,8 @@ public class Fraction {
     public String format() {
         return String.format("%d/%d", this.numerator, this.denominator);
     }
+
+    public Fraction times(int factor) {
+        return new Fraction(numerator * factor, denominator);
+    }
 }

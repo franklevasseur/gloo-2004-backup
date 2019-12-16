@@ -9,6 +9,7 @@ public class TileInfoUI {
     private Label tileInfoTextField;
     private ZoomManager zoomManager;
     private boolean metricDisplay = true;
+    private boolean isVisible = false;
     private RectangleInfo tileInfo;
 
     public TileInfoUI(Label tileInfoTextField, ZoomManager zoomManager) {
@@ -18,12 +19,13 @@ public class TileInfoUI {
 
     public void setMetric(boolean metricDisplay) {
         this.metricDisplay = metricDisplay;
-        if (tileInfo != null) {
+        if (tileInfo != null && isVisible) {
             setNewTileInfo(tileInfo, metricDisplay);
         }
     }
 
     public void setNewTileInfo(RectangleInfo tileInfo) {
+        isVisible = true;
         this.tileInfo = tileInfo;
         setNewTileInfo(tileInfo, metricDisplay);
     }
@@ -41,6 +43,7 @@ public class TileInfoUI {
     }
 
     public void hide() {
+        isVisible = false;
         tileInfoTextField.setText("");
     }
 }

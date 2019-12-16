@@ -2,6 +2,7 @@ package gui;
 
 import Domain.HoleStatus;
 import application.SurfaceDto;
+import gui.sidepanel.TileInfoUI;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
@@ -22,7 +23,7 @@ public class FusionedSurfaceUI extends SurfaceUI {
                              ZoomManager zoomManager,
                              SelectionManager selectionManager,
                              SnapGridUI snapGrid,
-                             Label tileInfoLabel
+                             TileInfoUI tileInfoLabel
     ) {
 
         super(surfaceDto, zoomManager, selectionManager, snapGrid, tileInfoLabel);

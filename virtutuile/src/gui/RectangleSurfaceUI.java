@@ -2,6 +2,7 @@ package gui;
 
 import Domain.HoleStatus;
 import application.*;
+import gui.sidepanel.TileInfoUI;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +19,7 @@ public class RectangleSurfaceUI extends SurfaceUI implements BoundingBoxResizabl
                               ZoomManager zoomManager,
                               SelectionManager selectionManager,
                               SnapGridUI snapGrid,
-                              Label tileInfoTextField
+                              TileInfoUI tileInfoTextField
     ) {
 
         super(surfaceDto, zoomManager, selectionManager, snapGrid, tileInfoTextField);

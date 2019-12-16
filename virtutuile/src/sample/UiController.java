@@ -5,6 +5,7 @@ import application.*;
 import gui.*;
 
 import gui.sidepanel.SidePanelUI;
+import gui.sidepanel.TileInfoUI;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -251,7 +252,8 @@ public class UiController implements Initializable {
                 snapGridUI,
                 minInspectionLengthTextField,
                 inspectButton,
-                inspectionArea);
+                inspectionArea,
+                tileInfo);
 
         renderFromProject();
     }
@@ -645,7 +647,7 @@ public class UiController implements Initializable {
 
     private void displaySurface(SurfaceDto surfaceDto) {
         if (surfaceDto.isFusionned) {
-            FusionedSurfaceUI surfaceUi = new FusionedSurfaceUI(surfaceDto, zoomManager, selectionManager, snapGridUI, tileInfo);
+            FusionedSurfaceUI surfaceUi = new FusionedSurfaceUI(surfaceDto, zoomManager, selectionManager, snapGridUI, sidePanel.getTileInfoUI());
             this.drawingSection.getChildren().add(surfaceUi.getNode());
             this.allSurfaces.add(surfaceUi);
             return;
@@ -656,7 +658,7 @@ public class UiController implements Initializable {
                     zoomManager,
                     selectionManager,
                     snapGridUI,
-                    this.tileInfo);
+                    sidePanel.getTileInfoUI());
             this.drawingSection.getChildren().add(surfaceUi.getNode());
             this.allSurfaces.add(surfaceUi);
             return;
@@ -666,7 +668,7 @@ public class UiController implements Initializable {
                 zoomManager,
                 selectionManager,
                 snapGridUI,
-                this.tileInfo);
+                sidePanel.getTileInfoUI());
         this.drawingSection.getChildren().add(irregularSurfaceUI.getNode());
         this.allSurfaces.add(irregularSurfaceUI);
     }

@@ -6,6 +6,7 @@ import application.Controller;
 import application.SealsInfoDto;
 import application.SurfaceDto;
 import application.TileDto;
+import gui.sidepanel.TileInfoUI;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -42,7 +43,7 @@ public abstract class SurfaceUI {
 
     protected List<TileUI> tiles;
 
-    protected Label tileInfoTextField;
+    protected TileInfoUI tileInfoTextField;
 
     protected List<Point> summits;
     protected Id id;
@@ -61,7 +62,7 @@ public abstract class SurfaceUI {
                      ZoomManager zoomManager,
                      SelectionManager selectionManager,
                      SnapGridUI snapGrid,
-                     Label tileInfoLabel) {
+                     TileInfoUI tileInfoLabel) {
         this.zoomManager = zoomManager;
         this.surfaceDto = surfaceDto;
         this.selectionManager = selectionManager;

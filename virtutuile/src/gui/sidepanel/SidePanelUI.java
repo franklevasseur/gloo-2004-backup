@@ -15,6 +15,7 @@ public class SidePanelUI {
     private DistanceSurfaceLabelUI distanceSurfaceLabelUI;
     private SnapGridPanel snapGridPanel;
     private InspectorPanel inspectorPanel;
+    private TileInfoUI tileInfoUI;
 
     public SidePanelUI(ZoomManager zoomManager,
                        Alert alert,
@@ -54,7 +55,8 @@ public class SidePanelUI {
                        SnapGridUI snapGrid,
                        TextField minInspectionLengthTextField,
                        Button inspectButton,
-                       TextArea inspectionArea) {
+                       TextArea inspectionArea,
+                       Label tileInfo) {
 
         this.surfacePropertiesPanel = new SurfacePropertiesPanel(tileHeightInputbox,
                 tileWidthInputbox,
@@ -106,12 +108,15 @@ public class SidePanelUI {
                 inspectionArea,
                 zoomManager);
 
+        this.tileInfoUI = new TileInfoUI(tileInfo, zoomManager);
+
         this.hideSnapGrid();
     }
 
     public void updateSelection(List<SurfaceUI> selectedSurfaces, boolean metricDisplay) {
 
         inspectorPanel.setMetric(metricDisplay);
+        tileInfoUI.setMetric(metricDisplay);
 
         if (selectedSurfaces.size() > 0) {
             displayInfo(selectedSurfaces, metricDisplay);
@@ -163,5 +168,9 @@ public class SidePanelUI {
 
     public void inspect(boolean metricDisplay) {
         inspectorPanel.inspect(metricDisplay);
+    }
+
+    public TileInfoUI getTileInfoUI() {
+        return this.tileInfoUI;
     }
 }

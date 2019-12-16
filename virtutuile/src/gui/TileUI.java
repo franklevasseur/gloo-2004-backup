@@ -2,8 +2,8 @@ package gui;
 
 import application.MaterialDto;
 import application.TileDto;
+import gui.sidepanel.TileInfoUI;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import utils.*;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class TileUI {
 
     private Polygon shape;
-    private Label tileInfoTextField;
+    private TileInfoUI tileInfoTextField;
     private ZoomManager zoomManager;
     private MaterialDto material;
     private boolean isMasterTile;
@@ -25,11 +25,11 @@ public class TileUI {
 
     private List<Point> pixelSummits;
 
-    public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface) {
+    public TileUI(TileDto dto, TileInfoUI tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface) {
         this(dto, tileInfoTextField, zoomManager, parentSurface, false);
     }
 
-    public TileUI(TileDto dto, Label tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface, boolean highligthIfMasterTile) {
+    public TileUI(TileDto dto, TileInfoUI tileInfoTextField, ZoomManager zoomManager, SurfaceUI parentSurface, boolean highligthIfMasterTile) {
         this.highligthIfMasterTile = highligthIfMasterTile;
 
         this.tileInfoTextField = tileInfoTextField;
@@ -84,15 +84,15 @@ public class TileUI {
 
     private void select() {
         updateColor(true);
-        tileInfoTextField.setText(formatInfoString());
+        tileInfoTextField.setNewTileInfo(formatInfoString());
     }
 
     private void unselect() {
         updateColor(false);
-        tileInfoTextField.setText("");
+        tileInfoTextField.hide();
     }
 
-    private String formatInfoString() {
+    private RectangleInfo formatInfoString() {
         AbstractShape shape = new AbstractShape(pixelSummits);
 
         double width;
@@ -109,6 +109,6 @@ public class TileUI {
         Point topLeft = ShapeHelper.getTopLeftCorner(shape);
         double x = this.zoomManager.pixelsToMeters(topLeft.x);
         double y = this.zoomManager.pixelsToMeters(topLeft.y);
-        return String.format("width: %.1f, height: %.1f, x: %.3f, y: %.3f", width, height, x, y);
+        return new RectangleInfo(new Point(x, y), width, height);
     }
 }

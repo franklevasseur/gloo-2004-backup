@@ -2,6 +2,7 @@ package utils.imperial;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.*;
 
 public class ImperialFractionHelper {
 
@@ -43,7 +44,7 @@ public class ImperialFractionHelper {
         }
 
         double reminder = decimalInches % 1;
-        Fraction fraction = decimalToFraction(reminder);
+        Fraction fraction = decimalToFraction(reminder, true);
 
         String out = "";
         if (feet != 0) {
@@ -54,16 +55,11 @@ public class ImperialFractionHelper {
             out += inches + "\"";
         }
 
-        if (fraction.isValid()) {
+        if (fraction.numerator != 0 && fraction.isValid()) {
             out += fraction.format();
             out += inches == 0 ? "\"" : "";
         }
         return out;
-    }
-
-    public String formatImperialFractionUsingBaseTwoDenominator(double nInches) {
-        // TODO: code this
-        return "";
     }
 
     private ImperialFractionText extractFeetsAndInches(String initialText) {
@@ -118,12 +114,34 @@ public class ImperialFractionHelper {
         return value;
     }
 
-    private Fraction decimalToFraction(double decimal) {
+    private Fraction decimalToFraction(double decimal, boolean useBaseTwoDenominator) {
         if (decimal < 0) {
-            Fraction positiveFraction = decimalToFraction((-1) * decimal);
+            Fraction positiveFraction = decimalToFraction((-1) * decimal, useBaseTwoDenominator);
             return positiveFraction.times(-1);
         }
 
+        if (!useBaseTwoDenominator) {
+            return decimalToFractionUsingGCD(decimal);
+        }
+
+        return decimalToFractionUsingBaseTwo(decimal);
+    }
+
+    private Fraction decimalToFractionUsingBaseTwo(double decimal) {
+
+        List<Integer> allowedDenominators = Arrays.asList(2, 4, 8, 16, 32, 64);
+        List<Fraction> fractions = new ArrayList<>();
+        for (int denom: allowedDenominators) {
+            int num = (int) Math.round(decimal * denom);
+            fractions.add(new Fraction(num, denom));
+        }
+
+        double minError = Collections.min(fractions, Comparator.comparing(f ->
+                Math.abs(f.toDecimal() - decimal))).toDecimal();
+        return fractions.stream().filter(f -> f.toDecimal() == minError).min(Comparator.comparing(f -> f.denominator)).get();
+    }
+
+    private Fraction decimalToFractionUsingGCD(double decimal) {
         String s = String.valueOf(decimal);
         int digitsDec = s.length() - 1 - s.indexOf('.');
 

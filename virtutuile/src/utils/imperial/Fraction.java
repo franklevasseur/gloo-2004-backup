@@ -21,4 +21,8 @@ public class Fraction {
     public Fraction times(int factor) {
         return new Fraction(numerator * factor, denominator);
     }
+
+    public double toDecimal() {
+        return ((double) numerator) / ((double) denominator);
+    }
 }

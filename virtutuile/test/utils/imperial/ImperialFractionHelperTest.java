@@ -55,7 +55,7 @@ class ImperialFractionHelperTest {
         String actual = helper.formatImperialFraction(3.1428571429);
 
         // assert
-        String expected = "3\"1/7";
+        String expected = "3\"9/64";
         assertEquals(expected, actual);
     }
 
@@ -65,7 +65,7 @@ class ImperialFractionHelperTest {
         String actual = helper.formatImperialFraction(0.35);
 
         // assert
-        String expected = "7/20\"";
+        String expected = "11/32\"";
         assertEquals(expected, actual);
     }
 
@@ -76,6 +76,16 @@ class ImperialFractionHelperTest {
 
         // assert
         String expected = "0";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void formatImperialFraction_withAlmostInteger_shouldReturnInteger() {
+        // arrange & act
+        String actual = helper.formatImperialFraction(7.0000001);
+
+        // assert
+        String expected = "7\"";
         assertEquals(expected, actual);
     }
 }

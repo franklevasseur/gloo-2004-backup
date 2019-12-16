@@ -16,6 +16,8 @@ public class SnapGridPanel {
     private SnapGridUI snapGrid;
     private ZoomManager zoomManager;
 
+    private boolean isVisible = false;
+
     public SnapGridPanel(TextField resizeSG,
                          Label snapgridLabel,
                          Button snapGridbutton,
@@ -44,6 +46,8 @@ public class SnapGridPanel {
 
     public void showSnapgridInfo(boolean metricDisplay) {
 
+        isVisible = true;
+
         InputBoxHelper formater = new InputBoxHelper(metricDisplay, zoomManager);
 
         this.resizeSG.setVisible(true);
@@ -55,8 +59,13 @@ public class SnapGridPanel {
     }
 
     public void hideSnapgridInfo() {
+        isVisible = false;
         this.resizeSG.setVisible(false);
         this.snapgridLabel.setVisible(false);
         this.snapGridbutton.setVisible(false);
+    }
+
+    public boolean isVisible() {
+        return isVisible;
     }
 }

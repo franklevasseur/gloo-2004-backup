@@ -123,8 +123,10 @@ public class SidePanelUI {
         accountingPanel.displayAccountingForSurfaces(selectedSurfaces, metricDisplay);
         surfacePropertiesPanel.displaySurfaceInfo(selectedSurfaces, metricDisplay);
         accountingPanel.displayMaterialInfo(metricDisplay);
-        snapGridPanel.showSnapgridInfo(metricDisplay);
         distanceSurfaceLabelUI.updateDistanceSurface(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()), metricDisplay);
+        if (snapGridPanel.isVisible()) {
+            snapGridPanel.showSnapgridInfo(metricDisplay);
+        }
     }
 
     public void hideInfo(boolean metricDisplay) {

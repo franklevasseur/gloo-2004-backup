@@ -7,7 +7,6 @@ public class ZoomManager {
     private double pixelsPerMeters = 100;
     private double currentScale = 1;
 
-    // TODO: take account of current scale in meters conversion
     public double pixelsToMeters(double pixels) {
         return pixels / pixelsPerMeters;
     }

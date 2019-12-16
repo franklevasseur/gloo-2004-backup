@@ -29,12 +29,12 @@ public class ImperialFractionHelper {
         int feet = (int) decimalInches / 12;
         int inches = (int) decimalInches % 12;
 
-        double reminder = decimalInches % 1;
-        Fraction fraction = decimalToFraction(reminder);
-
         if (decimalInches == 0) {
             return "0";
         }
+
+        double reminder = decimalInches % 1;
+        Fraction fraction = decimalToFraction(reminder);
 
         String out = "";
         if (feet != 0) {

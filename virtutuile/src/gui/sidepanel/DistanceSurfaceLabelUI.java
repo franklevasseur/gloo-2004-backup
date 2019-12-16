@@ -1,6 +1,7 @@
-package gui;
+package gui.sidepanel;
 
 import application.SurfaceDto;
+import gui.ZoomManager;
 import javafx.scene.control.Label;
 import utils.AbstractShape;
 import utils.Point;

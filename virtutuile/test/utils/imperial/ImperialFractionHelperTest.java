@@ -68,4 +68,14 @@ class ImperialFractionHelperTest {
         String expected = "7/20\"";
         assertEquals(expected, actual);
     }
+
+    @Test
+    void formatImperialFraction_withZero_shouldReturnString0() {
+        // arrange & act
+        String actual = helper.formatImperialFraction(0.0);
+
+        // assert
+        String expected = "0";
+        assertEquals(expected, actual);
+    }
 }

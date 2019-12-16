@@ -1,11 +1,10 @@
 package sample;
 
-import Domain.Accounting;
 import Domain.HoleStatus;
-import Domain.PatternType;
 import application.*;
 import gui.*;
 
+import gui.sidepanel.SidePanelUI;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -34,34 +33,39 @@ import java.util.stream.Collectors;
 
 public class UiController implements Initializable {
 
+    private ObservableList<String> possibleColor = FXCollections.observableArrayList("", "BLACK", "WHITE", "YELLOW", "GREEN", "BLUE", "RED", "VIOLET");
+
     public Pane pane;
     public Pane drawingSection;
+
     //Snap grid
     public TextField resizeSG;
     public Label snapgridLabel;
     public Button snapGridbutton;
 
-    //Material propreties
-    private ObservableList<String> possibleColor = FXCollections.observableArrayList("", "BLACK", "WHITE", "YELLOW", "GREEN", "BLUE", "RED", "VIOLET");
+    // inspection
+    public TextField minInspectionLengthTextField;
+    public Button inspectButton;
+    public TextArea inspectionArea;
+    private Double minInspectionLength;
 
+    // create material properties
     public TextField materialNameInputBox;
     public TextField tilePerBoxInputBox;
     public TextField boxPriceInputBox;
     public TextField tileHeightMaterialInputBox;
     public TextField tileWidthMaterialInputBox;
-
     public ChoiceBox<String> materialColorChoiceBox;
-    public ChoiceBox<String> surfaceColorChoiceBox;
 
-    //Édit material
+    // edit material
     public TextField mNewHeightInputBox;
     public TextField mNewLenghtInputBox;
     public TextField mNewTilePerBoxInput;
     public TextField mNewPricePerBoxInputBox;
-
     public ChoiceBox<String> editTileMaterialChoiceBox;
     public ChoiceBox<String> mNewColorInputBox;
 
+    // accounting
     public TableView<MaterialUI> materialTableView;
     public TableColumn<MaterialUI, String> materialNameColumn;
     public TableColumn<MaterialUI, String> materialNumberOfBoxInputColumn;
@@ -83,59 +87,54 @@ public class UiController implements Initializable {
     public TextField tileShiftingInputBox;
     public TextField surfacePositionXInputBox;
     public TextField surfacePositionYInputBox;
-    public Label distanceBetweenSurfacesLabelText;
-    public Label distanceBetweenSurfacesLabel;
-
-    public Button fillTilesButton;
-    public boolean stateCurrentlyFilling = true;
-
-    public TextField materialColorDisplay;
-
-    public Button fusionButton;
-    public boolean stateCurrentlyFusionning = true;
-
-    public Label tileInfo;
-
+    public ChoiceBox<String> surfaceColorChoiceBox;
     public ChoiceBox<String> sealColorChoiceBox;
     public ChoiceBox<String> tilePatternInputBox;
     public ChoiceBox<String> tileMaterialChoiceBox;
 
+    // distance surfaces
+    public Label distanceBetweenSurfacesLabelText;
+    public Label distanceBetweenSurfacesLabel;
+
+    // bottom left label for tile under cursor info
+    public Label tileInfo;
+
+    // top bar buttons
     public CheckBox snapGridCheckBox;
     public CheckBox mooveTilesCheckBox;
 
     public CheckBox imperialCheckBox;
     public CheckBox metricCheckBox;
 
+    public Button undoButton;
+    public Button redoButton;
+
+    public Button fillTilesButton;
+    public boolean stateCurrentlyFilling = true;
+
+    public Button fusionButton;
+    public boolean stateCurrentlyFusionning = true;
+
+    // services
     private List<SurfaceUI> allSurfaces = new ArrayList<>();
     private SelectionManager selectionManager;
     private ZoomManager zoomManager = new ZoomManager();
-    private DistanceSurfaceLabelUI distanceSurfaceLabelUI;
+    private SidePanelUI sidePanel;
     private SnapGridUI snapGridUI;
-
-    public Button undoButton;
-    public Button redoButton;
+    private Controller domainController = Controller.getInstance();
+    private ImperialFractionHelper numberUtils = new ImperialFractionHelper();
 
     // state variables to make coherent state machine
     private boolean stateCurrentlyCreatingRectangularSurface = false;
     private boolean stateCurrentlyCreatingIrregularSurface = false;
     private boolean stateTopLeftCornerCreated = false;
     private boolean stateEnableZooming = false;
-
+    private boolean metricDisplay = true;
     private Point firstClickCoord;
     private Rectangle rectangleSurfaceCreationIndicator;
-
     private List<AttachmentPointUI> irregularSurfaceSummits = new ArrayList<>();
 
-    public TextField minInspectionLengthTextField;
-    public Button inspectButton;
-    public TextArea inspectionArea;
-    private Double minInspectionLength;
-
-    private boolean metricDisplay = true;
-    private ImperialFractionHelper numberUtils = new ImperialFractionHelper();
-
-    private Controller domainController = Controller.getInstance();
-
+    // others
     Alert alert = new Alert(Alert.AlertType.WARNING);
 
     @Override
@@ -190,7 +189,6 @@ public class UiController implements Initializable {
             try {
                 CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
                 minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : format.parse(minInspectionLengthInput.toString()).doubleValue();
-//                minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : Double.valueOf(minInspectionLengthInput.toString()).doubleValue();
 
             } catch (ParseException e) {
                 parseSucess = false;
@@ -216,8 +214,7 @@ public class UiController implements Initializable {
                 metricCheckBox.setSelected(!t1);
                 if (t1) {
                     metricDisplay = false;
-                    ImperialToggle();
-                    toggleImperialMetriqueDistance();
+                    sidePanel.updateSelection(selectionManager.getSelectedSurfaces(), metricDisplay);
                 }
             }
         });
@@ -230,20 +227,50 @@ public class UiController implements Initializable {
 
                 if (t1) {
                     metricDisplay = true;
-                    MetricToggle();
-                    toggleImperialMetriqueDistance();
+                    sidePanel.updateSelection(selectionManager.getSelectedSurfaces(), metricDisplay);
                 }
 
             }
         });
 
         alert.setTitle("WARNING");
-        hideSnapgridInfo();
 
-        editTileMaterialChoiceBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> displayMaterialInfo()));
-
-        distanceSurfaceLabelUI = new DistanceSurfaceLabelUI(distanceBetweenSurfacesLabelText, distanceBetweenSurfacesLabel, zoomManager);
-        distanceSurfaceLabelUI.eraseDistance();
+        sidePanel = new SidePanelUI(zoomManager,
+                alert,
+                tileHeightInputbox,
+                tileWidthInputbox,
+                sealWidthInputBox,
+                surfaceHeightInputBox,
+                surfaceWidthInputBox,
+                masterTileX,
+                masterTileY,
+                tileAngleInputBox,
+                tileShiftingInputBox,
+                surfacePositionXInputBox,
+                surfacePositionYInputBox,
+                sealColorChoiceBox,
+                tilePatternInputBox,
+                tileMaterialChoiceBox,
+                surfaceColorChoiceBox,
+                materialNameInputBox,
+                tilePerBoxInputBox,
+                boxPriceInputBox,
+                tileHeightMaterialInputBox,
+                tileWidthMaterialInputBox,
+                materialColorChoiceBox,
+                materialTableView,
+                mNewHeightInputBox,
+                mNewLenghtInputBox,
+                mNewTilePerBoxInput,
+                mNewPricePerBoxInputBox,
+                editTileMaterialChoiceBox,
+                mNewColorInputBox,
+                distanceBetweenSurfacesLabelText,
+                distanceBetweenSurfacesLabel,
+                resizeSG,
+                snapgridLabel,
+                snapGridbutton,
+                snapGridUI);
 
         renderFromProject();
     }
@@ -332,10 +359,7 @@ public class UiController implements Initializable {
         fusionButton.setText("Fusion surfaces");
 
         selectionManager.unselectAll();
-        List<SurfaceUI> temp = new ArrayList<>();
-        this.getAccountingForSelectedSurface(temp);
-        hideRectangleInfo();
-        distanceSurfaceLabelUI.eraseDistance();
+        sidePanel.hideInfo(metricDisplay);
     }
 
     private void handleRectangularSurfaceCreation(Point click) {
@@ -361,9 +385,11 @@ public class UiController implements Initializable {
         drawingSection.getChildren().remove(rectangleSurfaceCreationIndicator);
         pane.setCursor(Cursor.DEFAULT);
         this.renderFromProject();
+
         selectionManager.unselectAll();
-        hideRectangleInfo();
         firstClickCoord = null;
+
+        sidePanel.hideInfo(metricDisplay);
     }
 
     private void handleIrregularSurfaceCreation(Point clickCoord) {
@@ -401,12 +427,10 @@ public class UiController implements Initializable {
         }
 
         selectionManager.unselectAll();
-        hideRectangleInfo();
+        sidePanel.hideInfo(metricDisplay);
     }
 
     public Void handleSelection(Void nothing) {
-        displayRectangleInfo();
-
         List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
 
         if (selectedSurfaces.stream().allMatch(s -> s.toDto().isHole == HoleStatus.FILLED)) {
@@ -431,11 +455,7 @@ public class UiController implements Initializable {
             surfaceHeightInputBox.setDisable(false);
         }
 
-        distanceSurfaceLabelUI.updateDistanceSurface(selectedSurfaces.stream().map(sUI -> sUI.toDto()).collect(Collectors.toList()), metricDisplay);
-
-        if (!metricDisplay) {
-            this.toggleImperialMetriqueDistance();
-        }
+        sidePanel.updateSelection(selectedSurfaces, metricDisplay);
 
         return null;
     }
@@ -447,241 +467,8 @@ public class UiController implements Initializable {
     }
 
     public void editSurface() {
-        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
-
-        if (selectedSurfaces.size() != 0) {
-            SurfaceUI chosenSurface = selectedSurfaces.get(0);
-            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-            try {
-                //check si on est en metric si on l'est pas on convertie temporairement toutes les valeurs
-                // des inputs box en metric
-                // a la fin du edit on reconvertis toute les valeurs metric en imperial si cest a faire
-                if (!metricDisplay) {
-                    this.MetricToggle();
-                }
-//                new Tile Height
-//                CharSequence tileHeightInput = this.tileHeightInputbox.getCharacters();
-//                Double newTileHeight = tileHeightInput.toString().equals("") ? null : format.parse(tileHeightInput.toString()).doubleValue();
-////                newTileHeight = tileHeightInput.toString().equals("") ? null : Double.valueOf(tileHeightInput.toString()).doubleValue();
-//
-//                //ce block nest pu utile a cause de la propriété tiletypeWidth
-//                //new Tile Width
-//                CharSequence tileWidthInput = this.tileWidthInputbox.getCharacters();
-//                Double newTileWidth = tileWidthInput.toString().equals("") ? null : format.parse(tileWidthInput.toString()).doubleValue();
-////                newTileWidth = tileWidthInput.toString().equals("") ? null : Double.valueOf(tileWidthInput.toString()).doubleValue();
-
-                //new master Tile position
-                CharSequence masterTileXInput = this.masterTileX.getCharacters();
-                Double newMasterTileX = masterTileXInput.toString().equals("") ? null : format.parse(masterTileXInput.toString()).doubleValue();
-//                newMasterTileX = masterTileXInput.toString().equals("") ? null : Double.valueOf(masterTileXInput.toString()).doubleValue();
-
-                CharSequence masterTileYInput = this.masterTileY.getCharacters();
-                Double newMasterTileY = masterTileYInput.toString().equals("") ? null : format.parse(masterTileYInput.toString()).doubleValue();
-//                newMasterTileY = masterTileYInput.toString().equals("") ? null : Double.valueOf(masterTileYInput.toString()).doubleValue();
-
-                CharSequence tileAngleInput = this.tileAngleInputBox.getCharacters();
-                Double tileAngle = tileAngleInput.toString().equals("") ? null : format.parse(tileAngleInput.toString()).doubleValue();
-
-                CharSequence tileShiftInput = this.tileShiftingInputBox.getCharacters();
-                Double tileShift = tileShiftInput.toString().equals("") ? null : format.parse(tileShiftInput.toString()).doubleValue();
-
-                //new Seal Width
-                CharSequence sealWidthInput = this.sealWidthInputBox.getCharacters();
-                Double newSealWidth = sealWidthInput.toString().equals("") ? null : format.parse(sealWidthInput.toString()).doubleValue();
-//                newSealWidth = sealWidthInput.toString().equals("") ? null : Double.valueOf(sealWidthInput.toString()).doubleValue();
-
-                CharSequence sealColorInput = this.sealColorChoiceBox.getValue();
-
-                CharSequence surfaceColorInput = this.surfaceColorChoiceBox.getValue();
-                chosenSurface.setSurfaceColor(ColorHelper.stringToUtils(surfaceColorInput.toString()));
-
-                CharSequence patternInput = this.tilePatternInputBox.getValue();
-
-                //new surface height
-                CharSequence surfaceHeightInput = this.surfaceHeightInputBox.getCharacters();
-                double newsurfaceHeight = format.parse(surfaceHeightInput.toString()).doubleValue();
-//                newsurfaceHeight = Double.valueOf(surfaceHeightInput.toString()).doubleValue();
-
-                //new surface width
-                CharSequence surfaceWidthInput = this.surfaceWidthInputBox.getCharacters();
-                double newSurfaceWidth = format.parse(surfaceWidthInput.toString()).doubleValue();
-//                newSurfaceWidth = Double.valueOf(surfaceWidthInput.toString()).doubleValue();
-
-                CharSequence tileMaterialInput = tileMaterialChoiceBox.getValue();
-                tileMaterialInput = tileMaterialInput == null ? "" : tileMaterialInput;
-
-                TileDto masterTile = null;
-                if (newMasterTileX != null && newMasterTileY != null && !tileMaterialInput.equals("")) {
-                    MaterialDto chosenMaterial = domainController.getMaterialByName(tileMaterialInput.toString()).get();
-
-                    masterTile = new TileDto();
-                    masterTile.material = chosenMaterial;
-
-                    RectangleInfo masterTileRect = new RectangleInfo(new Point(newMasterTileX, newMasterTileY), chosenMaterial.tileTypeWidth, chosenMaterial.tileTypeHeight);
-                    masterTile.summits = RectangleHelper.rectangleInfoToSummits(masterTileRect.topLeftCorner, masterTileRect.width, masterTileRect.height);
-                    chosenSurface.setMasterTile(masterTile);
-                }
-                //Changer la position de X et de y
-                CharSequence positionXinput = surfacePositionXInputBox.getCharacters();
-                CharSequence positionYinput = surfacePositionYInputBox.getCharacters();
-                double newPositioinX = format.parse(positionXinput.toString()).doubleValue();
-                double newPositionY = format.parse(positionYinput.toString()).doubleValue();
-                Point position = new Point(newPositioinX, newPositionY);
-                chosenSurface.setPosition(position);
-
-                chosenSurface.setSize(newSurfaceWidth, newsurfaceHeight);
-                if (masterTile == null || newSealWidth == null || sealColorInput == null || patternInput == null || tileAngle == null || tileShift == null) {
-                    this.domainController.updateSurface(chosenSurface.toDto());
-                } else {
-                    SealsInfoDto sealsInfoDto = new SealsInfoDto();
-                    sealsInfoDto.sealWidth = newSealWidth;
-                    sealsInfoDto.color = ColorHelper.stringToUtils(sealColorInput.toString());
-                    chosenSurface.setSealsInfo(sealsInfoDto);
-
-                    PatternType pattern = PatternHelperUI.stringToPattern(patternInput.toString());
-
-                    PatternType fallBackPattern = chosenSurface.getPattern() == null ? PatternType.DEFAULT : chosenSurface.getPattern();
-                    pattern = checkPattern(pattern, fallBackPattern, masterTile);
-                    chosenSurface.setPattern(pattern);
-
-                    tileAngle = checkTileAngle(tileAngle);
-                    chosenSurface.setTileAngle(tileAngle);
-
-                    tileShift = checkShift(tileShift);
-                    chosenSurface.setTileShifting(tileShift);
-                    this.domainController.updateAndRefill(chosenSurface.toDto(), masterTile, pattern, sealsInfoDto, tileAngle, tileShift);
-                }
-
-                this.renderFromProject();
-                hideRectangleInfo();
-            } catch (ParseException e) {
-                displayRectangleInfo();
-            } catch (NumberFormatException e) {
-                displayRectangleInfo();
-            }
-        }
-
-    }
-
-    private PatternType checkPattern(PatternType newPattern, PatternType previous, TileDto masterTIile) {
-        if (newPattern == PatternType.MIX || newPattern == PatternType.GROUP_MIX) {
-            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(masterTIile.summits);
-
-            double minSide = Math.min(tileRect.height, tileRect.width);
-            double maxSide = Math.min(tileRect.height, tileRect.width);
-            boolean isAllowed = (maxSide - 2 * minSide) < Point.DOUBLE_TOLERANCE;
-
-            if (!isAllowed) {
-                alert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",
-                        PatternHelperUI.patternToDisplayString(newPattern)));
-                alert.setContentText(String.format("Falling back on pattern '%s'", PatternHelperUI.patternToDisplayString(previous)));
-                alert.showAndWait();
-                return previous;
-            }
-        }
-        return newPattern;
-    }
-
-    private double checkShift(double newShift) {
-//        if (false) {
-//            alert.setHeaderText(String.format("Tile shift must be a percentage between 0 and 100... %f is out of bound", newShift));
-//            alert.setContentText(String.format("Falling back on shift = %f", 0.0));
-//            alert.showAndWait();
-//            return 0;
-//        }
-        return newShift;
-    }
-
-    private double checkTileAngle(double newAngle) {
-        if (newAngle < 0 || newAngle > 90) {
-            alert.setHeaderText(String.format("Tile angle must be an angle in degrees between 0 and 90... %.1f is out of bound", newAngle));
-            alert.setContentText(String.format("Falling back on angle = %f", 0.0));
-            alert.showAndWait();
-            return 0;
-        }
-        return newAngle;
-    }
-
-    private void displayRectangleInfo() {
-        List<SurfaceUI> selectedSurfaces = selectionManager.getSelectedSurfaces();
-        SurfaceUI firstOne = selectedSurfaces.get(0);
-
-        NumberFormat formatter = new DecimalFormat("#0.000");
-
-        double height = ShapeHelper.getHeight(new AbstractShape(firstOne.toDto().summits, false));
-        double width = ShapeHelper.getWidth(new AbstractShape(firstOne.toDto().summits, false));
-        Point topLeft = ShapeHelper.getTopLeftCorner(new AbstractShape(firstOne.toDto().summits, false));
-
-        surfaceHeightInputBox.setText(formatter.format(height));
-        surfaceWidthInputBox.setText(formatter.format(width));
-
-        if (firstOne.getSealsInfo() != null) {
-            sealWidthInputBox.setText(formatter.format(firstOne.getSealsInfo().sealWidth));
-            sealColorChoiceBox.setValue(ColorHelper.utilsColorToString(firstOne.getSealsInfo().color));
-        }
-
-        surfaceColorChoiceBox.setValue(ColorHelper.utilsColorToString(firstOne.getSurfaceColor()));
-
-        if (firstOne.getPattern() != null) {
-            PatternType pattern = firstOne.getPattern();
-            tilePatternInputBox.setValue(PatternHelperUI.patternToDisplayString(pattern));
-        } else if (firstOne.toDto().isHole == HoleStatus.FILLED) {
-            tilePatternInputBox.setValue(PatternHelperUI.getPlaceHolder());
-        } else {
-            tilePatternInputBox.setValue("");
-        }
-
-        surfacePositionXInputBox.setText(formatter.format(topLeft.x));
-        surfacePositionYInputBox.setText(formatter.format(topLeft.y));
-
-        if (firstOne.toDto().isHole == HoleStatus.FILLED && firstOne.toDto().tiles != null && firstOne.toDto().tiles.size() > 0) {
-            String tileMaterial = firstOne.toDto().tiles.get(0).material.name;
-            utils.Color tilecolor = firstOne.toDto().tiles.get(0).material.color;
-            String materialColor;
-            tileMaterialChoiceBox.setValue(tileMaterial);
-
-            materialColor = ColorHelper.utilsColorToString(tilecolor);
-            RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(firstOne.getMasterTile().summits);
-
-            tileHeightInputbox.setText(formatter.format(tileRect.height));
-            tileWidthInputbox.setText(formatter.format(tileRect.width));
-            masterTileX.setText(formatter.format(tileRect.topLeftCorner.x));
-            masterTileY.setText(formatter.format(tileRect.topLeftCorner.y));
-            tileAngleInputBox.setText(formatter.format(firstOne.getTileAngle()));
-            tileShiftingInputBox.setText(formatter.format(firstOne.getTileShifting()));
-            materialColorDisplay.setText(materialColor);
-        } else if (firstOne.toDto().isHole == HoleStatus.HOLE) {
-            materialColorDisplay.setText("hole");
-        } else {
-            materialColorDisplay.setText("");
-        }
-        this.getAccountingForSelectedSurface(selectedSurfaces);
-
-        if (!metricDisplay) {
-            this.ImperialToggle();
-        }
-
-    }
-
-    private void hideRectangleInfo() {
-        tileHeightInputbox.clear();
-        tileWidthInputbox.clear();
-        surfaceHeightInputBox.clear();
-        surfaceWidthInputBox.clear();
-        surfacePositionXInputBox.clear();
-        surfacePositionYInputBox.clear();
-        materialColorDisplay.clear();
-        sealWidthInputBox.clear();
-
-        masterTileX.clear();
-        masterTileY.clear();
-
-        tileAngleInputBox.clear();
-        tileShiftingInputBox.clear();
-
-        tilePatternInputBox.setValue("");
-        sealColorChoiceBox.setValue("");
-        surfaceColorChoiceBox.setValue("");
+        sidePanel.editSurface(selectionManager.getSelectedSurfaces(), metricDisplay);
+        renderFromProject();
     }
 
     private Point getPointInReferenceToOrigin(Point pointInReferenceToPane) {
@@ -715,11 +502,11 @@ public class UiController implements Initializable {
         if (snapGridCheckBox.isSelected()) {
             this.snapGridUI.setVisibility(true);
             this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
-            showSnapgridInfo();
+            sidePanel.displaySnapGrid(metricDisplay);
         } else {
             this.snapGridUI.setVisibility(false);
             this.snapGridUI.removeGrid();
-            hideSnapgridInfo();
+            sidePanel.hideSnapGrid();
         }
     }
 
@@ -758,7 +545,6 @@ public class UiController implements Initializable {
     public void fillSelectedSurfaceWithTiles() {
         List<SurfaceUI> selectedSurfaces = this.selectionManager.getSelectedSurfaces();
 
-
         for (SurfaceUI surface : selectedSurfaces) {
             surface.forceFill();
         }
@@ -780,7 +566,8 @@ public class UiController implements Initializable {
                 fs.getInnerSurfaces().forEach(s -> s.setHole(HoleStatus.NONE));
             }
         }
-        hideRectangleInfo();
+
+        sidePanel.hideInfo(metricDisplay);
         this.renderFromProject();
     }
 
@@ -858,28 +645,21 @@ public class UiController implements Initializable {
             this.tileMaterialChoiceBox.getItems().clear();
             editTileMaterialChoiceBox.getItems().clear();
             for (MaterialDto mDto : project.materials) {
-
                 tileMaterialChoiceBox.getItems().add(mDto.name);
                 editTileMaterialChoiceBox.getItems().add(mDto.name);
             }
-            displayMaterialInfo();
 
-            List<SurfaceUI> temp = new ArrayList<>();
-            this.getAccountingForSelectedSurface(temp);
-
-            if (!metricDisplay) {
-                this.ImperialToggle();
-            }
+            sidePanel.updateSelection(selectionManager.getSelectedSurfaces(), metricDisplay);
         }
     }
 
     private void clearDrawings() {
-        this.allSurfaces.forEach(SurfaceUI::hide);
+        allSurfaces.forEach(SurfaceUI::hide);
         drawingSection.getChildren().removeIf(allSurfaces.stream().map(s -> s.getNode()).collect(Collectors.toList())::contains);
-        this.selectionManager.unselectAll();
-        this.allSurfaces.clear();
-        this.snapGridUI.renderForViewBox(this.getViewBoxSummits());
-        this.materialTableView.getItems().clear();
+        selectionManager.unselectAll();
+        allSurfaces.clear();
+        snapGridUI.renderForViewBox(this.getViewBoxSummits());
+        materialTableView.getItems().clear();
     }
 
     private void displaySurface(SurfaceDto surfaceDto) {
@@ -911,7 +691,7 @@ public class UiController implements Initializable {
     }
 
     public void fusionToggle() {
-        hideRectangleInfo();
+        sidePanel.hideInfo(metricDisplay);
 
         if (stateCurrentlyFusionning) {
             fusionSurfaces();
@@ -941,47 +721,8 @@ public class UiController implements Initializable {
     }
 
     public void createNewMaterial() {
-
-        try {
-            if (!metricDisplay) {
-                this.ImperialToggle();
-            }
-            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-
-            MaterialDto dto = new MaterialDto();
-            dto.name = materialNameInputBox.getText();
-            dto.color = ColorHelper.stringToUtils(materialColorChoiceBox.getValue());
-
-            CharSequence boxCost = this.boxPriceInputBox.getCharacters();
-            dto.costPerBox = boxCost.toString().equals("") ? 0 : format.parse(boxCost.toString()).doubleValue();
-            dto.costPerBox = boxCost.toString().equals("") ? 0 : Double.parseDouble(boxCost.toString());
-
-            CharSequence tilePerBox = this.tilePerBoxInputBox.getCharacters();
-            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : format.parse(tilePerBox.toString()).intValue();
-//            dto.nbTilePerBox = tilePerBox.toString().equals("") ? 0 : Double.valueOf(tilePerBox.toString()).intValue();
-
-            CharSequence tileHeight = this.tileHeightMaterialInputBox.getCharacters();
-            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : format.parse(tileHeight.toString()).doubleValue();
-//            dto.tileTypeHeight = tileHeight.toString().equals("") ? 0 : Double.valueOf(tileHeight.toString());
-
-            CharSequence tileWidth = this.tileWidthMaterialInputBox.getCharacters();
-            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : format.parse(tileWidth.toString()).doubleValue();
-//            dto.tileTypeWidth = tileWidth.toString().equals("") ? 0 : Double.valueOf(tileWidth.toString());
-
-            domainController.createMaterial(dto);
-
-            materialNameInputBox.clear();
-            boxPriceInputBox.clear();
-            tilePerBoxInputBox.clear();
-            tileHeightMaterialInputBox.clear();
-            tileWidthMaterialInputBox.clear();
-
-
-            renderFromProject();
-        } catch (ParseException e) {
-            displayRectangleInfo();
-        }
-
+        sidePanel.createNewMaterial(metricDisplay);
+        renderFromProject();
     }
 
     public void undo() {
@@ -992,17 +733,6 @@ public class UiController implements Initializable {
     public void redo() {
         this.domainController.redo();
         renderFromProject();
-    }
-
-    private void defaultMaterial() {
-        MaterialDto dto = new MaterialDto();
-        dto.color = Color.GREEN;
-        dto.name = "Melon d'eau";
-        dto.nbTilePerBox = 45;
-        dto.costPerBox = 50;
-        dto.tileTypeHeight = 0.3;
-        dto.tileTypeWidth = 0.6;
-        domainController.createMaterial(dto);
     }
 
     public void centerSurfacesVertically() {
@@ -1278,11 +1008,11 @@ public class UiController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Sauvegarder Plan");
         fileChooser.setInitialDirectory(new File("./"));
-        fileChooser.setInitialFileName("TaMereEnShort.bin");
+        fileChooser.setInitialFileName("project.bin");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Serialized object", "*.bin"));
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
-            domainController.saveProject(file.getPath().toString());
+            domainController.saveProject(file.getPath());
         }
 
     }
@@ -1294,7 +1024,7 @@ public class UiController implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Java Serialized object", "*.bin"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
-            domainController.loadProject(file.getPath().toString());
+            domainController.loadProject(file.getPath());
         }
 
         this.renderFromProject();
@@ -1313,98 +1043,13 @@ public class UiController implements Initializable {
         return parseSucess;
     }
 
-    private void getAccountingForSelectedSurface(List<SurfaceUI> pSelectedSurfaces) {
-        this.materialTableView.getItems().clear();
-
-        List<SurfaceDto> listDTO = new ArrayList<>();
-        for (SurfaceUI i : pSelectedSurfaces) {
-            if (i.toDto().isHole == HoleStatus.FILLED) {
-                listDTO.add(i.toDto());
-            }
-        }
-        if (listDTO.size() == 0) {
-            domainController.getAccounting();
-        } else {
-            domainController.getSurfaceAccount(listDTO);
-        }
-        List<Accounting> account = domainController.Maccount;
-        for (Accounting accounting : account) {
-
-            NumberFormat formatter = new DecimalFormat("#0.000");
-
-            MaterialUI materialUI = new MaterialUI();
-            materialUI.name = accounting.getMaterial().getMaterialName();
-            materialUI.pricePerBoxe = formatter.format(accounting.getMaterial().getCostPerBox());
-            materialUI.color = ColorHelper.utilsColorToString(accounting.getMaterial().getColor());
-            materialUI.tilePerBox = formatter.format(accounting.getMaterial().getNbTilePerBox());
-            materialUI.numberOfTiles = formatter.format(accounting.getUsedTiles());
-            materialUI.numberOfBoxes = formatter.format(accounting.getNbBoxes());
-            materialUI.totalPrice = formatter.format(accounting.getTotalCost());
-
-
-            materialTableView.getItems().add(materialUI);
-        }
-    }
-
     public void snapGridApply() {
-        try {
-            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-            CharSequence newSnapgridSize = this.resizeSG.getCharacters();
-            Double snapGridSize = format.parse(newSnapgridSize.toString()).doubleValue();
-//            snapGridSize = Double.parseDouble(newSnapgridSize.toString());
-            snapGridUI.setSnapGridGap(zoomManager.metersToPixels(snapGridSize));
-        } catch (ParseException e) {
-            displayRectangleInfo();
-        }
-    }
-
-    private void showSnapgridInfo() {
-        NumberFormat formatter = new DecimalFormat("#0.000");
-
-        this.resizeSG.setVisible(true);
-        this.snapgridLabel.setVisible(true);
-        this.snapGridbutton.setVisible(true);
-
-        resizeSG.setText(formatter.format(zoomManager.pixelsToMeters(snapGridUI.getSnapGripGap())));
-    }
-
-    private void hideSnapgridInfo() {
-        this.resizeSG.setVisible(false);
-        this.snapgridLabel.setVisible(false);
-        this.snapGridbutton.setVisible(false);
+        sidePanel.applySnapGrid(metricDisplay);
     }
 
     public void editMaterialButton() {
-        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-        try {
-            MaterialDto mDTO = new MaterialDto();
-
-            CharSequence mNewHeight = this.mNewHeightInputBox.getCharacters();
-            Double newMaterialHeight = mNewHeight.toString().equals("") ? null : format.parse(mNewHeight.toString()).doubleValue();
-
-            CharSequence mNewWidth = this.mNewLenghtInputBox.getCharacters();
-            Double newMaterialWidth = mNewWidth.toString().equals("") ? null : format.parse(mNewWidth.toString()).doubleValue();
-
-            CharSequence mNbTilePerBox = this.mNewTilePerBoxInput.getCharacters();
-            Integer newNbTilePerBox = mNbTilePerBox.toString().equals("") ? null : format.parse(mNbTilePerBox.toString()).intValue();
-
-            CharSequence mCostPerBox = this.mNewPricePerBoxInputBox.getCharacters();
-            Integer newCostPerBox = mCostPerBox.toString().equals("") ? null : format.parse(mCostPerBox.toString()).intValue();
-
-            mDTO.name = editTileMaterialChoiceBox.getValue();
-            mDTO.tileTypeHeight = newMaterialHeight;
-            mDTO.tileTypeWidth = newMaterialWidth;
-            mDTO.nbTilePerBox = newNbTilePerBox;
-            mDTO.costPerBox = newCostPerBox;
-            mDTO.color = ColorHelper.stringToUtils(mNewColorInputBox.getValue());
-            domainController.updateMaterial(mDTO);
-
-        } catch (ParseException e) {
-            displayMaterialInfo();
-        }
-
+        sidePanel.updateMaterial(metricDisplay);
         renderFromProject();
-        hideMaterialInfo();
     }
 
     private void displayMaterialInfo() {
@@ -1421,249 +1066,5 @@ public class UiController implements Initializable {
             mNewPricePerBoxInputBox.setText(formatter.format(material.costPerBox));
             mNewColorInputBox.setValue(ColorHelper.utilsColorToString(material.color));
         }
-    }
-
-    private void hideMaterialInfo() {
-        mNewHeightInputBox.clear();
-        mNewLenghtInputBox.clear();
-        mNewTilePerBoxInput.clear();
-        mNewPricePerBoxInputBox.clear();
-        mNewColorInputBox.setValue("");
-    }
-
-    public void MetricToggle() {
-        //Converti le contenu de chaque input box en metric
-        // C'EST DES METRE!!
-        NumberFormat formatter = new DecimalFormat("#0.000");
-
-        //13
-        CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
-        Double tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-//            Double tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.tileHeightMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //12
-        temp = this.tileWidthMaterialInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.tileWidthMaterialInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //11
-        temp = this.mNewHeightInputBox.getCharacters();
-        tempDouble = numberUtils.parseImperialFraction(temp.toString());
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-//        tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.mNewHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //10
-        temp = this.mNewLenghtInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.mNewLenghtInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //9
-        temp = this.tileHeightInputbox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.tileHeightInputbox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //8
-        temp = this.tileWidthInputbox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.tileWidthInputbox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //7
-        temp = this.sealWidthInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.sealWidthInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //6
-        temp = this.surfaceHeightInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.surfaceHeightInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //5
-        temp = this.surfaceWidthInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.surfaceWidthInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //4
-        temp = this.masterTileX.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.masterTileX.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //3
-        temp = this.masterTileY.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.masterTileY.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //2
-        temp = this.surfacePositionXInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.surfacePositionXInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-        //1
-        temp = this.surfacePositionYInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.surfacePositionYInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-
-        temp = this.tileShiftingInputBox.getCharacters();
-        tempDouble = temp.toString().equals("") ? null : numberUtils.parseImperialFraction(temp.toString());
-
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-        if (tempDouble != null) {
-            this.tileShiftingInputBox.setText(formatter.format(zoomManager.inchToMeters(tempDouble)));
-        }
-    }
-
-    public void ImperialToggle() {
-        //Converti le contenu de chaque input box en imperial
-        // CEST DES POUCE!!!
-        NumberFormat formatter = new DecimalFormat("#0.000");
-
-        try {
-            //13
-            CharSequence temp = this.tileHeightMaterialInputBox.getCharacters();
-            Double tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.tileHeightMaterialInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //12
-            temp = this.tileWidthMaterialInputBox.getCharacters();
-
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.tileWidthMaterialInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //11
-            temp = this.mNewHeightInputBox.getCharacters();
-
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.mNewHeightInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //10
-            temp = this.mNewLenghtInputBox.getCharacters();
-
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.mNewLenghtInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-
-            //9
-            temp = this.tileHeightInputbox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.tileHeightInputbox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-
-            //8
-            temp = this.tileWidthInputbox.getCharacters();
-
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.tileWidthInputbox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //7
-            temp = this.sealWidthInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.sealWidthInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //6
-            temp = this.surfaceHeightInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.surfaceHeightInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //5
-            temp = this.surfaceWidthInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.surfaceWidthInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //4
-            temp = this.masterTileX.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.masterTileX.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //3
-            temp = this.masterTileY.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.masterTileY.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //2
-            temp = this.surfacePositionXInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.surfacePositionXInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            //1
-            temp = this.surfacePositionYInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.surfacePositionYInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-            temp = this.tileShiftingInputBox.getCharacters();
-            tempDouble = temp.toString().equals("") ? null : formatter.parse(temp.toString()).doubleValue();
-//            tempDouble = temp.toString().equals("") ? null : Double.parseDouble(temp.toString());
-            if (tempDouble != null) {
-                this.tileShiftingInputBox.setText(numberUtils.formatImperialFraction(zoomManager.metersToInch(tempDouble)));
-            }
-        } catch (ParseException e) {
-            displayRectangleInfo();
-        }
-    }
-
-    private void toggleImperialMetriqueDistance() {
-        distanceSurfaceLabelUI.updateDistanceSurface(selectionManager.getSelectedSurfaces().stream().map(s -> s.toDto()).collect(Collectors.toList()), metricDisplay);
     }
 }

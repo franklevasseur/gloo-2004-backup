@@ -910,6 +910,8 @@ public class UiController implements Initializable {
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point firstTopLeft = ShapeHelper.getTopLeftCorner(firstSurface);
         double firstY = firstTopLeft.y;
+        double firstX = firstTopLeft.x;
+        double firstWidth = ShapeHelper.getWidth(firstSurface);
         double firstHeight = ShapeHelper.getHeight(firstSurface);
 
         for (SurfaceUI s : selectedSurfaces) {
@@ -920,12 +922,39 @@ public class UiController implements Initializable {
             Point surfaceTopLeft = ShapeHelper.getTopLeftCorner(surface);
             double surfaceX = surfaceTopLeft.x;
             double surfaceY = surfaceTopLeft.y;
+            double surfaceWidth = ShapeHelper.getWidth(surface);
             double surfaceHeight = ShapeHelper.getHeight(surface);
 
-            if (surfaceY > firstY) {
-                s.setPosition(new Point(surfaceX, firstY + firstHeight));
-            } else {
-                s.setPosition(new Point(surfaceX, firstY - surfaceHeight));
+            if (surfaceY >= firstY) {
+                if(surfaceX + surfaceWidth >= firstX && surfaceX + surfaceWidth <= firstX + firstWidth) {
+                    s.setPosition(new Point(surfaceX, firstY + firstHeight));
+                }
+                else if(surfaceX >= firstX && surfaceX <= firstX + firstWidth){
+                    s.setPosition(new Point(surfaceX, firstY + firstHeight));
+                }
+                else if(surfaceX < firstX && surfaceX + surfaceWidth > firstX + firstWidth){
+                    s.setPosition(new Point(surfaceX, firstY + firstHeight));
+                }
+                else{
+                    break;
+                }
+            }
+            else if(surfaceY <= firstY) {
+                if(surfaceX + surfaceWidth >= firstX && surfaceX + surfaceWidth <= firstX + firstWidth) {
+                    s.setPosition(new Point(surfaceX, firstY - surfaceHeight));
+                }
+                else if(surfaceX >= firstX && surfaceX <= firstX + firstWidth){
+                    s.setPosition(new Point(surfaceX, firstY - surfaceHeight));
+                }
+                else if(surfaceX < firstX && surfaceX + surfaceWidth > firstX + firstWidth){
+                    s.setPosition(new Point(surfaceX, firstY - surfaceHeight));
+                }
+                else{
+                    break;
+                }
+            }
+            else{
+                break;
             }
 
             if (s.toDto().isHole == HoleStatus.FILLED) {
@@ -947,7 +976,9 @@ public class UiController implements Initializable {
         AbstractShape firstSurface = new AbstractShape(mainSurface.toDto().summits);
         Point firstTopLeft = ShapeHelper.getTopLeftCorner(firstSurface);
         double firstX = firstTopLeft.x;
+        double firstY = firstTopLeft.y;
         double firstWidth = ShapeHelper.getWidth(firstSurface);
+        double firstHeight = ShapeHelper.getHeight(firstSurface);
 
         for (SurfaceUI s : selectedSurfaces) {
             if (s == mainSurface) {
@@ -958,10 +989,38 @@ public class UiController implements Initializable {
             double surfaceX = surfaceTopLeft.x;
             double surfaceY = surfaceTopLeft.y;
             double surfaceWidth = ShapeHelper.getWidth(surface);
-            if (surfaceX > firstX) {
-                s.setPosition(new Point(firstX + firstWidth, surfaceY));
-            } else {
-                s.setPosition(new Point(firstX - surfaceWidth, surfaceY));
+            double surfaceHeight = ShapeHelper.getHeight(surface);
+
+            if (surfaceX >= firstX) {
+                if(surfaceY + surfaceHeight >= firstY && surfaceY + surfaceHeight <= firstY + firstHeight){
+                    s.setPosition(new Point(firstX + firstWidth, surfaceY));
+                }
+                else if(surfaceY >= firstY && surfaceY <= firstY + firstHeight){
+                    s.setPosition(new Point(firstX + firstWidth, surfaceY));
+                }
+                else if(surfaceY < firstY && surfaceY + surfaceHeight >= firstY + firstHeight){
+                    s.setPosition(new Point(firstX + firstWidth, surfaceY));
+                }
+                else{
+                    break;
+                }
+            }
+            else if(surfaceX <= firstX) {
+                if(surfaceY + surfaceHeight >= firstY && surfaceY + surfaceHeight <= firstY + firstHeight){
+                    s.setPosition(new Point(firstX - surfaceWidth, surfaceY));
+                }
+                else if(surfaceY >= firstY && surfaceY <= firstY+ firstHeight){
+                    s.setPosition(new Point(firstX - surfaceWidth, surfaceY));
+                }
+                else if(surfaceY < firstY && surfaceY + surfaceHeight >= firstY + firstHeight){
+                    s.setPosition(new Point(firstX - surfaceWidth, surfaceY));
+                }
+                else{
+                    break;
+                }
+            }
+            else{
+                break;
             }
 
             if (s.toDto().isHole == HoleStatus.FILLED) {

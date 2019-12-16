@@ -243,7 +243,7 @@ public class Controller {
 
     public Optional<MaterialDto> getMaterialByName(String materialName) {
         Optional<Material> material = this.materialService.getMaterialByName(materialName);
-        if (material.isEmpty()) {
+        if (!material.isPresent()) {
             return Optional.empty();
         }
         return Optional.of(materialAssembler.toDto(material.get()));

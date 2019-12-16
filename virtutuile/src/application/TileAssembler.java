@@ -39,7 +39,8 @@ public class TileAssembler {
         MaterialDto materialDto = tDto.material;
 
         Optional<Material> optionalMaterial = materialService.getMaterialByName(materialDto.name);
-        Material material = optionalMaterial.isEmpty() ? materialAssembler.fromDto(materialDto) : materialAssembler.fromDto(materialDto, optionalMaterial.get());
+        Material material = optionalMaterial.isPresent() ? materialAssembler.fromDto(materialDto, optionalMaterial.get())
+                : materialAssembler.fromDto(materialDto);
         return new Tile(points, material, tDto.isMasterTile);
     }
 }

@@ -21,8 +21,6 @@ public class Controller {
 
     private UndoRedoManager undoRedoManager = new UndoRedoManager();
 
-    public List<Accounting> Maccount = new ArrayList<>();
-
     private InspectionService inspector = new InspectionService();
     private ProjectRepository projectRepository;
     private MaterialService materialService;
@@ -214,16 +212,16 @@ public class Controller {
         justDoIt();
     }
 
-    public void getAccounting() {
+    public List<Accounting> getAccounting() {
         List<Accounting> account = new ArrayList<>();
         for (Material i : this.projectRepository.getProject().getMaterials()) {
             Accounting temp = new Accounting(this.projectRepository.getProject().getSurfaces(), i);
             account.add(temp);
         }
-        Maccount = account;
+        return account;
     }
 
-    public void getSurfaceAccount(List<SurfaceDto> pSurface) {
+    public List<Accounting> getSurfaceAccount(List<SurfaceDto> pSurface) {
         List<Accounting> account = new ArrayList<>();
         List<Surface> surfaces = pSurface.stream().map(dto -> {
             return this.projectRepository.getProject().getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
@@ -234,7 +232,7 @@ public class Controller {
                 account.add(temp);
             }
         }
-        Maccount = account;
+        return account;
     }
 
     public String inspectProject(double pWidth, double pHeight) {

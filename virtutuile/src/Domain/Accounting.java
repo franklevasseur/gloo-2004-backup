@@ -9,9 +9,9 @@ public class Accounting {
 
     private List<Surface> surfaces = new ArrayList<>();
     private Material material;
-    private double usedTiles;
+    private int usedTiles;
     private double totalCost;
-    private double nbBoxes;
+    private int nbBoxes;
 
     public Accounting(List<Surface> pSurfaces, Material pMaterials) {
         this.material = pMaterials;
@@ -26,8 +26,9 @@ public class Accounting {
         return this.material;
     }
 
-    public double getNbBoxes() {
-        nbBoxes = Math.ceil(usedTiles / Double.valueOf(material.getNbTilePerBox()));
+    public int getNbBoxes() {
+        double divisionResult = ((double) usedTiles) / ((double) material.getNbTilePerBox());
+        nbBoxes = (int) Math.ceil(divisionResult);
         return nbBoxes;
     }
 
@@ -36,11 +37,11 @@ public class Accounting {
         return totalCost;
     }
 
-    public double getUsedTiles() {
+    public int getUsedTiles() {
         return F_usedTiles();
     }
 
-    private double F_usedTiles() {
+    private int F_usedTiles() {
 
         for (Surface var : surfaces) {
             List<Tile> tiles = var.getTiles();

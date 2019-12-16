@@ -122,11 +122,11 @@ public class SidePanelUI {
             displayInfo(selectedSurfaces, metricDisplay);
             return;
         }
-        hideInfo(metricDisplay);
+        hideInfo();
     }
 
     private void displayInfo(List<SurfaceUI> selectedSurfaces, boolean metricDisplay) {
-        accountingPanel.displayAccountingForSurfaces(selectedSurfaces, metricDisplay);
+        accountingPanel.displayAccountingForSurfaces(selectedSurfaces);
         surfacePropertiesPanel.displaySurfaceInfo(selectedSurfaces, metricDisplay);
         accountingPanel.displayMaterialInfo(metricDisplay);
         distanceSurfaceLabelUI.updateDistanceSurface(selectedSurfaces.stream().map(s -> s.toDto()).collect(Collectors.toList()), metricDisplay);
@@ -135,8 +135,8 @@ public class SidePanelUI {
         }
     }
 
-    public void hideInfo(boolean metricDisplay) {
-        accountingPanel.displayAccountingForSurfaces(new ArrayList<>(), metricDisplay); // empty
+    public void hideInfo() {
+        accountingPanel.displayAccountingForSurfaces(new ArrayList<>()); // empty
         surfacePropertiesPanel.hideSurfaceInfo();
         accountingPanel.hideMaterialInfo();
         distanceSurfaceLabelUI.eraseDistance();

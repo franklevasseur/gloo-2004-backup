@@ -58,7 +58,9 @@ public class Project implements Serializable {
     }
 
     private void createDefaultMaterial() {
-        Material material = new Material(Color.GREEN, "Melon d'eau", 45, 50, 0.6, 0.3);
-        this.materials.add(material);
+        Material waterMelon = new Material(Color.GREEN, "Melon d'eau", 45, 50, 0.6, 0.3);
+        Material banana = new Material(Color.YELLOW, "Banane", 35, 90, 0.4, 0.9);
+        this.materials.add(waterMelon);
+        this.materials.add(banana);
     }
 }

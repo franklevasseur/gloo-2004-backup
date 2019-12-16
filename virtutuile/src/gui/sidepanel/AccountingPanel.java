@@ -117,9 +117,7 @@ public class AccountingPanel {
         mNewColorInputBox.setValue("");
     }
 
-    public void displayAccountingForSurfaces(List<SurfaceUI> pSelectedSurfaces, boolean metricDisplay) {
-
-        lastMetric = metricDisplay;
+    public void displayAccountingForSurfaces(List<SurfaceUI> pSelectedSurfaces) {
 
         this.materialTableView.getItems().clear();
 
@@ -129,26 +127,53 @@ public class AccountingPanel {
                 listDTO.add(i.toDto());
             }
         }
-        if (listDTO.size() == 0) {
-            domainController.getAccounting();
-        } else {
-            domainController.getSurfaceAccount(listDTO);
-        }
-        List<Accounting> account = domainController.Maccount;
-        for (Accounting accounting : account) {
 
-            InputBoxHelper formatter = new InputBoxHelper(metricDisplay, zoomManager);
+        List<Accounting> account;
+        if (listDTO.size() == 0) {
+            account = domainController.getAccounting();
+        } else {
+            account = domainController.getSurfaceAccount(listDTO);
+        }
+
+        for (Accounting accounting : account) {
 
             MaterialUI materialUI = new MaterialUI();
             materialUI.name = accounting.getMaterial().getMaterialName();
-            materialUI.pricePerBoxe = formatter.formatMetric(accounting.getMaterial().getCostPerBox());
+            materialUI.pricePerBoxe = String.format("%.2f", accounting.getMaterial().getCostPerBox());
             materialUI.color = ColorHelper.utilsColorToString(accounting.getMaterial().getColor());
-            materialUI.tilePerBox = formatter.formatMetric(accounting.getMaterial().getNbTilePerBox());
-            materialUI.numberOfTiles = formatter.formatMetric(accounting.getUsedTiles());
-            materialUI.numberOfBoxes = formatter.formatMetric(accounting.getNbBoxes());
-            materialUI.totalPrice = formatter.formatMetric(accounting.getTotalCost());
-
+            materialUI.tilePerBox = String.format("%d", accounting.getMaterial().getNbTilePerBox());
+            materialUI.numberOfTiles = String.format("%d", accounting.getUsedTiles());
+            materialUI.numberOfBoxes = String.format("%d", accounting.getNbBoxes());
+            materialUI.totalPrice = String.format("%.2f", accounting.getTotalCost());
             materialTableView.getItems().add(materialUI);
         }
+
+        appendTotal(account);
+    }
+
+    private void appendTotal(List<Accounting> account) {
+
+        double totalcost = 0;
+        int totalTiles = 0;
+        int totalBox = 0;
+        for (Accounting accounting : account) {
+            totalcost += accounting.getTotalCost();
+            totalTiles += accounting.getUsedTiles();
+            totalBox += accounting.getNbBoxes();
+        }
+
+        double avgPricePerBox = totalcost / totalBox;
+        double avgTilesPerBox = ((double)totalTiles) / ((double)totalBox);
+
+        MaterialUI materialUI = new MaterialUI();
+
+        materialUI.name = "total";
+        materialUI.pricePerBoxe = String.format("%.2f", avgPricePerBox);
+        materialUI.color = "";
+        materialUI.tilePerBox = String.format("%.2f", avgTilesPerBox);
+        materialUI.numberOfTiles = String.format("%d", totalTiles);
+        materialUI.numberOfBoxes = String.format("%d", totalBox);
+        materialUI.totalPrice = String.format("%.2f", totalcost);
+        materialTableView.getItems().add(materialUI);
     }
 }

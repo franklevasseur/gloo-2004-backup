@@ -342,7 +342,7 @@ public class UiController implements Initializable {
         fusionButton.setText("Fusion surfaces");
 
         selectionManager.unselectAll();
-        sidePanel.hideInfo(metricDisplay);
+        sidePanel.hideInfo();
     }
 
     private void handleRectangularSurfaceCreation(Point click) {
@@ -372,7 +372,7 @@ public class UiController implements Initializable {
         selectionManager.unselectAll();
         firstClickCoord = null;
 
-        sidePanel.hideInfo(metricDisplay);
+        sidePanel.hideInfo();
     }
 
     private void handleIrregularSurfaceCreation(Point clickCoord) {
@@ -410,7 +410,7 @@ public class UiController implements Initializable {
         }
 
         selectionManager.unselectAll();
-        sidePanel.hideInfo(metricDisplay);
+        sidePanel.hideInfo();
     }
 
     public Void handleSelection(Void nothing) {
@@ -550,7 +550,7 @@ public class UiController implements Initializable {
             }
         }
 
-        sidePanel.hideInfo(metricDisplay);
+        sidePanel.hideInfo();
         this.renderFromProject();
     }
 
@@ -674,7 +674,7 @@ public class UiController implements Initializable {
     }
 
     public void fusionToggle() {
-        sidePanel.hideInfo(metricDisplay);
+        sidePanel.hideInfo();
 
         if (stateCurrentlyFusionning) {
             fusionSurfaces();

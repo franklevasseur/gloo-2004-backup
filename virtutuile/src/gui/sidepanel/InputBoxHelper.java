@@ -24,6 +24,10 @@ public class InputBoxHelper {
             return input.equals("") ? null : format.parse(input).doubleValue();
         }
 
+        if (!imperialFractionHelper.isValid(input)) {
+            throw new ParseException("c'est pas une fraction valide ça mon chummé", 0);
+        }
+
         double inchesDecimal = imperialFractionHelper.parseImperialFraction(input);
         return zoomManager.inchToMeters(inchesDecimal);
     }

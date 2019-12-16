@@ -7,57 +7,76 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 import java.text.ParseException;
+import java.util.function.Function;
 
 public class InspectorPanel {
 
     private TextField minInspectionLengthTextField;
     private Button inspectButton;
     private TextArea inspectionArea;
-    private Double minInspectionLength;
+
     private ZoomManager zoomManager;
     private Controller domainController = Controller.getInstance();
+
+    private boolean metricDisplay = true;
 
     public InspectorPanel(TextField minInspectionLengthTextField,
                           Button inspectButton,
                           TextArea inspectionArea,
-                          Double minInspectionLength,
                           ZoomManager zoomManager) {
 
         this.minInspectionLengthTextField = minInspectionLengthTextField;
         this.inspectButton = inspectButton;
         this.inspectionArea = inspectionArea;
-        this.minInspectionLength = minInspectionLength;
         this.zoomManager = zoomManager;
         
         inspectionArea.setDisable(true);
         inspectionArea.setStyle("-fx-text-fill: #ff0000; -fx-opacity: 1.0;");
         inspectButton.setDisable(true);
 
-        // TODO: arrange this
-        InputBoxHelper parser = new InputBoxHelper(true, zoomManager);
-
         minInspectionLengthTextField.textProperty().addListener((observableValue, oldString, newString) -> {
 
-            boolean parseSucess = true;
-            try {
-                CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
-                this.minInspectionLength = parser.parseToMetric(minInspectionLengthInput.toString());
-            } catch (ParseException e) {
-                parseSucess = false;
-            }
-
-            this.inspectButton.setDisable(!parseSucess);
+            this.parse(this.minInspectionLengthTextField.getText(), sucess -> {
+                this.inspectButton.setDisable(!sucess);
+                return null;
+            });
         });
     }
 
+    public void setMetric(boolean metricDisplay) {
+        this.metricDisplay = metricDisplay;
+    }
+
     public void inspect(boolean metricDisplay) {
+        this.metricDisplay = metricDisplay;
+
         String unit = "m";
-        double inspectValue = minInspectionLength;
+        double meters = this.parse(this.minInspectionLengthTextField.getText(), null);
+
+        double minInspectionLength = meters;
         if (!metricDisplay) {
-            inspectValue = zoomManager.inchToMeters(minInspectionLength);
+            minInspectionLength = zoomManager.metersToInch(meters);
             unit = "in";
         }
-        String inspectionResult = domainController.inspectProject(inspectValue, inspectValue);
+        String inspectionResult = domainController.inspectProject(meters, meters);
         inspectionArea.setText(String.format("Inspection result for min lenght = %.2f %s : \n\n%s", minInspectionLength, unit, inspectionResult));
+    }
+
+    private Double parse(String inputText, Function<Boolean, Void> callback) {
+        boolean parseSucess = true;
+
+        InputBoxHelper parser = new InputBoxHelper(metricDisplay, zoomManager);
+        Double meters = 0.0;
+
+        try {
+            meters = parser.parseToMetric(inputText);
+        } catch (ParseException e) {
+            parseSucess = false;
+        }
+
+        if (callback != null) {
+            callback.apply(parseSucess);
+        }
+        return meters;
     }
 }

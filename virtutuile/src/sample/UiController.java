@@ -251,8 +251,7 @@ public class UiController implements Initializable {
                 snapGridUI,
                 minInspectionLengthTextField,
                 inspectButton,
-                inspectionArea,
-                minInspectionLength);
+                inspectionArea);
 
         renderFromProject();
     }

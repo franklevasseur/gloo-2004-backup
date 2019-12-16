@@ -54,8 +54,7 @@ public class SidePanelUI {
                        SnapGridUI snapGrid,
                        TextField minInspectionLengthTextField,
                        Button inspectButton,
-                       TextArea inspectionArea,
-                       Double minInspectionLength) {
+                       TextArea inspectionArea) {
 
         this.surfacePropertiesPanel = new SurfacePropertiesPanel(tileHeightInputbox,
                 tileWidthInputbox,
@@ -105,13 +104,15 @@ public class SidePanelUI {
         this.inspectorPanel = new InspectorPanel(minInspectionLengthTextField,
                 inspectButton,
                 inspectionArea,
-                minInspectionLength,
                 zoomManager);
 
         this.hideSnapGrid();
     }
 
     public void updateSelection(List<SurfaceUI> selectedSurfaces, boolean metricDisplay) {
+
+        inspectorPanel.setMetric(metricDisplay);
+
         if (selectedSurfaces.size() > 0) {
             displayInfo(selectedSurfaces, metricDisplay);
             return;

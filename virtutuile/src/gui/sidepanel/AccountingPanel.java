@@ -32,6 +32,8 @@ public class AccountingPanel {
 
     private ZoomManager zoomManager;
 
+    private boolean lastMetric = true;
+
     public AccountingPanel(TableView<MaterialUI> materialTableView,
                            TextField mNewHeightInputBox,
                            TextField mNewLenghtInputBox,
@@ -49,11 +51,12 @@ public class AccountingPanel {
         this.mNewColorInputBox = mNewColorInputBox;
         this.zoomManager = zoomManager;
 
-        // TODO: should call method with correct unit system
-        editTileMaterialChoiceBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> displayMaterialInfo(true)));
+        editTileMaterialChoiceBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> displayMaterialInfo(lastMetric)));
     }
 
     public void editMaterialButton(boolean metricDisplay) {
+
+        lastMetric = metricDisplay;
 
         InputBoxHelper parser = new InputBoxHelper(metricDisplay, zoomManager);
 
@@ -89,6 +92,8 @@ public class AccountingPanel {
 
     public void displayMaterialInfo(boolean metricDisplay) {
 
+        lastMetric = metricDisplay;
+
         InputBoxHelper formater = new InputBoxHelper(metricDisplay, zoomManager);
 
         String materialName = editTileMaterialChoiceBox.getValue();
@@ -113,6 +118,9 @@ public class AccountingPanel {
     }
 
     public void displayAccountingForSurfaces(List<SurfaceUI> pSelectedSurfaces, boolean metricDisplay) {
+
+        lastMetric = metricDisplay;
+
         this.materialTableView.getItems().clear();
 
         List<SurfaceDto> listDTO = new ArrayList<>();

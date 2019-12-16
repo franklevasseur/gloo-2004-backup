@@ -5,6 +5,15 @@ import java.math.MathContext;
 
 public class ImperialFractionHelper {
 
+    public boolean isValid(String inputText) {
+        try {
+            parseImperialFraction(inputText);
+        } catch (RuntimeException e) {
+            return false;
+        }
+        return true;
+    }
+
     public double parseImperialFraction(String initialText) {
 
         ImperialFractionText imperialFraction = extractFeetsAndInches(initialText);

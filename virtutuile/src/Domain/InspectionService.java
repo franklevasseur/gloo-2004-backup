@@ -16,7 +16,9 @@ public class InspectionService {
         int count = 0;
         for (Tile tile : surface.getTiles()) {
             if (tile.getWidth() < pWidth || tile.getHeight() < pHeight) {
-                tile.getMaterial().setColor(Color.RED);
+                Material material = tile.getMaterial().deepCopy();
+                material.setColor(Color.RED);
+                tile.setMaterial(material);
                 count++;
             }
         }

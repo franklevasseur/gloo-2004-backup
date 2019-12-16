@@ -51,6 +51,10 @@ public class Material implements Serializable {
         return tileTypeHeight;
     }
 
+    public Material deepCopy() {
+        return new Material(color, String.format("%s-cpy", materialName), nbTilePerBox, costPerBox, tileTypeWidth, tileTypeHeight);
+    }
+
     public double getTileTypeWidth() {
         return tileTypeWidth;
     }

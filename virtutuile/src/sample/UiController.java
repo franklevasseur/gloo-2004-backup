@@ -27,7 +27,6 @@ import java.io.File;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -178,35 +177,14 @@ public class UiController implements Initializable {
             }
         });
 
-        inspectionArea.setDisable(true);
-        inspectionArea.setStyle("-fx-text-fill: #ff0000; -fx-opacity: 1.0;");
-        inspectButton.setDisable(true);
-
-        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
-        minInspectionLengthTextField.textProperty().addListener((observableValue, oldString, newString) -> {
-
-            boolean parseSucess = true;
-            try {
-                CharSequence minInspectionLengthInput = this.minInspectionLengthTextField.getCharacters();
-                minInspectionLength = minInspectionLengthInput.toString().equals("") ? null : format.parse(minInspectionLengthInput.toString()).doubleValue();
-
-            } catch (ParseException e) {
-                parseSucess = false;
-            }
-
-            if (parseSucess) {
-                inspectButton.setDisable(false);
-            }
-        });
-
-        materialNameInputBox.textProperty().addListener((observableValue, oldString, newString) -> {
-
-            if (!createMaterialListener()) {
-                inspectButton.setDisable(false);
-            } else {
-                inspectButton.setDisable(true);
-            }
-        });
+//        materialNameInputBox.textProperty().addListener((observableValue, oldString, newString) -> {
+//
+//            if (!createMaterialListener()) {
+//                inspectButton.setDisable(false);
+//            } else {
+//                inspectButton.setDisable(true);
+//            }
+//        });
 
         imperialCheckBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -270,7 +248,11 @@ public class UiController implements Initializable {
                 resizeSG,
                 snapgridLabel,
                 snapGridbutton,
-                snapGridUI);
+                snapGridUI,
+                minInspectionLengthTextField,
+                inspectButton,
+                inspectionArea,
+                minInspectionLength);
 
         renderFromProject();
     }
@@ -993,14 +975,7 @@ public class UiController implements Initializable {
     }
 
     public void inspect() {
-        String unit = "m";
-        double inspectValue = minInspectionLength;
-        if (!metricDisplay) {
-            inspectValue = zoomManager.inchToMeters(minInspectionLength);
-            unit = "in";
-        }
-        String inspectionResult = domainController.inspectProject(inspectValue, inspectValue);
-        inspectionArea.setText(String.format("Inspection result for min lenght = %.2f %s : \n\n%s", minInspectionLength, unit, inspectionResult));
+        sidePanel.inspect(metricDisplay);
         this.renderFromProject();
     }
 

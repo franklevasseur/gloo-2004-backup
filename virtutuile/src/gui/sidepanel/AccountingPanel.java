@@ -130,9 +130,9 @@ public class AccountingPanel {
 
         List<Accounting> account;
         if (listDTO.size() == 0) {
-            account = domainController.getAccounting();
+            account = domainController.getAllAccounting();
         } else {
-            account = domainController.getSurfaceAccount(listDTO);
+            account = domainController.getAccountingForSurfaces(listDTO);
         }
 
         for (Accounting accounting : account) {
@@ -155,10 +155,12 @@ public class AccountingPanel {
 
         double totalcost = 0;
         int totalTiles = 0;
+        int totalUsedTiles = 0;
         int totalBox = 0;
         for (Accounting accounting : account) {
             totalcost += accounting.getTotalCost();
-            totalTiles += accounting.getUsedTiles();
+            totalTiles += accounting.getAllTiles();
+            totalUsedTiles += accounting.getUsedTiles();
             totalBox += accounting.getNbBoxes();
         }
 
@@ -171,7 +173,7 @@ public class AccountingPanel {
         materialUI.pricePerBoxe = String.format("%.2f", avgPricePerBox);
         materialUI.color = "";
         materialUI.tilePerBox = String.format("%.2f", avgTilesPerBox);
-        materialUI.numberOfTiles = String.format("%d", totalTiles);
+        materialUI.numberOfTiles = String.format("%d", totalUsedTiles);
         materialUI.numberOfBoxes = String.format("%d", totalBox);
         materialUI.totalPrice = String.format("%.2f", totalcost);
         materialTableView.getItems().add(materialUI);

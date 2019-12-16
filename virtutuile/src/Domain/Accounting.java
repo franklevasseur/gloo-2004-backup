@@ -1,105 +1,37 @@
 package Domain;
 
-import utils.Point;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class Accounting {
 
-    private List<Surface> surfaces = new ArrayList<>();
     private Material material;
-    private int usedTiles;
-    private double totalCost;
-    private int nbBoxes;
+    private int totalTiles;
 
-    public Accounting(List<Surface> pSurfaces, Material pMaterials) {
+    public Accounting(Material pMaterials, int totalTiles) {
         this.material = pMaterials;
-        this.surfaces = pSurfaces;
-        usedTiles = 0;
-        totalCost = 0;
-        nbBoxes = 0;
+        this.totalTiles = totalTiles;
     }
-
 
     public Material getMaterial() {
         return this.material;
     }
 
     public int getNbBoxes() {
-        double divisionResult = ((double) usedTiles) / ((double) material.getNbTilePerBox());
-        nbBoxes = (int) Math.ceil(divisionResult);
-        return nbBoxes;
+        double exactNumberOfBoxes = ((double) totalTiles) / ((double) material.getNbTilePerBox());
+        return (int) Math.ceil(exactNumberOfBoxes);
     }
 
     public double getTotalCost() {
-        totalCost = material.getCostPerBox() * nbBoxes;
-        return totalCost;
+        return this.getNbBoxes() * material.getCostPerBox();
     }
 
     public int getUsedTiles() {
-        return F_usedTiles();
+        return this.totalTiles;
     }
 
-    private int F_usedTiles() {
-
-        for (Surface var : surfaces) {
-            List<Tile> tiles = var.getTiles();
-            if (!(tiles.size() <= 0)) {
-                if (tiles.get(0).getMaterial().getMaterialName() == material.getMaterialName()) {
-                    usedTiles += tiles.size();
-                }
-            }
-
-        }
-        return usedTiles;
+    public int getAllTiles() {
+        return material.getNbTilePerBox() * getNbBoxes();
     }
 
-
-    private double TotalArea() {
-        for (Surface i : surfaces) {
-            //check si la surface est une surface fusionne
-            if (i.isFusionned()) {
-
-            } else {
-
-            }
-        }
-        return 2.0;
-    }
-
-    private double areaOfSurface(Surface pSurface) {
-
-        return 2.0;
-    }
-
-    private Surface surfaceSansTrou(FusionnedSurface pSurface) {
-        Surface trou = null;
-        for (Surface i : pSurface.getFusionnedSurfaces()) {
-            if (i.isHole() == HoleStatus.HOLE) {
-                trou = i;
-            }
-        }
-        if (trou == null) {
-            //return pSurface;
-        } else {
-/**
- for(Point j: trou){
- for (Point k: pSurface.getFusionnedSurfaces() ) {
-
- if (...) {
- iter.remove();
- }
- }
-
- }
- */
-        }
-        return pSurface;
-    }
-
-    private Surface surfaceTrou(Surface pSurface) {
-
-        return pSurface;
+    public void incrementNbTiles(int deltaTiles) {
+        this.totalTiles += deltaTiles;
     }
 }

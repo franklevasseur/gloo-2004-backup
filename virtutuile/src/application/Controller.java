@@ -5,9 +5,7 @@ import utils.*;
 import utils.Point;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -212,27 +210,43 @@ public class Controller {
         justDoIt();
     }
 
-    public List<Accounting> getAccounting() {
-        List<Accounting> account = new ArrayList<>();
-        for (Material i : this.projectRepository.getProject().getMaterials()) {
-            Accounting temp = new Accounting(this.projectRepository.getProject().getSurfaces(), i);
-            account.add(temp);
-        }
-        return account;
+    public List<Accounting> getAllAccounting() {
+        return getAccounting(projectRepository.getProject().getSurfaces());
     }
 
-    public List<Accounting> getSurfaceAccount(List<SurfaceDto> pSurface) {
-        List<Accounting> account = new ArrayList<>();
-        List<Surface> surfaces = pSurface.stream().map(dto -> {
-            return this.projectRepository.getProject().getSurfaces().stream().filter(s -> s.getId().isSame(dto.id)).findFirst().get();
-        }).collect(Collectors.toList());
-        for (Surface i : surfaces) {
-            if (i.getTiles().size() > 0) {
-                Accounting temp = new Accounting(surfaces, i.getTiles().get(0).getMaterial());
-                account.add(temp);
+    public List<Accounting> getAccountingForSurfaces(List<SurfaceDto> pSurface) {
+        List<Surface> surfaces = pSurface.stream()
+                .map(dto -> surfaceService.getSurfaceById(dto.id).get())
+                .collect(Collectors.toList());
+
+        return getAccounting(surfaces);
+    }
+
+    private List<Accounting> getAccounting(List<Surface> surfaces) {
+        List<Accounting> allAccountings = new ArrayList<>();
+
+        for (Surface surface : surfaces) {
+            if (surface.getTiles().size() <= 0) {
+                continue;
+            }
+
+            Material surfaceMaterial = surface.getMasterTile().getMaterial();
+            Optional<Accounting> alreadyInList = allAccountings
+                    .stream()
+                    .filter(a -> a.getMaterial().getMaterialName().equals(surfaceMaterial.getMaterialName()))
+                    .findFirst();
+
+            int nTiles = surface.getTiles().size();
+            if (alreadyInList.isPresent()) {
+                Accounting accounting = alreadyInList.get();
+                accounting.incrementNbTiles(nTiles);
+            } else {
+                Accounting newAccoutning = new Accounting(surfaceMaterial, nTiles);
+                allAccountings.add(newAccoutning);
             }
         }
-        return account;
+
+        return allAccountings;
     }
 
     public String inspectProject(double pWidth, double pHeight) {

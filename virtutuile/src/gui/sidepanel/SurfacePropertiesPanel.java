@@ -165,8 +165,8 @@ public class SurfacePropertiesPanel {
             RectangleInfo tileRect = RectangleHelper.summitsToRectangleInfo(masterTIile.summits);
 
             double minSide = Math.min(tileRect.height, tileRect.width);
-            double maxSide = Math.min(tileRect.height, tileRect.width);
-            boolean isAllowed = (maxSide - 2 * minSide) < Point.DOUBLE_TOLERANCE;
+            double maxSide = Math.max(tileRect.height, tileRect.width);
+            boolean isAllowed = Math.abs(maxSide - 2 * minSide) < Point.DOUBLE_TOLERANCE;
 
             if (!isAllowed) {
                 alert.setHeaderText(String.format("You can select pattern '%s' only if the tile width is half of its length...",

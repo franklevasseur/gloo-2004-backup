@@ -62,14 +62,18 @@ public class MaterialPanel {
 
             domainController.createMaterial(dto);
 
-            materialNameInputBox.clear();
-            boxPriceInputBox.clear();
-            tilePerBoxInputBox.clear();
-            tileHeightMaterialInputBox.clear();
-            tileWidthMaterialInputBox.clear();
+            hideAll();
 
-        } catch (ParseException ignored) {
-            // if there a parse error, we just empty all boxes...
+        } catch (ParseException | RuntimeException ignored) {
+            hideAll();
         }
+    }
+
+    private void hideAll() {
+        materialNameInputBox.clear();
+        boxPriceInputBox.clear();
+        tilePerBoxInputBox.clear();
+        tileHeightMaterialInputBox.clear();
+        tileWidthMaterialInputBox.clear();
     }
 }

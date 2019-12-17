@@ -92,7 +92,7 @@ public class AccountingPanel {
 
     public void deleteMaterialButton() {
         String materialName = editTileMaterialChoiceBox.getValue();
-        if (!materialName.equals("")) {
+        if (materialName != null && !materialName.equals("")) {
             domainController.removeMaterial(materialName);
         }
     }

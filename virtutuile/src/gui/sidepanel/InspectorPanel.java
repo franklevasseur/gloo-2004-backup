@@ -63,7 +63,7 @@ public class InspectorPanel {
     }
 
     private Double parse(String inputText, Function<Boolean, Void> callback) {
-        boolean parseSucess = true;
+        boolean parseSucess = !inputText.equals("");
 
         InputBoxHelper parser = new InputBoxHelper(metricDisplay, zoomManager);
         Double meters = 0.0;

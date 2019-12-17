@@ -394,7 +394,7 @@ public class UiController implements Initializable {
 
         AttachmentPointUI firstPoint = irregularSurfaceSummits.get(0);
         double samePositionTolerance = 10;
-        if (clickCoord.isInRange(firstPoint.getPixelCoords(), samePositionTolerance)) {
+        if (pointToAdd.isInRange(firstPoint.getPixelCoords(), samePositionTolerance)) {
             if (irregularSurfaceSummits.size() > 2) {
                 // remove last point added
                 irregularSurfaceSummits.remove(irregularSurfaceSummits.size() - 1);

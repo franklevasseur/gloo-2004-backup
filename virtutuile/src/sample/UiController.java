@@ -1087,19 +1087,8 @@ public class UiController implements Initializable {
         renderFromProject();
     }
 
-    private void displayMaterialInfo() {
-        NumberFormat formatter = new DecimalFormat("#0.000");
-
-        String materialName = editTileMaterialChoiceBox.getValue();
-        Optional<MaterialDto> optionalMaterial = domainController.getMaterialByName(materialName);
-
-        if (optionalMaterial.isPresent()) {
-            MaterialDto material = optionalMaterial.get();
-            mNewHeightInputBox.setText(formatter.format(material.tileTypeHeight));
-            mNewLenghtInputBox.setText(formatter.format(material.tileTypeWidth));
-            mNewTilePerBoxInput.setText(formatter.format(material.nbTilePerBox));
-            mNewPricePerBoxInputBox.setText(formatter.format(material.costPerBox));
-            mNewColorInputBox.setValue(ColorHelper.utilsColorToString(material.color));
-        }
+    public void removeMaterialButton() {
+        sidePanel.deleteMaterial();
+        renderFromProject();
     }
 }

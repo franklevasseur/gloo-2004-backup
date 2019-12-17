@@ -52,6 +52,14 @@ public class Project implements Serializable {
         this.surfaces.add(newFusionnedSurface);
     }
 
+    public void removeSurface(Surface surface) {
+        this.surfaces.remove(surface);
+    }
+
+    public void removeMaterial(Material material) {
+        this.materials.remove(material);
+    }
+
     public void unfusionSurfaces(FusionnedSurface fusionnedSurface) {
         this.surfaces.removeIf(s -> s == fusionnedSurface);
         this.surfaces.addAll(fusionnedSurface.getFusionnedSurfaces());

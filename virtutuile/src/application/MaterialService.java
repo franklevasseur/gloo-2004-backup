@@ -20,4 +20,11 @@ public class MaterialService {
         }
         return Optional.empty();
     }
+
+    public void removeMaterialByName(String name) {
+        Optional<Material> material = this.getMaterialByName(name);
+        if (material.isPresent()) {
+            this.projectRepository.getProject().removeMaterial(material.get());
+        }
+    }
 }

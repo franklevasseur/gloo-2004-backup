@@ -221,9 +221,10 @@
                             <Button layoutX="262.0" layoutY="279.0" mnemonicParsing="false" onAction="#editMaterialButton" text="Apply" />
                             <TextField fx:id="mNewTilePerBoxInput" layoutX="187.0" layoutY="177.0" />
                             <TextField fx:id="mNewPricePerBoxInputBox" layoutX="188.0" layoutY="215.0" />
-                            <Label layoutX="48.0" layoutY="181.0" text="Number of tile per Box" />
+                            <Label layoutX="20.0" layoutY="181.0" text="Number of tile per Box" />
                             <Label layoutX="70.0" layoutY="219.0" text="Price per box" />
                             <ChoiceBox fx:id="mNewColorInputBox" layoutX="187.0" layoutY="144.0" prefWidth="150.0" />
+                            <Button layoutX="64.0" layoutY="279.0" mnemonicParsing="false" onAction="#removeMaterialButton" style="-fx-background-color: rgb(235, 64, 52);" text="delete" textFill="BLACK" />
                           </children>
                         </AnchorPane>
                       </items>

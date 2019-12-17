@@ -21,6 +21,13 @@ public class SurfaceService {
         return this.projectRepository.getProject().getSurfaces().stream().filter(s -> s.getId().isSame(surfaceId)).findFirst();
     }
 
+    public void removeSurfaceById(Id surfaceId) {
+        Optional<Surface> surface = this.getSurfaceById(surfaceId);
+        if (surface.isPresent()) {
+            this.projectRepository.getProject().removeSurface(surface.get());
+        }
+    }
+
     public void updateMaterial(Material material) {
 
         for (Surface s : projectRepository.getProject().getSurfaces()) {

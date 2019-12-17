@@ -166,6 +166,10 @@ public class SidePanelUI {
         accountingPanel.editMaterialButton(metricDisplay);
     }
 
+    public void deleteMaterial() {
+        accountingPanel.deleteMaterialButton();
+    }
+
     public void inspect(boolean metricDisplay) {
         inspectorPanel.inspect(metricDisplay);
     }

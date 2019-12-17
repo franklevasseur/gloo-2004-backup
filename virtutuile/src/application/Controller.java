@@ -46,8 +46,7 @@ public class Controller {
     }
 
     public void removeSurface(SurfaceDto surface) {
-        this.projectRepository.getProject().getSurfaces().removeIf(s -> s.getId().isSame(surface.id));
-
+        surfaceService.removeSurfaceById(surface.id);
         justDoIt();
     }
 
@@ -80,6 +79,11 @@ public class Controller {
         materialAssembler.fromDto(materialDto, material);
         surfaceService.updateMaterial(material);
 
+        justDoIt();
+    }
+
+    public void removeMaterial(String materialName) {
+        materialService.removeMaterialByName(materialName);
         justDoIt();
     }
 

@@ -90,6 +90,13 @@ public class AccountingPanel {
         hideMaterialInfo();
     }
 
+    public void deleteMaterialButton() {
+        String materialName = editTileMaterialChoiceBox.getValue();
+        if (!materialName.equals("")) {
+            domainController.removeMaterial(materialName);
+        }
+    }
+
     public void displayMaterialInfo(boolean metricDisplay) {
 
         lastMetric = metricDisplay;

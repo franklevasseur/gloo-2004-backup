@@ -9,7 +9,7 @@ public class InspectionService {
         for (Surface surface : project.getSurfaces()) {
             count += inspectOneSurface(surface, pWidth, pHeight);
         }
-        return String.format("There is %d tiles that do not respect the minimal cut length.", count);
+        return String.format("There are %d tiles that do not respect the minimal cut length.", count);
     }
 
     private int inspectOneSurface(Surface surface, double pWidth, double pHeight) {

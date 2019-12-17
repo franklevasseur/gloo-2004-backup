@@ -230,7 +230,7 @@ public class Controller {
         List<Accounting> allAccountings = new ArrayList<>();
 
         for (Surface surface : surfaces) {
-            if (surface.getTiles().size() <= 0) {
+            if (surface.isHole() != HoleStatus.FILLED || surface.getTiles().size() <= 0) {
                 continue;
             }
 

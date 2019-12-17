@@ -69,8 +69,8 @@ public class SnapGridUI {
 
         originIndicator.setRadius(viewBoxRectangle.width / 100);
 
-        this.renderLines(viewBoxRectangle);
-        this.renderColumn(viewBoxRectangle);
+        this.renderLines(viewBoxRectangle, viewBoxRectangle.width);
+        this.renderColumn(viewBoxRectangle, viewBoxRectangle.width);
         this.parentNode.getChildren().addAll(displayedLines);
         toBack();
     }
@@ -97,7 +97,7 @@ public class SnapGridUI {
         return this.isVisible;
     }
 
-    private void renderLines(RectangleInfo viewBoxRectangle) {
+    private void renderLines(RectangleInfo viewBoxRectangle, double viewBoxWidth) {
         int lowerBoundLine = (int) Math.ceil(viewBoxRectangle.topLeftCorner.y / gridGap);
         int upperBoundLine = (int) Math.ceil((viewBoxRectangle.topLeftCorner.y + viewBoxRectangle.height) / gridGap);
 
@@ -113,12 +113,13 @@ public class SnapGridUI {
             double yi = i * gridGap;
             Line line = new Line(viewBoxRectangle.topLeftCorner.x, yi, viewBoxRectangle.topLeftCorner.x + viewBoxRectangle.width, yi);
             line.setStroke(Color.GRAY);
+            line.setStrokeWidth(viewBoxWidth / 1000);
             line.getStrokeDashArray().addAll(5d);
             this.displayedLines.add(line);
         }
     }
 
-    private void renderColumn(RectangleInfo viewBoxRectangle) {
+    private void renderColumn(RectangleInfo viewBoxRectangle, double viewBoxWidth) {
         int lowerBoundColumn = (int) Math.ceil(viewBoxRectangle.topLeftCorner.x / gridGap);
         int upperBoundColumn = (int) Math.ceil((viewBoxRectangle.topLeftCorner.x + viewBoxRectangle.width) / gridGap);
 
@@ -134,6 +135,7 @@ public class SnapGridUI {
             double xi = i * gridGap;
             Line line = new Line(xi, viewBoxRectangle.topLeftCorner.y, xi, viewBoxRectangle.topLeftCorner.y + viewBoxRectangle.height);
             line.setStroke(Color.GRAY);
+            line.setStrokeWidth(viewBoxWidth / 1000);
             line.getStrokeDashArray().addAll(5d);
             this.displayedLines.add(line);
         }

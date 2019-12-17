@@ -16,8 +16,8 @@ public class ResizeIndicator {
 
     private Point initialCoord;
 
-    public ResizeIndicator(Point pixelCoordinate, SurfaceUI parentSurface, boolean proportional) {
-        node = new Circle(pixelCoordinate.x, pixelCoordinate.y, 5);
+    public ResizeIndicator(Point pixelCoordinate, SurfaceUI parentSurface, boolean proportional, double width) {
+        node = new Circle(pixelCoordinate.x, pixelCoordinate.y, width);
         node.setCursor(Cursor.SE_RESIZE);
 
         initialCoord = pixelCoordinate;

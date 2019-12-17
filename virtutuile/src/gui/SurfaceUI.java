@@ -9,7 +9,6 @@ import application.TileDto;
 import gui.sidepanel.TileInfoUI;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
@@ -155,13 +154,18 @@ public abstract class SurfaceUI {
     }
 
     protected void displayAttachmentPoints() {
+
+        AbstractShape shape = new AbstractShape(summits);
+        double maxLength = Math.max(ShapeHelper.getWidth(shape), ShapeHelper.getHeight(shape));
+        double pointWidth = zoomManager.pixelsToMeters(maxLength);
+
         for (Point summit : summits) {
-            attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this));
+            attachmentPoints.add(new AttachmentPointUI(summit, summit.cardinality, this, pointWidth * 2));
         }
 
         Point resizeCoordinate = ShapeHelper.getTheoricalBottomRightCorner(new AbstractShape(summits));
 
-        resizeIndicator = new ResizeIndicator(resizeCoordinate, this, !this.toDto().isRectangular);
+        resizeIndicator = new ResizeIndicator(resizeCoordinate, this, !this.toDto().isRectangular, pointWidth);
 
         surfaceGroup.getChildren().addAll(attachmentPoints.stream().map(AttachmentPointUI::getNode).collect(Collectors.toList()));
         surfaceGroup.getChildren().add(resizeIndicator.getNode());

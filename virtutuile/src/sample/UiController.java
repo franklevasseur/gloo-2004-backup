@@ -5,7 +5,6 @@ import application.*;
 import gui.*;
 
 import gui.sidepanel.SidePanelUI;
-import gui.sidepanel.TileInfoUI;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -26,8 +25,6 @@ import utils.imperial.ImperialFractionHelper;
 
 import java.io.File;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -384,7 +381,11 @@ public class UiController implements Initializable {
         boolean isFirstPoint = irregularSurfaceSummits.size() < 1;
         Cursor cursor = isFirstPoint ? Cursor.HAND : null;
 
-        AttachmentPointUI point = new AttachmentPointUI(pointToAdd, null, null, cursor);
+        AbstractShape shape = new AbstractShape(getViewBoxSummits());
+        double maxLength = Math.max(ShapeHelper.getWidth(shape), ShapeHelper.getHeight(shape));
+        double pointWidth = zoomManager.pixelsToMeters(maxLength) * 2;
+
+        AttachmentPointUI point = new AttachmentPointUI(pointToAdd, null, null, cursor, pointWidth);
         irregularSurfaceSummits.add(point);
         this.drawingSection.getChildren().add(point.getNode());
 
@@ -393,7 +394,8 @@ public class UiController implements Initializable {
         }
 
         AttachmentPointUI firstPoint = irregularSurfaceSummits.get(0);
-        double samePositionTolerance = 10;
+
+        double samePositionTolerance = pointWidth * 1.5;
         if (pointToAdd.isInRange(firstPoint.getPixelCoords(), samePositionTolerance)) {
             if (irregularSurfaceSummits.size() > 2) {
                 // remove last point added

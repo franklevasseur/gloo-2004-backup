@@ -9,15 +9,16 @@ import utils.Point;
 
 public class AttachmentPointUI {
 
-    private static final double pointWidth = 10;
     private Rectangle rectangle;
+    private double pointWidth;
 
-    public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface) {
-        this(coord, cardinal, parentSurface, null);
+    public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface, double width) {
+        this(coord, cardinal, parentSurface, null, width);
     }
 
-    public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface, Cursor cursor) {
-        rectangle = new Rectangle(coord.x - (pointWidth / 2), coord.y - (pointWidth / 2), pointWidth, pointWidth);
+    public AttachmentPointUI(Point coord, CardinalPoint cardinal, SurfaceUI parentSurface, Cursor cursor, double width) {
+        pointWidth = width;
+        rectangle = new Rectangle(coord.x - (width / 2), coord.y - (width / 2), width, width);
 
         if (cursor != null) {
             rectangle.setCursor(cursor);

@@ -13,9 +13,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class AccountingPanel {
@@ -59,6 +61,7 @@ public class AccountingPanel {
         lastMetric = metricDisplay;
 
         InputBoxHelper parser = new InputBoxHelper(metricDisplay, zoomManager);
+        NumberFormat formater = NumberFormat.getInstance(Locale.FRANCE);
 
         try {
             MaterialDto mDTO = new MaterialDto();
@@ -70,10 +73,10 @@ public class AccountingPanel {
             Double newMaterialWidth = parser.parseToMetric(mNewWidth.toString());
 
             CharSequence mNbTilePerBox = this.mNewTilePerBoxInput.getCharacters();
-            Integer newNbTilePerBox = parser.parseToMetric(mNbTilePerBox.toString()).intValue();
+            Integer newNbTilePerBox = mNbTilePerBox.toString().equals("") ? null : formater.parse(mNbTilePerBox.toString()).intValue();
 
             CharSequence mCostPerBox = this.mNewPricePerBoxInputBox.getCharacters();
-            Integer newCostPerBox = parser.parseToMetric(mCostPerBox.toString()).intValue();
+            Double newCostPerBox = mCostPerBox.toString().equals("") ? null : formater.parse(mCostPerBox.toString()).doubleValue();
 
             mDTO.name = editTileMaterialChoiceBox.getValue();
             mDTO.tileTypeHeight = newMaterialHeight;
@@ -83,7 +86,7 @@ public class AccountingPanel {
             mDTO.color = ColorHelper.stringToUtils(mNewColorInputBox.getValue());
             domainController.updateMaterial(mDTO);
 
-        } catch (ParseException e) {
+        } catch (ParseException | RuntimeException e) {
             displayMaterialInfo(metricDisplay);
         }
 
@@ -101,17 +104,18 @@ public class AccountingPanel {
 
         lastMetric = metricDisplay;
 
-        InputBoxHelper formater = new InputBoxHelper(metricDisplay, zoomManager);
+        InputBoxHelper helper = new InputBoxHelper(metricDisplay, zoomManager);
+        NumberFormat formater = NumberFormat.getInstance(Locale.FRANCE);
 
         String materialName = editTileMaterialChoiceBox.getValue();
         Optional<MaterialDto> optionalMaterial = domainController.getMaterialByName(materialName);
 
         if (optionalMaterial.isPresent()) {
             MaterialDto material = optionalMaterial.get();
-            mNewHeightInputBox.setText(formater.formatMetric(material.tileTypeHeight));
-            mNewLenghtInputBox.setText(formater.formatMetric(material.tileTypeWidth));
-            mNewTilePerBoxInput.setText(formater.formatMetric(material.nbTilePerBox));
-            mNewPricePerBoxInputBox.setText(formater.formatMetric(material.costPerBox));
+            mNewHeightInputBox.setText(helper.formatMetric(material.tileTypeHeight));
+            mNewLenghtInputBox.setText(helper.formatMetric(material.tileTypeWidth));
+            mNewTilePerBoxInput.setText(formater.format(material.nbTilePerBox));
+            mNewPricePerBoxInputBox.setText(formater.format(material.costPerBox));
             mNewColorInputBox.setValue(ColorHelper.utilsColorToString(material.color));
         }
     }

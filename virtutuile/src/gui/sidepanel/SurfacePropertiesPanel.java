@@ -9,8 +9,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import utils.*;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 
 public class SurfacePropertiesPanel {
 
@@ -77,6 +79,7 @@ public class SurfacePropertiesPanel {
             SurfaceUI chosenSurface = selectedSurfaces.get(0);
 
             InputBoxHelper parser = new InputBoxHelper(metricDisplay, zoomManager);
+            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
 
             try {
                 CharSequence masterTileXInput = this.masterTileX.getCharacters();
@@ -86,7 +89,7 @@ public class SurfacePropertiesPanel {
                 Double newMasterTileY = parser.parseToMetric(masterTileYInput.toString());
 
                 CharSequence tileAngleInput = this.tileAngleInputBox.getCharacters();
-                Double tileAngle = parser.parseToMetric(tileAngleInput.toString());
+                Double tileAngle = tileAngleInput.toString().equals("") ? null : format.parse(tileAngleInput.toString()).doubleValue();
 
                 CharSequence tileShiftInput = this.tileShiftingInputBox.getCharacters();
                 Double tileShift = parser.parseToMetric(tileShiftInput.toString());
@@ -193,6 +196,7 @@ public class SurfacePropertiesPanel {
         SurfaceUI firstOne = selectedSurfaces.get(0);
 
         InputBoxHelper parser = new InputBoxHelper(metricDisplay, zoomManager);
+        NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
 
         double height = ShapeHelper.getHeight(new AbstractShape(firstOne.toDto().summits, false));
         double width = ShapeHelper.getWidth(new AbstractShape(firstOne.toDto().summits, false));
@@ -230,7 +234,9 @@ public class SurfacePropertiesPanel {
             tileWidthInputbox.setText(parser.formatMetric(tileRect.width));
             masterTileX.setText(parser.formatMetric(tileRect.topLeftCorner.x));
             masterTileY.setText(parser.formatMetric(tileRect.topLeftCorner.y));
-            tileAngleInputBox.setText(parser.formatMetric(firstOne.getTileAngle()));
+
+            tileAngleInputBox.setText(format.format(firstOne.getTileAngle()));
+
             tileShiftingInputBox.setText(parser.formatMetric(firstOne.getTileShifting()));
         }
     }

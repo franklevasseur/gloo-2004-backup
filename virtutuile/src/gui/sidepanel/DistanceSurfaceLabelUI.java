@@ -30,9 +30,11 @@ public class DistanceSurfaceLabelUI {
             SurfaceDto secondSurface = selectedSurfaces.get(1);
 
             Double distance = this.calculateDistance(firstSurface, secondSurface, metric);
-            String distanceTwoSurfaces = distance.toString();
 
-            distanceLabel.setText(distanceTwoSurfaces);
+            InputBoxHelper helper = new InputBoxHelper(metric, zoomManager);
+            String displayString = helper.formatMetric(distance);
+
+            distanceLabel.setText(displayString);
             presentationLabel.setText("Distance between two surfaces: ");
             return;
         }
@@ -55,11 +57,6 @@ public class DistanceSurfaceLabelUI {
         double xS = secondTopLeft.x;
         double yS = secondTopLeft.y;
 
-        double distance = sqrt(((xF - xS) * (xF - xS) + (yF - yS) * (yF - yS)));
-
-        if (metric) {
-            return distance;
-        }
-        return zoomManager.metersToInch(distance);
+        return sqrt(((xF - xS) * (xF - xS) + (yF - yS) * (yF - yS)));
     }
 }
